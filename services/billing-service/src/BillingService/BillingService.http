@@ -1,0 +1,48 @@
+### Billing Service API Tests
+
+@baseUrl = http://localhost:5005
+@userId = 550e8400-e29b-41d4-a716-446655440000
+
+### Get Billing Info
+GET {{baseUrl}}/api/billing/user/{{userId}}
+
+### Track Usage - Website Generated
+POST {{baseUrl}}/api/billing/track-usage
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "eventType": "website_generated",
+  "count": 1,
+  "costPerUnit": 0.50
+}
+
+### Track Usage - Image Generated
+POST {{baseUrl}}/api/billing/track-usage
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "eventType": "image_generated",
+  "count": 3,
+  "costPerUnit": 0.10
+}
+
+### Get Current Usage
+GET {{baseUrl}}/api/billing/usage/{{userId}}
+
+### Get User Invoices
+GET {{baseUrl}}/api/billing/invoices/{{userId}}
+
+### Stripe Webhook
+POST {{baseUrl}}/api/billing/webhook/stripe
+Content-Type: application/json
+
+{
+  "type": "invoice.payment_succeeded",
+  "data": {
+    "object": {
+      "id": "in_1234567890"
+    }
+  }
+}

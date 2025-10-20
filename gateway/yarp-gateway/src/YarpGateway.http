@@ -1,0 +1,69 @@
+### Gateway Health Check
+GET http://localhost:5000/health
+
+###
+
+### Gateway Info
+GET http://localhost:5000/info
+
+###
+
+### Auth Service - Register (via Gateway)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Test123!@#",
+  "fullName": "Test User"
+}
+
+###
+
+### Auth Service - Login (via Gateway)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Test123!@#"
+}
+
+###
+
+### User Service - Get Profile (via Gateway with JWT)
+GET http://localhost:5000/api/users/me
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+###
+
+### Image Service - Generate Image (via Gateway with JWT)
+POST http://localhost:5000/api/images/generate
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "prompt": "A beautiful sunset over mountains",
+  "size": "1024x1024",
+  "quality": "standard"
+}
+
+###
+
+### Test Rate Limiting (Run multiple times quickly)
+GET http://localhost:5000/info
+
+###
+
+### Swagger UI
+GET http://localhost:5000/swagger
+
+###
+
+### Test CORS Preflight
+OPTIONS http://localhost:5000/api/auth/login
+Origin: http://localhost:3000
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
+
+###
