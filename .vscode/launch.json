@@ -1,0 +1,205 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ---------------------------------------------------------------------
+    // 🧩 AUTH SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET Auth Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-auth-service",
+      "program": "${workspaceFolder}/services/auth-service/src/bin/Debug/net8.0/AuthService.dll",
+      "cwd": "${workspaceFolder}/services/auth-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5010;https://localhost:5011"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5010/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 💳 BILLING SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET Billing Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-billing-service",
+      "program": "${workspaceFolder}/services/billing-service/src/BillingService/bin/Debug/net8.0/BillingService.dll",
+      "cwd": "${workspaceFolder}/services/billing-service/src/BillingService",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5020;https://localhost:5021"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5020/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // ⚙️ GENERATOR SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET Generator Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-generator-service",
+      "program": "${workspaceFolder}/services/generator-service/src/bin/Debug/net8.0/GeneratorService.dll",
+      "cwd": "${workspaceFolder}/services/generator-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5030;https://localhost:5031"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5030/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 🛠 ADMIN SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET Admin Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-admin-service",
+      "program": "${workspaceFolder}/services/admin-service/src/AdminService/bin/Debug/net8.0/AdminService.dll",
+      "cwd": "${workspaceFolder}/services/admin-service/src/AdminService",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5040;https://localhost:5041"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5040/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 🖼 IMAGE SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET Image Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-image-service",
+      "program": "${workspaceFolder}/services/image-service/src/ImageService/bin/Debug/net8.0/ImageService.dll",
+      "cwd": "${workspaceFolder}/services/image-service/src/ImageService",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5050;https://localhost:5051"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5050/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 👤 USER SERVICE
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET User Service",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-user-service",
+      "program": "${workspaceFolder}/services/user-service/src/UserService/bin/Debug/net8.0/UserService.dll",
+      "cwd": "${workspaceFolder}/services/user-service/src/UserService",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5060;https://localhost:5061"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5060/swagger",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 🌐 NEXT.JS FRONTEND
+    // ---------------------------------------------------------------------
+    {
+      "name": "Next.js Frontend",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/web-frontend/techbirdsfly-frontend-nextjs/node_modules/.bin/next",
+      "args": ["dev", "--port", "3000"],
+      "cwd": "${workspaceFolder}/web-frontend/techbirdsfly-frontend-nextjs",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "serverReadyAction": {
+        "pattern": "ready - started server on",
+        "uriFormat": "http://localhost:3000",
+        "action": "openExternally",
+        "webBrowser": "chrome"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 🚀 COMPOSITE LAUNCH (OPTIONAL)
+    // ---------------------------------------------------------------------
+    {
+      "name": "🚀 Launch All Services (Composite)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/.vscode/launch-all.js",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🔵 All .NET Services + Frontend",
+      "configurations": [
+        ".NET Auth Service",
+        ".NET Billing Service",
+        ".NET Generator Service",
+        ".NET Admin Service",
+        ".NET Image Service",
+        ".NET User Service",
+        "Next.js Frontend"
+      ],
+      "stopAll": true,
+      "preLaunchTask": "start-observability-stack"
+    }
+  ]
+}

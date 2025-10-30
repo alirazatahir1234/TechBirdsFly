@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Applications/My Drive/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj": {}
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj": {}
   },
   "projects": {
-    "/Applications/My Drive/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj": {
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Applications/My Drive/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj",
+        "projectUniqueName": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj",
         "projectName": "AdminService",
-        "projectPath": "/Applications/My Drive/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj",
+        "projectPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/AdminService.csproj",
         "packagesPath": "/Users/alirazatahir/.nuget/packages/",
-        "outputPath": "/Applications/My Drive/TechBirdsFly/services/admin-service/src/AdminService/obj/",
+        "outputPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/alirazatahir/.nuget/NuGet/NuGet.Config"
@@ -66,6 +66,50 @@
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.10, )"
+            },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "OpenTelemetry": {
+              "target": "Package",
+              "version": "[1.13.1, )"
+            },
+            "OpenTelemetry.Exporter.Jaeger": {
+              "target": "Package",
+              "version": "[1.5.1, )"
+            },
+            "OpenTelemetry.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[1.13.1, )"
+            },
+            "OpenTelemetry.Instrumentation.AspNetCore": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Http": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Runtime": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
+            "Serilog": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Enrichers.Context": {
+              "target": "Package",
+              "version": "[4.6.5, )"
+            },
+            "Serilog.Sinks.Seq": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using UserService.Services;
+using UserService.Services.Cache;
 using UserService.Models;
 
 namespace UserService.Controllers;
@@ -12,15 +13,18 @@ public class UserController : ControllerBase
 {
     private readonly IUserManagementService _userService;
     private readonly ISubscriptionService _subscriptionService;
+    private readonly ICacheService _cache;
     private readonly ILogger<UserController> _logger;
 
     public UserController(
         IUserManagementService userService,
         ISubscriptionService subscriptionService,
+        ICacheService cache,
         ILogger<UserController> logger)
     {
         _userService = userService;
         _subscriptionService = subscriptionService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -54,12 +58,18 @@ public class UserController : ControllerBase
                 return Unauthorized();
             }
 
+            var cacheKey = $"user-profile:{userId}";
+            var cachedUser = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedUser != null)
+                return Ok(cachedUser);
+
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return NotFound();
             }
 
+            await _cache.SetAsync(cacheKey, user, TimeSpan.FromMinutes(30));
             return Ok(user);
         }
         catch (Exception ex)
@@ -78,12 +88,18 @@ public class UserController : ControllerBase
     {
         try
         {
+            var cacheKey = $"user:{userId}";
+            var cachedUser = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedUser != null)
+                return Ok(cachedUser);
+
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return NotFound(new { error = "User not found" });
             }
 
+            await _cache.SetAsync(cacheKey, user, TimeSpan.FromMinutes(30));
             return Ok(user);
         }
         catch (Exception ex)
@@ -102,12 +118,18 @@ public class UserController : ControllerBase
     {
         try
         {
+            var cacheKey = $"user-email:{email}";
+            var cachedUser = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedUser != null)
+                return Ok(cachedUser);
+
             var user = await _userService.GetUserByEmailAsync(email);
             if (user == null)
             {
                 return NotFound(new { error = "User not found" });
             }
 
+            await _cache.SetAsync(cacheKey, user, TimeSpan.FromMinutes(30));
             return Ok(user);
         }
         catch (Exception ex)
@@ -159,6 +181,11 @@ public class UserController : ControllerBase
             }
 
             var user = await _userService.UpdateUserAsync(userId, request);
+            
+            // Invalidate cache
+            await _cache.RemoveAsync($"user-profile:{userId}");
+            await _cache.RemoveAsync($"user:{userId}");
+
             return Ok(user);
         }
         catch (KeyNotFoundException)
@@ -219,12 +246,18 @@ public class UserController : ControllerBase
                 return Forbid();
             }
 
+            var cacheKey = $"subscription:{userId}";
+            var cachedSubscription = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedSubscription != null)
+                return Ok(cachedSubscription);
+
             var subscription = await _subscriptionService.GetSubscriptionAsync(userId);
             if (subscription == null)
             {
                 return NotFound(new { error = "Subscription not found" });
             }
 
+            await _cache.SetAsync(cacheKey, subscription, TimeSpan.FromMinutes(30));
             return Ok(subscription);
         }
         catch (Exception ex)
@@ -254,6 +287,10 @@ public class UserController : ControllerBase
             }
 
             var subscription = await _subscriptionService.UpgradePlanAsync(userId, request.PlanType);
+            
+            // Invalidate cache
+            await _cache.RemoveAsync($"subscription:{userId}");
+
             return Ok(subscription);
         }
         catch (KeyNotFoundException)
@@ -286,6 +323,10 @@ public class UserController : ControllerBase
             }
 
             var subscription = await _subscriptionService.CancelSubscriptionAsync(userId);
+            
+            // Invalidate cache
+            await _cache.RemoveAsync($"subscription:{userId}");
+
             return Ok(subscription);
         }
         catch (KeyNotFoundException)

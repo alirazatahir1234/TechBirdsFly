@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Applications/My Drive/TechBirdsFly/services/generator-service/src/GeneratorService.csproj": {}
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/GeneratorService.csproj": {}
   },
   "projects": {
-    "/Applications/My Drive/TechBirdsFly/services/generator-service/src/GeneratorService.csproj": {
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/GeneratorService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Applications/My Drive/TechBirdsFly/services/generator-service/src/GeneratorService.csproj",
+        "projectUniqueName": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/GeneratorService.csproj",
         "projectName": "GeneratorService",
-        "projectPath": "/Applications/My Drive/TechBirdsFly/services/generator-service/src/GeneratorService.csproj",
+        "projectPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/GeneratorService.csproj",
         "packagesPath": "/Users/alirazatahir/.nuget/packages/",
-        "outputPath": "/Applications/My Drive/TechBirdsFly/services/generator-service/src/obj/",
+        "outputPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/alirazatahir/.nuget/NuGet/NuGet.Config"
@@ -59,9 +59,53 @@
               "target": "Package",
               "version": "[9.0.10, )"
             },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "OpenTelemetry": {
+              "target": "Package",
+              "version": "[1.13.1, )"
+            },
+            "OpenTelemetry.Exporter.Jaeger": {
+              "target": "Package",
+              "version": "[1.5.1, )"
+            },
+            "OpenTelemetry.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[1.13.1, )"
+            },
+            "OpenTelemetry.Instrumentation.AspNetCore": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Http": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Runtime": {
+              "target": "Package",
+              "version": "[1.13.0, )"
+            },
             "RabbitMQ.Client": {
               "target": "Package",
               "version": "[7.1.2, )"
+            },
+            "Serilog": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Enrichers.Context": {
+              "target": "Package",
+              "version": "[4.6.5, )"
+            },
+            "Serilog.Sinks.Seq": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

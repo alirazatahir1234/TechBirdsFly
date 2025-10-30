@@ -4,66 +4,176 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AuthService.Data;
 using AuthService.Services;
-using AuthService.Data; // Ensure this matches the namespace where AuthDbContext is defined
-// Add this if IAuthService is in a different namespace
-// using AuthService.Services.Interfaces; // Uncomment and adjust if needed
-using Microsoft.AspNetCore.Builder;
+using AuthService.Services.Cache;
+using AuthService.Middleware;
+using Serilog;
+using Serilog.Context;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
-var builder = WebApplication.CreateBuilder(args);
+// ============================================================================
+// SERILOG CONFIGURATION - MUST BE FIRST
+// ============================================================================
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-// In-memory SQLite for quick local testing (file-based)
-builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("AuthDb") ?? "Data Source=auth.db"));
-
-// JWT auth
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "development-secret-key-please-change";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TechBirdsFly";
-var key = Encoding.ASCII.GetBytes(jwtKey);
-
-builder.Services.AddAuthentication(options =>
+try
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    Log.Information("Starting TechBirdsFly Auth Service");
+    
+    var builder = WebApplication.CreateBuilder(args);
+
+    // ========================================================================
+    // CONFIGURE SERILOG
+    // ========================================================================
+    
+    builder.Host.UseSerilog((context, services, configuration) =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = false,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
+        var serviceName = "AuthService";
+        
+        configuration
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+            .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+            .WriteTo.Console(
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:l}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.Seq(
+                serverUrl: context.Configuration["Serilog:Seq:Url"] ?? "http://seq:80",
+                apiKey: context.Configuration["Serilog:Seq:ApiKey"])
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithProperty("Service", serviceName)
+            .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName);
+    });
 
-builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
+    // ========================================================================
+    // OPENTELEMETRY CONFIGURATION
+    // ========================================================================
 
-var app = builder.Build();
+    var serviceName2 = "AuthService";
+    var serviceVersion = "1.0.0";
 
-// Migrate DB
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-    db.Database.Migrate();
+    var resource = ResourceBuilder.CreateDefault()
+        .AddService(serviceName2, serviceVersion: serviceVersion)
+        .AddAttributes(new Dictionary<string, object>
+        {
+            { "environment", builder.Environment.EnvironmentName },
+            { "service.namespace", "techbirdsfly" }
+        });
+
+    var otelBuilder = builder.Services.AddOpenTelemetry()
+        .WithTracing(tracing => tracing
+            .SetResourceBuilder(resource)
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.RecordException = true;
+                options.Filter = ctx => !ctx.Request.Path.ToString().Contains("/health");
+            })
+            .AddHttpClientInstrumentation(options =>
+            {
+                options.RecordException = true;
+            })
+            .AddJaegerExporter(options =>
+            {
+                options.AgentHost = builder.Configuration["Jaeger:AgentHost"] ?? "localhost";
+                options.AgentPort = int.Parse(builder.Configuration["Jaeger:AgentPort"] ?? "6831");
+            }));
+
+    // ========================================================================
+    // ADD SERVICES
+    // ========================================================================
+
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    // In-memory SQLite for quick local testing (file-based)
+    builder.Services.AddDbContext<AuthDbContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("AuthDb") ?? "Data Source=auth.db"));
+
+    // Add Redis Distributed Cache
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+        options.Configuration = redisConnectionString;
+        options.InstanceName = "AuthService_";
+    });
+
+    // Register Cache Service
+    builder.Services.AddScoped<ICacheService, RedisCacheService>();
+
+    // JWT auth
+    var jwtKey = builder.Configuration["Jwt:Key"] ?? "development-secret-key-please-change";
+    var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TechBirdsFly";
+    var key = Encoding.ASCII.GetBytes(jwtKey);
+
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    });
+
+    builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
+
+    // ========================================================================
+    // BUILD APP & MIDDLEWARE PIPELINE
+    // ========================================================================
+
+    var app = builder.Build();
+
+    // Migrate DB
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        db.Database.Migrate();
+    }
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    // Request/Response logging with correlation ID
+    app.UseSerilogRequestLogging();
+
+    // Add correlation ID to all requests
+    app.UseMiddleware<CorrelationIdMiddleware>();
+
+    // Global exception handling
+    app.UseMiddleware<GlobalExceptionMiddleware>();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    // Health checks endpoint
+    app.MapHealthChecks("/health");
+
+    app.Run();
 }
-
-if (app.Environment.IsDevelopment())
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Fatal(ex, "TechBirdsFly Auth Service terminated unexpectedly");
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
 

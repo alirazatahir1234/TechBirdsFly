@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ImageService.Services;
+using ImageService.Services.Cache;
 
 namespace ImageService.Controllers;
 
@@ -11,15 +12,18 @@ public class ImageController : ControllerBase
 {
     private readonly IImageGenerationService _generationService;
     private readonly IImageStorageService _storageService;
+    private readonly ICacheService _cache;
     private readonly ILogger<ImageController> _logger;
 
     public ImageController(
         IImageGenerationService generationService,
         IImageStorageService storageService,
+        ICacheService cache,
         ILogger<ImageController> logger)
     {
         _generationService = generationService;
         _storageService = storageService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -156,13 +160,18 @@ public class ImageController : ControllerBase
     {
         try
         {
+            var cacheKey = $"image:{imageId}";
+            var cachedImage = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedImage != null)
+                return Ok(cachedImage);
+
             var image = await _storageService.GetImageAsync(imageId);
             if (image == null)
             {
                 return NotFound(new { error = "Image not found" });
             }
 
-            return Ok(new
+            var result = new
             {
                 id = image.Id,
                 url = image.ImageUrl,
@@ -171,7 +180,10 @@ public class ImageController : ControllerBase
                 description = image.Description,
                 format = image.Format,
                 size = image.Size
-            });
+            };
+
+            await _cache.SetAsync(cacheKey, result, TimeSpan.FromHours(1));
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -189,9 +201,14 @@ public class ImageController : ControllerBase
         try
         {
             var userId = User.FindFirst("sub")?.Value ?? "unknown";
+            var cacheKey = $"image-list:{userId}:{limit}:{offset}";
+            var cachedImages = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedImages != null)
+                return Ok(cachedImages);
+
             var images = await _storageService.ListImagesAsync(userId, limit, offset);
 
-            return Ok(new
+            var result = new
             {
                 total = images.Count,
                 limit,
@@ -204,7 +221,10 @@ public class ImageController : ControllerBase
                     createdAt = img.CreatedAt,
                     description = img.Description
                 })
-            });
+            };
+
+            await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(10));
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -227,6 +247,16 @@ public class ImageController : ControllerBase
                 return NotFound(new { error = "Image not found" });
             }
 
+            // Invalidate cache
+            var userId = User.FindFirst("sub")?.Value ?? "unknown";
+            await _cache.RemoveAsync($"image:{imageId}");
+            // Clear user's image list cache (using wildcard pattern would be ideal, but we clear known keys)
+            for (int i = 0; i < 5; i++) // Clear first 5 page combinations
+            {
+                await _cache.RemoveAsync($"image-list:{userId}:20:{i * 20}");
+                await _cache.RemoveAsync($"image-list:{userId}:50:{i * 50}");
+            }
+
             _logger.LogInformation("Image deleted: {ImageId}", imageId);
             return Ok(new { status = "deleted", message = "Image removed successfully" });
         }
@@ -246,9 +276,14 @@ public class ImageController : ControllerBase
     {
         try
         {
+            var cacheKey = "image-stats:summary";
+            var cachedStats = await _cache.GetAsync<dynamic>(cacheKey);
+            if (cachedStats != null)
+                return Ok(cachedStats);
+
             var stats = await _generationService.GetStatisticsAsync();
 
-            return Ok(new
+            var result = new
             {
                 timestamp = DateTime.UtcNow,
                 imagesGenerated = stats.ImagesGenerated,
@@ -257,7 +292,10 @@ public class ImageController : ControllerBase
                 failedGenerations = stats.FailedGenerations,
                 storageUsed = stats.TotalStorageUsed,
                 successRate = stats.SuccessRate
-            });
+            };
+
+            await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(15));
+            return Ok(result);
         }
         catch (Exception ex)
         {

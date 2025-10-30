@@ -1,12 +1,34 @@
 using ImageService.Data;
+using ImageService.Middleware;
 using ImageService.Services;
+using ImageService.Services.Cache;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Serilog;
+using Serilog.Context;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+// Bootstrap Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.Seq("http://seq:80")
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithProperty("ServiceName", "ImageService")
+    .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development")
+    .CreateLogger();
+
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+    
+    // Add Serilog to DI
+    builder.Host.UseSerilog();
 
 // ============================================================================
 // SERVICES
@@ -24,6 +46,17 @@ builder.Services.AddDbContext<ImageDbContext>(options =>
         options.LogTo(Console.WriteLine);
     }
 });
+
+// Add Redis Distributed Cache
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+    options.Configuration = redisConnectionString;
+    options.InstanceName = "ImageService_";
+});
+
+// Register Cache Service
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 // Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -147,107 +180,87 @@ builder.Services.AddCors(options =>
     });
 });
 
+// OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+    {
+        tracerProviderBuilder
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(serviceName: "ImageService", serviceVersion: "1.0.0"))
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddJaegerExporter(options =>
+            {
+                options.AgentHost = Environment.GetEnvironmentVariable("JAEGER_AGENT_HOST") ?? "localhost";
+                options.AgentPort = int.Parse(Environment.GetEnvironmentVariable("JAEGER_AGENT_PORT") ?? "6831");
+            });
+    });
+
 // Health Checks
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ImageDbContext>(name: "database");
-
-// Logging
-builder.Services.AddLogging(config =>
-{
-    config.ClearProviders();
-    config.AddConsole();
-    config.AddDebug();
-
-    var logLevel = builder.Configuration.GetValue<string>("Logging:LogLevel:Default") ?? "Information";
-    if (Enum.TryParse<LogLevel>(logLevel, out var level))
-    {
-        config.SetMinimumLevel(level);
-    }
-});
 
 // ============================================================================
 // MIDDLEWARE PIPELINE
 // ============================================================================
 
-var app = builder.Build();
+    var app = builder.Build();
 
-// Database Migration
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ImageDbContext>();
-    db.Database.Migrate();
-    Console.WriteLine("✓ Database migrations applied");
-}
-
-// Development
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    // Database Migration
+    using (var scope = app.Services.CreateScope())
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Image Service API v1");
-        options.RoutePrefix = "swagger";
-    });
-}
-
-// HTTPS Redirect
-app.UseHttpsRedirection();
-
-// CORS
-app.UseCors("AllowFrontend");
-
-// Authentication & Authorization
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Health Check Endpoint
-app.MapHealthChecks("/health");
-
-// Controllers
-app.MapControllers();
-
-// ============================================================================
-// ERROR HANDLING MIDDLEWARE
-// ============================================================================
-
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next(context);
+        var db = scope.ServiceProvider.GetRequiredService<ImageDbContext>();
+        db.Database.Migrate();
+        Log.Information("✓ Database migrations applied");
     }
-    catch (UnauthorizedAccessException ex)
-    {
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        await context.Response.WriteAsJsonAsync(new { error = "Unauthorized", message = ex.Message });
-    }
-    catch (ArgumentException ex)
-    {
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        await context.Response.WriteAsJsonAsync(new { error = "Bad Request", message = ex.Message });
-    }
-    catch (Exception ex)
-    {
-        var logger = app.Services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Unhandled exception occurred");
 
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await context.Response.WriteAsJsonAsync(new
+    // Development
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
         {
-            error = "Internal Server Error",
-            message = app.Environment.IsDevelopment() ? ex.Message : "An error occurred"
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Image Service API v1");
+            options.RoutePrefix = "swagger";
         });
     }
-});
 
-// Startup Banner
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-logger.LogInformation("═══════════════════════════════════════════════════════════════");
-logger.LogInformation("🖼️  Image Service Starting");
-logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
-logger.LogInformation("OpenAI API: {OpenAiEnabled}", !string.IsNullOrEmpty(builder.Configuration["OpenAi:ApiKey"]) ? "Configured" : "Mock Mode");
-logger.LogInformation("Storage: {StorageType}", builder.Configuration["Storage:Type"] ?? "local");
-logger.LogInformation("═══════════════════════════════════════════════════════════════");
+    // Observability Middleware
+    app.UseSerilogRequestLogging();
+    app.UseMiddleware<CorrelationIdMiddleware>();
+    app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// Run
-app.Run();
+    // HTTPS Redirect
+    app.UseHttpsRedirection();
+
+    // CORS
+    app.UseCors("AllowFrontend");
+
+    // Authentication & Authorization
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    // Health Check Endpoint
+    app.MapHealthChecks("/health");
+
+    // Controllers
+    app.MapControllers();
+
+    // Startup Banner
+    Log.Information("═══════════════════════════════════════════════════════════════");
+    Log.Information("🖼️  Image Service Starting");
+    Log.Information("Environment: {Environment}", app.Environment.EnvironmentName);
+    Log.Information("OpenAI API: {OpenAiEnabled}", !string.IsNullOrEmpty(builder.Configuration["OpenAi:ApiKey"]) ? "Configured" : "Mock Mode");
+    Log.Information("Storage: {StorageType}", builder.Configuration["Storage:Type"] ?? "local");
+    Log.Information("═══════════════════════════════════════════════════════════════");
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

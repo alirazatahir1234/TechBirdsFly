@@ -2,6 +2,7 @@ using GeneratorService.Models;
 using Microsoft.AspNetCore.Mvc;
 using GeneratorService.Data;
 using GeneratorService.Services;
+using GeneratorService.Services.Cache;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeneratorService.Controllers
@@ -13,17 +14,20 @@ namespace GeneratorService.Controllers
         private readonly GeneratorDbContext _db;
         private readonly IGeneratorService _generator;
         private readonly IMessagePublisher _publisher;
+        private readonly ICacheService _cache;
         private readonly ILogger<ProjectsController> _logger;
 
         public ProjectsController(
             GeneratorDbContext db,
             IGeneratorService generator,
             IMessagePublisher publisher,
+            ICacheService cache,
             ILogger<ProjectsController> logger)
         {
             _db = db;
             _generator = generator;
             _publisher = publisher;
+            _cache = cache;
             _logger = logger;
         }
 
@@ -64,6 +68,9 @@ namespace GeneratorService.Controllers
                 _db.GenerateWebsiteJobs.Add(job);
                 await _db.SaveChangesAsync();
 
+                // Invalidate user projects list cache
+                await _cache.RemoveAsync($"generator-projects:{userId}");
+
                 // Publish to message bus for worker to pick up
                 try
                 {
@@ -100,6 +107,11 @@ namespace GeneratorService.Controllers
         {
             try
             {
+                var cacheKey = $"generator-project:{id}";
+                var cachedProject = await _cache.GetAsync<dynamic>(cacheKey);
+                if (cachedProject != null)
+                    return Ok(cachedProject);
+
                 var project = await _db.Projects.FindAsync(id);
                 if (project == null)
                     return NotFound(new { error = "Project not found" });
@@ -107,7 +119,7 @@ namespace GeneratorService.Controllers
                 var job = await _db.GenerateWebsiteJobs
                     .FirstOrDefaultAsync(j => j.ProjectId == id);
 
-                return Ok(new
+                var result = new
                 {
                     project.Id,
                     project.Name,
@@ -116,7 +128,11 @@ namespace GeneratorService.Controllers
                     project.ArtifactUrl,
                     jobStatus = job?.Status ?? "unknown",
                     project.CreatedAt
-                });
+                };
+
+                // Cache for 10 minutes (status changes frequently during generation)
+                await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(10));
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -130,6 +146,11 @@ namespace GeneratorService.Controllers
         {
             try
             {
+                var cacheKey = $"generator-download:{id}";
+                var cachedDownload = await _cache.GetAsync<dynamic>(cacheKey);
+                if (cachedDownload != null)
+                    return Ok(cachedDownload);
+
                 var project = await _db.Projects.FindAsync(id);
                 if (project == null)
                     return NotFound(new { error = "Project not found" });
@@ -139,7 +160,11 @@ namespace GeneratorService.Controllers
 
                 // In production, this would return a signed URL from Blob Storage
                 // For now, return mock data
-                return Ok(new { downloadUrl = project.ArtifactUrl });
+                var result = new { downloadUrl = project.ArtifactUrl };
+                
+                // Cache download URL for 1 hour (artifact is immutable)
+                await _cache.SetAsync(cacheKey, result, TimeSpan.FromHours(1));
+                return Ok(result);
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using AdminService.Services;
+using AdminService.Services.Cache;
 using AdminService.Models;
 
 namespace AdminService.Controllers;
@@ -12,6 +13,7 @@ public class AdminController : ControllerBase
     private readonly IUserManagementService _userService;
     private readonly IRoleManagementService _roleService;
     private readonly IAnalyticsService _analyticsService;
+    private readonly ICacheService _cache;
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(
@@ -19,12 +21,14 @@ public class AdminController : ControllerBase
         IUserManagementService userService,
         IRoleManagementService roleService,
         IAnalyticsService analyticsService,
+        ICacheService cache,
         ILogger<AdminController> logger)
     {
         _adminService = adminService;
         _userService = userService;
         _roleService = roleService;
         _analyticsService = analyticsService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -47,23 +51,42 @@ public class AdminController : ControllerBase
     [HttpGet("templates")]
     public async Task<IActionResult> GetActiveTemplates()
     {
+        var cacheKey = "admin-templates:all";
+        var cachedTemplates = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedTemplates != null)
+            return Ok(cachedTemplates);
+
         var templates = await _adminService.GetActiveTemplatesAsync();
+        await _cache.SetAsync(cacheKey, templates, TimeSpan.FromHours(1));
         return Ok(templates);
     }
 
     [HttpGet("templates/category/{category}")]
     public async Task<IActionResult> GetTemplatesByCategory(string category)
     {
+        var cacheKey = $"admin-templates:category:{category}";
+        var cachedTemplates = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedTemplates != null)
+            return Ok(cachedTemplates);
+
         var templates = await _adminService.GetTemplatesByCategoryAsync(category);
+        await _cache.SetAsync(cacheKey, templates, TimeSpan.FromHours(1));
         return Ok(templates);
     }
 
     [HttpGet("templates/{id}")]
     public async Task<IActionResult> GetTemplate(Guid id)
     {
+        var cacheKey = $"admin-template:{id}";
+        var cachedTemplate = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedTemplate != null)
+            return Ok(cachedTemplate);
+
         var template = await _adminService.GetTemplateAsync(id);
         if (template == null)
             return NotFound();
+
+        await _cache.SetAsync(cacheKey, template, TimeSpan.FromHours(1));
         return Ok(template);
     }
 
@@ -83,6 +106,11 @@ public class AdminController : ControllerBase
         };
 
         var created = await _adminService.CreateTemplateAsync(template);
+        
+        // Invalidate cache
+        await _cache.RemoveAsync("admin-templates:all");
+        await _cache.RemoveAsync($"admin-templates:category:{request.Category}");
+
         return CreatedAtAction(nameof(GetTemplate), new { id = created.Id }, created);
     }
 
@@ -104,6 +132,12 @@ public class AdminController : ControllerBase
             };
 
             var updated = await _adminService.UpdateTemplateAsync(id, template);
+            
+            // Invalidate cache
+            await _cache.RemoveAsync($"admin-template:{id}");
+            await _cache.RemoveAsync("admin-templates:all");
+            await _cache.RemoveAsync($"admin-templates:category:{request.Category}");
+
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -118,6 +152,11 @@ public class AdminController : ControllerBase
         try
         {
             await _adminService.DeleteTemplateAsync(id);
+            
+            // Invalidate cache
+            await _cache.RemoveAsync($"admin-template:{id}");
+            await _cache.RemoveAsync("admin-templates:all");
+
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -386,10 +425,16 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(date, out var parsedDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:daily:{date}";
+        var cachedStats = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedStats != null)
+            return Ok(cachedStats);
+
         var stats = await _analyticsService.GetDailyStatsAsync(parsedDate);
         if (stats == null)
             return NotFound(new { message = "No statistics found for this date" });
 
+        await _cache.SetAsync(cacheKey, stats, TimeSpan.FromHours(24));
         return Ok(stats);
     }
 
@@ -399,7 +444,13 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:range:{from}:{to}";
+        var cachedStats = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedStats != null)
+            return Ok(cachedStats);
+
         var stats = await _analyticsService.GetStatsRangeAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, stats, TimeSpan.FromHours(24));
         return Ok(stats);
     }
 
@@ -409,7 +460,13 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:revenue:{from}:{to}";
+        var cachedRevenue = await _cache.GetAsync<decimal?>(cacheKey);
+        if (cachedRevenue.HasValue)
+            return Ok(new { totalRevenue = cachedRevenue, from = fromDate, to = toDate });
+
         var revenue = await _analyticsService.GetTotalRevenueAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, revenue, TimeSpan.FromHours(24));
         return Ok(new { totalRevenue = revenue, from = fromDate, to = toDate });
     }
 
@@ -419,7 +476,13 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:websites:{from}:{to}";
+        var cachedCount = await _cache.GetAsync<int?>(cacheKey);
+        if (cachedCount.HasValue)
+            return Ok(new { websitesGenerated = cachedCount, from = fromDate, to = toDate });
+
         var count = await _analyticsService.GetTotalWebsitesGeneratedAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, count, TimeSpan.FromHours(24));
         return Ok(new { websitesGenerated = count, from = fromDate, to = toDate });
     }
 
@@ -429,7 +492,13 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:images:{from}:{to}";
+        var cachedCount = await _cache.GetAsync<int?>(cacheKey);
+        if (cachedCount.HasValue)
+            return Ok(new { imagesGenerated = cachedCount, from = fromDate, to = toDate });
+
         var count = await _analyticsService.GetTotalImagesGeneratedAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, count, TimeSpan.FromHours(24));
         return Ok(new { imagesGenerated = count, from = fromDate, to = toDate });
     }
 
@@ -439,7 +508,13 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:avgtime:{from}:{to}";
+        var cachedAvgTime = await _cache.GetAsync<double?>(cacheKey);
+        if (cachedAvgTime.HasValue)
+            return Ok(new { averageGenerationTimeSeconds = Math.Round(cachedAvgTime.Value, 2), from = fromDate, to = toDate });
+
         var avgTime = await _analyticsService.GetAverageGenerationTimeAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, avgTime, TimeSpan.FromHours(24));
         return Ok(new { averageGenerationTimeSeconds = Math.Round(avgTime, 2), from = fromDate, to = toDate });
     }
 
@@ -449,14 +524,26 @@ public class AdminController : ControllerBase
         if (!DateTime.TryParse(from, out var fromDate) || !DateTime.TryParse(to, out var toDate))
             return BadRequest(new { message = "Invalid date format. Use YYYY-MM-DD" });
 
+        var cacheKey = $"admin-analytics:failed:{from}:{to}";
+        var cachedCount = await _cache.GetAsync<int?>(cacheKey);
+        if (cachedCount.HasValue)
+            return Ok(new { failedGenerations = cachedCount, from = fromDate, to = toDate });
+
         var count = await _analyticsService.GetFailedGenerationsCountAsync(fromDate, toDate);
+        await _cache.SetAsync(cacheKey, count, TimeSpan.FromHours(24));
         return Ok(new { failedGenerations = count, from = fromDate, to = toDate });
     }
 
     [HttpGet("analytics/summary")]
     public async Task<IActionResult> GetPlatformSummary()
     {
+        var cacheKey = "admin-analytics:summary";
+        var cachedSummary = await _cache.GetAsync<dynamic>(cacheKey);
+        if (cachedSummary != null)
+            return Ok(cachedSummary);
+
         var summary = await _analyticsService.GetPlatformSummaryAsync();
+        await _cache.SetAsync(cacheKey, summary, TimeSpan.FromMinutes(30));
         return Ok(summary);
     }
 

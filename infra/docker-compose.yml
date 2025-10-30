@@ -1,118 +1,348 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  auth-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      SA_PASSWORD: "Your_password123"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Your_password123 -Q "select 1" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 3
+  # ============================================================================
+  # SHARED INFRASTRUCTURE
+  # ============================================================================
 
   redis:
-    image: redis:7-alpine
+    image: redis:7.4-alpine
+    container_name: techbirdsfly-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - techbirdsfly_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    environment:
+      - REDIS_REPLICATION_DISKLESS_SYNC=yes
+    labels:
+      - "com.techbirdsfly.service=redis"
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.13-management-alpine
+    container_name: techbirdsfly-rabbitmq
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - techbirdsfly_network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
       timeout: 5s
       retries: 3
+    labels:
+      - "com.techbirdsfly.service=messaging"
+
+  # ============================================================================
+  # OBSERVABILITY STACK
+  # ============================================================================
+
+  seq:
+    image: datalust/seq:2024.1
+    container_name: techbirdsfly-seq
+    restart: unless-stopped
+    ports:
+      - "5341:5341"
+      - "80:80"
+    environment:
+      - ACCEPT_EULA=Y
+    networks:
+      - techbirdsfly_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5341/api/diagnotics", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - "com.techbirdsfly.service=seq"
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: techbirdsfly-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "6831:6831/udp"  # Jaeger agent
+      - "6832:6832/udp"
+      - "5775:5775/udp"
+      - "5778:5778"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    networks:
+      - techbirdsfly_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:16686/", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - "com.techbirdsfly.service=jaeger"
+
+  # ============================================================================
+  # MICROSERVICES
+  # ============================================================================
 
   auth-service:
     build:
       context: ../services/auth-service
       dockerfile: Dockerfile
+    container_name: techbirdsfly-auth-service
+    restart: unless-stopped
     ports:
-      - "5001:80"
+      - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__AuthDb=Server=auth-db,1433;Database=AuthDb;User Id=sa;Password=Your_password123;
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__AuthDb=Data Source=/app/auth.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - auth_data:/app
+    networks:
+      - techbirdsfly_network
     depends_on:
-      auth-db:
+      redis:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=auth-service"
+
+  billing-service:
+    build:
+      context: ../services/billing-service
+      dockerfile: Dockerfile
+    container_name: techbirdsfly-billing-service
+    restart: unless-stopped
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__BillingDb=Data Source=/app/billing.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - Stripe__ApiKey=${STRIPE_API_KEY:-sk_test_YOUR_KEY}
+      - Stripe__WebhookSecret=${STRIPE_WEBHOOK_SECRET:-whsec_YOUR_SECRET}
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - billing_data:/app
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      redis:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=billing-service"
 
   generator-service:
     build:
       context: ../services/generator-service
       dockerfile: Dockerfile
+    container_name: techbirdsfly-generator-service
+    restart: unless-stopped
     ports:
-      - "5003:80"
+      - "5003:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__GeneratorDb=Data Source=/app/generator.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - generator_data:/app
+    networks:
+      - techbirdsfly_network
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       redis:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
       interval: 10s
       timeout: 5s
       retries: 3
-
-  user-service:
-    build:
-      context: ../services/user-service
-      dockerfile: Dockerfile
-    ports:
-      - "5008:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  image-service:
-    build:
-      context: ../services/image-service
-      dockerfile: Dockerfile
-    ports:
-      - "5007:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=generator-service"
 
   admin-service:
     build:
       context: ../services/admin-service
       dockerfile: Dockerfile
+    container_name: techbirdsfly-admin-service
+    restart: unless-stopped
     ports:
-      - "5006:80"
+      - "5006:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__AdminDb=Data Source=/app/admin.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - admin_data:/app
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      redis:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=admin-service"
+
+  image-service:
+    build:
+      context: ../services/image-service
+      dockerfile: Dockerfile
+    container_name: techbirdsfly-image-service
+    restart: unless-stopped
+    ports:
+      - "5007:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/image.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - image_data:/app
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      redis:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=image-service"
+
+  user-service:
+    build:
+      context: ../services/user-service
+      dockerfile: Dockerfile
+    container_name: techbirdsfly-user-service
+    restart: unless-stopped
+    ports:
+      - "5008:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/user.db
+      - ConnectionStrings__Redis=techbirdsfly-redis:6379
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+    volumes:
+      - user_data:/app
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      redis:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=user-service"
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+
+volumes:
+  redis_data:
+    driver: local
+  auth_data:
+    driver: local
+  billing_data:
+    driver: local
+  generator_data:
+    driver: local
+  admin_data:
+    driver: local
+  image_data:
+    driver: local
+  user_data:
+    driver: local
+
+# ============================================================================
+# NETWORKS
+# ============================================================================
+
+networks:
+  techbirdsfly_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16

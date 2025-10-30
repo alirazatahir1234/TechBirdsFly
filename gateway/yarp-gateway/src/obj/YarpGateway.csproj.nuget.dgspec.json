@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Applications/My Drive/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj": {}
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj": {}
   },
   "projects": {
-    "/Applications/My Drive/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj": {
+    "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Applications/My Drive/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj",
+        "projectUniqueName": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj",
         "projectName": "YarpGateway",
-        "projectPath": "/Applications/My Drive/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj",
+        "projectPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/gateway/yarp-gateway/src/YarpGateway.csproj",
         "packagesPath": "/Users/alirazatahir/.nuget/packages/",
-        "outputPath": "/Applications/My Drive/TechBirdsFly/gateway/yarp-gateway/src/obj/",
+        "outputPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/gateway/yarp-gateway/src/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/alirazatahir/.nuget/NuGet/NuGet.Config"

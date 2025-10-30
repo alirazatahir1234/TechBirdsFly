@@ -1,0 +1,22 @@
+{
+  "debug.onTaskErrors": "showErrors",
+  "debug.inlineValues": "on",
+  "debug.showDebugOutput": true,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "dotnet.defaultSolutionOrFolder": "${workspaceFolder}/TechBirdsFly.sln",
+  "omnisharp.loggingLevel": "debug"
+}
