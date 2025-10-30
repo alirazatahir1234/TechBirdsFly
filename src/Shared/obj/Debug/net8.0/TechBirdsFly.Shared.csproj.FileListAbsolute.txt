@@ -1,0 +1,13 @@
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/bin/Debug/net8.0/TechBirdsFly.Shared.deps.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/bin/Debug/net8.0/TechBirdsFly.Shared.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/bin/Debug/net8.0/TechBirdsFly.Shared.pdb
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.csproj.AssemblyReference.cache
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.AssemblyInfoInputs.cache
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.AssemblyInfo.cs
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.csproj.CoreCompileInputs.cache
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.sourcelink.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/refint/TechBirdsFly.Shared.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/TechBirdsFly.Shared.pdb
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/obj/Debug/net8.0/ref/TechBirdsFly.Shared.dll
