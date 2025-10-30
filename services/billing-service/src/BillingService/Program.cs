@@ -23,17 +23,17 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     Log.Information("Starting TechBirdsFly Billing Service");
-    
+
     var builder = WebApplication.CreateBuilder(args);
 
     // ========================================================================
     // CONFIGURE SERILOG
     // ========================================================================
-    
+
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         var serviceName = "BillingService";
-        
+
         configuration
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)

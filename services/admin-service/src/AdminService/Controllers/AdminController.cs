@@ -106,7 +106,7 @@ public class AdminController : ControllerBase
         };
 
         var created = await _adminService.CreateTemplateAsync(template);
-        
+
         // Invalidate cache
         await _cache.RemoveAsync("admin-templates:all");
         await _cache.RemoveAsync($"admin-templates:category:{request.Category}");
@@ -132,7 +132,7 @@ public class AdminController : ControllerBase
             };
 
             var updated = await _adminService.UpdateTemplateAsync(id, template);
-            
+
             // Invalidate cache
             await _cache.RemoveAsync($"admin-template:{id}");
             await _cache.RemoveAsync("admin-templates:all");
@@ -152,7 +152,7 @@ public class AdminController : ControllerBase
         try
         {
             await _adminService.DeleteTemplateAsync(id);
-            
+
             // Invalidate cache
             await _cache.RemoveAsync($"admin-template:{id}");
             await _cache.RemoveAsync("admin-templates:all");

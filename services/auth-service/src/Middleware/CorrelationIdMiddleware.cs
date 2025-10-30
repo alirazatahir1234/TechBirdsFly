@@ -20,10 +20,10 @@ public class CorrelationIdMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var correlationId = GetOrCreateCorrelationId(context);
-        
+
         // Add to response headers using indexer
         context.Response.Headers[CorrelationIdHeader] = correlationId;
-        
+
         // Add to Serilog context for all logs within this request
         using (LogContext.PushProperty(CorrelationIdProperty, correlationId))
         {

@@ -24,10 +24,10 @@ namespace AuthService.Controllers
             try
             {
                 var user = await _auth.RegisterAsync(req.FullName, req.Email, req.Password);
-                
+
                 // Cache user data for quick retrieval (5 minutes)
                 await _cache.SetAsync($"user:{user.Id}", new { user.Id, user.Email, user.FullName }, TimeSpan.FromMinutes(5));
-                
+
                 return Ok(new { user.Id, user.Email, user.FullName });
             }
             catch (Exception ex)
@@ -42,10 +42,10 @@ namespace AuthService.Controllers
             try
             {
                 var tokens = await _auth.LoginAsync(req.Email, req.Password);
-                
+
                 // Cache session token (1 hour expiry)
                 await _cache.SetAsync($"token:{req.Email}", tokens.accessToken, TimeSpan.FromHours(1));
-                
+
                 return Ok(new { accessToken = tokens.accessToken, refreshToken = tokens.refreshToken });
             }
             catch (Exception ex)
@@ -68,10 +68,10 @@ namespace AuthService.Controllers
 
                 // Validate token (implementation depends on your auth service)
                 var isValid = true; // Replace with actual validation
-                
+
                 // Cache validation result (5 minutes)
                 await _cache.SetAsync($"token-valid:{req.Token}", isValid, TimeSpan.FromMinutes(5));
-                
+
                 return Ok(new { valid = isValid, fromCache = false });
             }
             catch (Exception ex)
@@ -87,7 +87,7 @@ namespace AuthService.Controllers
             {
                 // Remove from cache
                 await _cache.RemoveAsync($"token:{email}");
-                
+
                 return Ok(new { message = "Logged out successfully" });
             }
             catch (Exception ex)

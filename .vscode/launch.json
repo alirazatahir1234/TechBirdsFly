@@ -21,8 +21,7 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5010/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -46,8 +45,7 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5020/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -71,8 +69,7 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5030/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -96,8 +93,7 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5040/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -121,8 +117,7 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5050/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -146,8 +141,31 @@
       "serverReadyAction": {
         "pattern": "Now listening on",
         "uriFormat": "http://localhost:5060/swagger",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
+      }
+    },
+
+    // ---------------------------------------------------------------------
+    // 🚪 API GATEWAY (YARP)
+    // ---------------------------------------------------------------------
+    {
+      "name": ".NET API Gateway (YARP)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-gateway",
+      "program": "${workspaceFolder}/gateway/yarp-gateway/src/bin/Debug/net8.0/YarpGateway.dll",
+      "cwd": "${workspaceFolder}/gateway/yarp-gateway/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8000;https://localhost:8001"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:8000/swagger",
+        "action": "openExternally"
       }
     },
 
@@ -169,8 +187,7 @@
       "serverReadyAction": {
         "pattern": "ready - started server on",
         "uriFormat": "http://localhost:3000",
-        "action": "openExternally",
-        "webBrowser": "chrome"
+        "action": "openExternally"
       }
     },
 
@@ -190,6 +207,7 @@
     {
       "name": "🔵 All .NET Services + Frontend",
       "configurations": [
+        ".NET API Gateway (YARP)",
         ".NET Auth Service",
         ".NET Billing Service",
         ".NET Generator Service",

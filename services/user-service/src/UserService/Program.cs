@@ -26,123 +26,123 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
     // Add Serilog to DI
     builder.Host.UseSerilog();
 
-// ============================================================================
-// SERVICES
-// ============================================================================
+    // ============================================================================
+    // SERVICES
+    // ============================================================================
 
-// Database
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? "Data Source=user.db";
-builder.Services.AddDbContext<UserDbContext>(options =>
-{
-    options.UseSqlite(connectionString);
-    if (builder.Environment.IsDevelopment())
+    // Database
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? "Data Source=user.db";
+    builder.Services.AddDbContext<UserDbContext>(options =>
     {
-        options.EnableSensitiveDataLogging();
-        options.LogTo(Console.WriteLine);
-    }
-});
-
-// Add Redis Distributed Cache
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
-    options.Configuration = redisConnectionString;
-    options.InstanceName = "UserService_";
-});
-
-// Register Cache Service
-builder.Services.AddScoped<ICacheService, RedisCacheService>();
-
-// Authentication
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings.GetValue<string>("SecretKey") 
-    ?? throw new InvalidOperationException("JWT SecretKey not configured");
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
-        ValidateIssuer = true,
-        ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-        ValidateAudience = true,
-        ValidAudience = jwtSettings.GetValue<string>("Audience"),
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = context =>
+        options.UseSqlite(connectionString);
+        if (builder.Environment.IsDevelopment())
         {
-            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            options.EnableSensitiveDataLogging();
+            options.LogTo(Console.WriteLine);
+        }
+    });
+
+    // Add Redis Distributed Cache
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+        options.Configuration = redisConnectionString;
+        options.InstanceName = "UserService_";
+    });
+
+    // Register Cache Service
+    builder.Services.AddScoped<ICacheService, RedisCacheService>();
+
+    // Authentication
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var secretKey = jwtSettings.GetValue<string>("SecretKey")
+        ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+            ValidateAudience = true,
+            ValidAudience = jwtSettings.GetValue<string>("Audience"),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
             {
-                context.Response.Headers.Append("Token-Expired", "true");
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                {
+                    context.Response.Headers.Append("Token-Expired", "true");
+                }
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
-        }
-    };
-});
-
-// Authorization
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Admin"));
-    
-    options.AddPolicy("UserOrAdmin", policy =>
-        policy.RequireRole("User", "Admin"));
-});
-
-// Application Services
-builder.Services.AddScoped<IUserManagementService, UserManagementService>();
-builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
-
-// Controllers
-builder.Services.AddControllers();
-
-// Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "User Service API",
-        Version = "v1.0",
-        Description = "User management and subscription service",
-        Contact = new OpenApiContact
-        {
-            Name = "TechBirdsFly Team",
-            Email = "support@techbirdsfly.com"
-        },
-        License = new OpenApiLicense
-        {
-            Name = "MIT",
-            Url = new Uri("https://opensource.org/licenses/MIT")
-        }
+        };
     });
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    // Authorization
+    builder.Services.AddAuthorization(options =>
     {
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        Description = "Enter your JWT token"
+        options.AddPolicy("AdminOnly", policy =>
+            policy.RequireRole("Admin"));
+
+        options.AddPolicy("UserOrAdmin", policy =>
+            policy.RequireRole("User", "Admin"));
     });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    // Application Services
+    builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+    builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
+    // Controllers
+    builder.Services.AddControllers();
+
+    // Swagger/OpenAPI
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
     {
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "User Service API",
+            Version = "v1.0",
+            Description = "User management and subscription service",
+            Contact = new OpenApiContact
+            {
+                Name = "TechBirdsFly Team",
+                Email = "support@techbirdsfly.com"
+            },
+            License = new OpenApiLicense
+            {
+                Name = "MIT",
+                Url = new Uri("https://opensource.org/licenses/MIT")
+            }
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Enter your JWT token"
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
         {
             new OpenApiSecurityScheme
             {
@@ -154,55 +154,55 @@ builder.Services.AddSwaggerGen(options =>
             },
             new string[] { }
         }
+        });
+
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (File.Exists(xmlPath))
+        {
+            options.IncludeXmlComments(xmlPath);
+        }
     });
 
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath))
+    // CORS
+    builder.Services.AddCors(options =>
     {
-        options.IncludeXmlComments(xmlPath);
-    }
-});
+        options.AddPolicy("AllowFrontend", corsBuilder =>
+        {
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                ?? new[] { "http://localhost:3000", "http://localhost:3001" };
 
-// CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", corsBuilder =>
-    {
-        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-            ?? new[] { "http://localhost:3000", "http://localhost:3001" };
-
-        corsBuilder
-            .WithOrigins(allowedOrigins)
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
-    });
-});
-
-// OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracerProviderBuilder =>
-    {
-        tracerProviderBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService(serviceName: "UserService", serviceVersion: "1.0.0"))
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddJaegerExporter(options =>
-            {
-                options.AgentHost = Environment.GetEnvironmentVariable("JAEGER_AGENT_HOST") ?? "localhost";
-                options.AgentPort = int.Parse(Environment.GetEnvironmentVariable("JAEGER_AGENT_PORT") ?? "6831");
-            });
+            corsBuilder
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
     });
 
-// Health Checks
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<UserDbContext>(name: "database");
+    // OpenTelemetry
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder =>
+        {
+            tracerProviderBuilder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService(serviceName: "UserService", serviceVersion: "1.0.0"))
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddJaegerExporter(options =>
+                {
+                    options.AgentHost = Environment.GetEnvironmentVariable("JAEGER_AGENT_HOST") ?? "localhost";
+                    options.AgentPort = int.Parse(Environment.GetEnvironmentVariable("JAEGER_AGENT_PORT") ?? "6831");
+                });
+        });
 
-// ============================================================================
-// MIDDLEWARE PIPELINE
-// ============================================================================
+    // Health Checks
+    builder.Services.AddHealthChecks()
+        .AddDbContextCheck<UserDbContext>(name: "database");
+
+    // ============================================================================
+    // MIDDLEWARE PIPELINE
+    // ============================================================================
 
     var app = builder.Build();
 

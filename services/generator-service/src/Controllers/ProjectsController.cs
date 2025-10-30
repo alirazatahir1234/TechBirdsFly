@@ -161,7 +161,7 @@ namespace GeneratorService.Controllers
                 // In production, this would return a signed URL from Blob Storage
                 // For now, return mock data
                 var result = new { downloadUrl = project.ArtifactUrl };
-                
+
                 // Cache download URL for 1 hour (artifact is immutable)
                 await _cache.SetAsync(cacheKey, result, TimeSpan.FromHours(1));
                 return Ok(result);

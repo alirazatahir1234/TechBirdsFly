@@ -107,6 +107,24 @@
       "problemMatcher": "$msCompile"
     },
 
+    {
+      "label": "build-gateway",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/gateway/yarp-gateway/src/YarpGateway.csproj",
+        "--configuration",
+        "Debug"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      },
+      "problemMatcher": "$msCompile"
+    },
+
     // ---------------------------------------------------------------------
     // 🧱 BUILD ALL (.SLN LEVEL)
     // ---------------------------------------------------------------------

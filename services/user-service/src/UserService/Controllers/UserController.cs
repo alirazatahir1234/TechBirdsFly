@@ -174,14 +174,14 @@ public class UserController : ControllerBase
             // Check authorization: user can only update their own profile
             var currentUserId = User.FindFirst("sub")?.Value;
             var role = User.FindFirst("role")?.Value;
-            
+
             if (currentUserId != userId && role != "Admin")
             {
                 return Forbid();
             }
 
             var user = await _userService.UpdateUserAsync(userId, request);
-            
+
             // Invalidate cache
             await _cache.RemoveAsync($"user-profile:{userId}");
             await _cache.RemoveAsync($"user:{userId}");
@@ -209,7 +209,7 @@ public class UserController : ControllerBase
         {
             var currentUserId = User.FindFirst("sub")?.Value;
             var role = User.FindFirst("role")?.Value;
-            
+
             if (currentUserId != userId && role != "Admin")
             {
                 return Forbid();
@@ -240,7 +240,7 @@ public class UserController : ControllerBase
         {
             var currentUserId = User.FindFirst("sub")?.Value;
             var role = User.FindFirst("role")?.Value;
-            
+
             if (currentUserId != userId && role != "Admin")
             {
                 return Forbid();
@@ -287,7 +287,7 @@ public class UserController : ControllerBase
             }
 
             var subscription = await _subscriptionService.UpgradePlanAsync(userId, request.PlanType);
-            
+
             // Invalidate cache
             await _cache.RemoveAsync($"subscription:{userId}");
 
@@ -323,7 +323,7 @@ public class UserController : ControllerBase
             }
 
             var subscription = await _subscriptionService.CancelSubscriptionAsync(userId);
-            
+
             // Invalidate cache
             await _cache.RemoveAsync($"subscription:{userId}");
 

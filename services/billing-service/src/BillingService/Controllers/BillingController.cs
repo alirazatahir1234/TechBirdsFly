@@ -36,7 +36,7 @@ public class BillingController : ControllerBase
         {
             account = await _billingService.CreateBillingAccountAsync(userId);
         }
-        
+
         var result = new
         {
             account.Id,
@@ -51,7 +51,7 @@ public class BillingController : ControllerBase
 
         // Cache for 15 minutes
         await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(15));
-        
+
         return Ok(result);
     }
 
@@ -79,7 +79,7 @@ public class BillingController : ControllerBase
 
         // Cache for 30 minutes (invoices don't change often)
         await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(30));
-        
+
         return Ok(result);
     }
 
@@ -87,10 +87,10 @@ public class BillingController : ControllerBase
     public async Task<IActionResult> TrackUsage([FromBody] TrackUsageRequest request)
     {
         await _billingService.TrackUsageAsync(request.UserId, request.EventType, request.Count, request.CostPerUnit);
-        
+
         // Invalidate usage cache when usage is tracked
         await _cache.RemoveAsync($"usage:{request.UserId}");
-        
+
         return Ok(new { message = "Usage tracked" });
     }
 
@@ -108,7 +108,7 @@ public class BillingController : ControllerBase
 
         var currentUsage = await _billingService.GetCurrentMonthUsageAsync(userId);
         var isUnderQuota = await _billingService.IsUnderQuotaAsync(userId);
-        
+
         var result = new
         {
             currentMonthUsage = currentUsage,
@@ -117,7 +117,7 @@ public class BillingController : ControllerBase
 
         // Cache for 5 minutes (usage changes frequently, so shorter TTL)
         await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
-        
+
         return Ok(result);
     }
 
