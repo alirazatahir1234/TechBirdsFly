@@ -6,6 +6,7 @@ using AuthService.Infrastructure.Persistence;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Cache;
 using AuthService.Infrastructure.ExternalServices;
+using AuthService.Infrastructure.EventBus;
 
 namespace AuthService.WebAPI.DI;
 
@@ -20,6 +21,7 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<AuthApplicationService>();
+        services.AddScoped<AuthEventPublisherService>();
         return services;
     }
 
@@ -77,6 +79,14 @@ public static class DependencyInjectionExtensions
         services.AddScoped<ITokenService>(provider =>
             new JwtTokenService(jwtSecret, jwtIssuer, jwtAudience, jwtExpiration)
         );
+
+        // Event Bus Integration
+        var eventBusBaseUrl = configuration["EventBus:BaseUrl"] ?? "http://localhost:5020";
+        services.AddHttpClient<IEventPublisher, EventBusHttpPublisher>(client =>
+        {
+            client.BaseAddress = new Uri(eventBusBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
 
         return services;
     }

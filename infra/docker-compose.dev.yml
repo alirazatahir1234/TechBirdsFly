@@ -1,0 +1,40 @@
+version: '3.9'
+
+# Docker Compose override for local development
+# Run with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  postgres:
+    environment:
+      # Development settings
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5432:5432"
+
+  zookeeper:
+    environment:
+      LOG4J_FORMAT_MSG_NO_LOOKUPS: "true"
+
+  kafka:
+    environment:
+      KAFKA_LOG_RETENTION_HOURS: 168  # 7 days
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824  # 1GB
+
+  redis:
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  seq:
+    ports:
+      - "5341:5341"
+      - "80:80"
+
+  jaeger:
+    ports:
+      - "16686:16686"
+      - "6831:6831/udp"
+
+  schema-registry:
+    ports:
+      - "8081:8081"

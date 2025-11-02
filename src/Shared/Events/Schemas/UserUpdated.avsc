@@ -1,0 +1,74 @@
+{
+  "type": "record",
+  "name": "UserUpdated",
+  "namespace": "techbirdsfly.events",
+  "doc": "Event fired when user profile is updated",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier"
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "Updated user's identifier"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "doc": "User's updated email address"
+    },
+    {
+      "name": "firstName",
+      "type": "string",
+      "doc": "User's updated first name"
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "doc": "User's updated last name"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Unix milliseconds when event occurred"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Service that emitted the event"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "doc": "Event type identifier"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "int",
+      "doc": "Schema version for evolution"
+    },
+    {
+      "name": "correlationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for request tracing"
+    },
+    {
+      "name": "causationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Event that caused this event"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional event metadata"
+    }
+  ]
+}

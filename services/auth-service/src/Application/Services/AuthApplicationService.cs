@@ -14,17 +14,23 @@ public class AuthApplicationService
     private readonly IPasswordService _passwordService;
     private readonly ITokenService _tokenService;
     private readonly ICacheService _cacheService;
+    private readonly AuthEventPublisherService _eventPublisherService;
+    private readonly ILogger<AuthApplicationService> _logger;
 
     public AuthApplicationService(
         IUnitOfWork unitOfWork,
         IPasswordService passwordService,
         ITokenService tokenService,
-        ICacheService cacheService)
+        ICacheService cacheService,
+        AuthEventPublisherService eventPublisherService,
+        ILogger<AuthApplicationService> logger)
     {
         _unitOfWork = unitOfWork;
         _passwordService = passwordService;
         _tokenService = tokenService;
         _cacheService = cacheService;
+        _eventPublisherService = eventPublisherService ?? throw new ArgumentNullException(nameof(eventPublisherService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -53,6 +59,35 @@ public class AuthApplicationService
         // Persist
         await _unitOfWork.UserRepository.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Publish UserRegistered event
+        try
+        {
+            _logger.LogInformation(
+                "📢 Publishing UserRegistered event for new user - UserId: {UserId}, Email: {Email}",
+                user.Id,
+                user.Email);
+
+            await _eventPublisherService.PublishUserRegisteredEventAsync(
+                userId: user.Id.ToString(),
+                email: user.Email,
+                firstName: user.FirstName,
+                lastName: user.LastName,
+                cancellationToken: cancellationToken);
+
+            _logger.LogInformation(
+                "✅ UserRegistered event published - UserId: {UserId}",
+                user.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "⚠️ Failed to publish UserRegistered event (non-blocking) - UserId: {UserId}",
+                user.Id);
+            // Non-blocking: Continue even if event publishing fails
+            // The user is already registered, event publishing is a side effect
+        }
 
         return new RegisterResponseDto
         {

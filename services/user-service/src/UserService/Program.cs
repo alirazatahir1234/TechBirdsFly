@@ -2,6 +2,8 @@ using UserService.Data;
 using UserService.Middleware;
 using UserService.Services;
 using UserService.Services.Cache;
+using UserService.EventConsumers;
+using TechBirdsFly.Shared.Events.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -108,6 +110,15 @@ try
     // Application Services
     builder.Services.AddScoped<IUserManagementService, UserManagementService>();
     builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
+    // Event Consumer Services
+    builder.Services.AddScoped<UserProfileEventHandler>();
+    builder.Services.AddHttpClient<EventConsumerService>(client =>
+    {
+        client.BaseAddress = new Uri("http://localhost:5020");
+        client.Timeout = TimeSpan.FromSeconds(30);
+    });
+    builder.Services.AddHostedService<EventConsumerService>();
 
     // Controllers
     builder.Services.AddControllers();

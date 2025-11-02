@@ -1870,6 +1870,26 @@
         "runtime": {
           "lib/netcoreapp2.1/_._": {}
         }
+      },
+      "TechBirdsFly.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Microsoft.Extensions.Caching.StackExchangeRedis": "8.0.0",
+          "Microsoft.Extensions.DependencyInjection": "8.0.0",
+          "Serilog": "3.1.1",
+          "Swashbuckle.AspNetCore": "6.4.0",
+          "System.IdentityModel.Tokens.Jwt": "7.0.3"
+        },
+        "compile": {
+          "bin/placeholder/TechBirdsFly.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TechBirdsFly.Shared.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       }
     }
   },
@@ -4812,6 +4832,11 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "TechBirdsFly.Shared/1.0.0": {
+      "type": "project",
+      "path": "../../../../src/Shared/TechBirdsFly.Shared.csproj",
+      "msbuildProject": "../../../../src/Shared/TechBirdsFly.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4832,7 +4857,8 @@
       "Serilog.Enrichers.Context >= 4.6.5",
       "Serilog.Sinks.Seq >= 9.0.0",
       "Swashbuckle.AspNetCore >= 6.5.0",
-      "System.IdentityModel.Tokens.Jwt >= 7.1.2"
+      "System.IdentityModel.Tokens.Jwt >= 7.1.2",
+      "TechBirdsFly.Shared >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -4860,7 +4886,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/TechBirdsFly.Shared.csproj": {
+              "projectPath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/src/Shared/TechBirdsFly.Shared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

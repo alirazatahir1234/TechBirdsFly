@@ -1,0 +1,74 @@
+{
+  "type": "record",
+  "name": "SubscriptionStarted",
+  "namespace": "techbirdsfly.events",
+  "doc": "Event fired when subscription starts",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier"
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User who started subscription"
+    },
+    {
+      "name": "subscriptionId",
+      "type": "string",
+      "doc": "Subscription identifier"
+    },
+    {
+      "name": "plan",
+      "type": "string",
+      "doc": "Subscription plan name (basic, pro, enterprise)"
+    },
+    {
+      "name": "price",
+      "type": "double",
+      "doc": "Subscription price"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Unix milliseconds when event occurred"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Service that emitted the event"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "doc": "Event type identifier"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "int",
+      "doc": "Schema version for evolution"
+    },
+    {
+      "name": "correlationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for request tracing"
+    },
+    {
+      "name": "causationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Event that caused this event"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional event metadata"
+    }
+  ]
+}

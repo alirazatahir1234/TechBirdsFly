@@ -1,0 +1,74 @@
+{
+  "type": "record",
+  "name": "WebsiteGenerated",
+  "namespace": "techbirdsfly.events",
+  "doc": "Event fired when website is generated",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier"
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User who generated the website"
+    },
+    {
+      "name": "websiteId",
+      "type": "string",
+      "doc": "Generated website identifier"
+    },
+    {
+      "name": "websiteName",
+      "type": "string",
+      "doc": "Name of the generated website"
+    },
+    {
+      "name": "url",
+      "type": "string",
+      "doc": "URL of the generated website"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Unix milliseconds when event occurred"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Service that emitted the event"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "doc": "Event type identifier"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "int",
+      "doc": "Schema version for evolution"
+    },
+    {
+      "name": "correlationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for request tracing"
+    },
+    {
+      "name": "causationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Event that caused this event"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional event metadata"
+    }
+  ]
+}

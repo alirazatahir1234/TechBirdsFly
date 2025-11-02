@@ -1,0 +1,86 @@
+{
+  "type": "record",
+  "namespace": "TechBirdsFly.Events.V1",
+  "name": "UserRegistered",
+  "doc": "Event fired when a new user registers in the system",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique event identifier for idempotency"
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User ID of the newly registered user"
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "doc": "User's email address"
+    },
+    {
+      "name": "firstName",
+      "type": "string",
+      "doc": "User's first name"
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "doc": "User's last name"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Event timestamp in Unix milliseconds"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "default": "auth-service",
+      "doc": "Source service that emitted the event"
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "default": "UserRegistered",
+      "doc": "Event type identifier"
+    },
+    {
+      "name": "schemaVersion",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema version for versioning support"
+    },
+    {
+      "name": "correlationId",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Correlation ID for distributed tracing"
+    },
+    {
+      "name": "causationId",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Causation ID linking to the command that caused this event"
+    },
+    {
+      "name": "metadata",
+      "type": [
+        "null",
+        {
+          "type": "map",
+          "values": "string"
+        }
+      ],
+      "default": null,
+      "doc": "Additional metadata (e.g., IP address, user agent)"
+    }
+  ]
+}

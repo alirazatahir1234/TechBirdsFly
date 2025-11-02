@@ -84,7 +84,7 @@ try
     // =========================================================================
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    
+
     // ✅ Use TechBirdsFly Swagger Configuration Template
     builder.Services.AddTechBirdsFlSwagger(
         serviceName: "Auth Service",
