@@ -96,10 +96,16 @@ try
     // HEALTH CHECKS
     // =========================================================================
     builder.Services.AddHealthChecks()
-        .AddDbContextCheck<AuthDbContext>("Database")
-        .AddRedis(
-            builder.Configuration["ConnectionStrings:Redis"] ?? "localhost:6379",
-            name: "Redis");
+        .AddDbContextCheck<AuthDbContext>("Database");
+
+    // Redis check is optional - only add if running with Docker/dedicated Redis instance
+    if (builder.Configuration.GetValue<bool>("Features:IncludeRedisHealthCheck"))
+    {
+        builder.Services.AddHealthChecks()
+            .AddRedis(
+                builder.Configuration["ConnectionStrings:Redis"] ?? "localhost:6379",
+                name: "Redis");
+    }
 
     // =========================================================================
     // DEPENDENCY INJECTION LAYERS

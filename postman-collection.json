@@ -1,0 +1,938 @@
+{
+  "info": {
+    "_postman_id": "techbirdsfly-microservices-api",
+    "name": "TechBirdsFly Microservices API",
+    "description": "Complete API collection for TechBirdsFly event-driven microservices architecture.\n\nIncludes:\n- Auth Service (JWT authentication, user registration/login)\n- Event Bus Service (event publishing & consumption)\n- User Service (user profile management)\n\nThis collection demonstrates Use Case U1: User Registration → Profile Creation via event-driven architecture.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "techbirdsfly"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth Service (Port 5000)",
+      "description": "Authentication service for JWT token generation, user registration, and login management.",
+      "item": [
+        {
+          "name": "1. Register New User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('auth_token', jsonData.data.token);",
+                  "    pm.environment.set('user_id', jsonData.data.id);",
+                  "    pm.environment.set('user_email', jsonData.data.email);",
+                  "    console.log('✅ User registered successfully');",
+                  "    console.log('User ID:', jsonData.data.id);",
+                  "    console.log('Email:', jsonData.data.email);",
+                  "} else {",
+                  "    console.log('❌ Registration failed:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text",
+                "description": "Unique correlation ID for tracing across services"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@techbirdsfly.com\",\n  \"password\": \"SecurePassword123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_base_url}}/api/auth/register",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user and receive JWT token.\n\n✅ Triggers UserRegisteredEvent which flows through:\n- Event Bus (HTTP POST)\n- Outbox storage (PostgreSQL)\n- Background worker (publishes to Kafka)\n- User Service consumer (creates profile)"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('auth_token', jsonData.data.token);",
+                  "    console.log('✅ Login successful');",
+                  "    console.log('Token expires in:', jsonData.data.expiresIn, 'minutes');",
+                  "} else {",
+                  "    console.log('❌ Login failed:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@techbirdsfly.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_base_url}}/api/auth/login",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with email and password to receive JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_base_url}}/api/auth/me",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get current authenticated user's profile. Requires valid JWT token in Authorization header."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{auth_base_url}}/health",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check Auth Service health status (Database + optional Redis)"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{auth_base_url}}/swagger/index.html",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "swagger",
+                "index.html"
+              ]
+            },
+            "description": "Interactive API documentation for Auth Service"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📨 Event Bus Service (Port 5020)",
+      "description": "Event bus for publishing and consuming events across microservices. Implements outbox pattern for guaranteed delivery.",
+      "item": [
+        {
+          "name": "1. Publish Event (Direct)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('event_id', jsonData.data.eventId);",
+                  "    pm.environment.set('outbox_id', jsonData.data.outboxId);",
+                  "    console.log('✅ Event published successfully');",
+                  "    console.log('Event ID:', jsonData.data.eventId);",
+                  "    console.log('Outbox ID:', jsonData.data.outboxId);",
+                  "} else {",
+                  "    console.log('❌ Event publishing failed:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"user.registered\",\n  \"data\": {\n    \"userId\": \"{{user_id}}\",\n    \"email\": \"john.doe@techbirdsfly.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"registeredAt\": \"2025-11-02T10:30:00Z\"\n  },\n  \"correlationId\": \"{{$guid}}\",\n  \"timestamp\": \"{{$timestamp}}\"\n}"
+            },
+            "url": {
+              "raw": "{{event_bus_base_url}}/api/events/publish",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "api",
+                "events",
+                "publish"
+              ]
+            },
+            "description": "Publish a new event to the event bus.\n\n📍 Flow:\n1. Event stored in PostgreSQL Outbox table\n2. Background Worker (OutboxPublisherBackgroundService) picks it up\n3. Published to Kafka topic: USER_REGISTERED\n4. User Service consumer processes event\n5. User profile created in SQLite\n\n✨ Guarantees:\n- Exactly-once delivery (idempotency key)\n- Correlation ID tracking\n- Exponential backoff retry on failure"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Event by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{event_bus_base_url}}/api/events/{{event_id}}",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "api",
+                "events",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Retrieve a specific event by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get All Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{event_bus_base_url}}/api/events?pageNumber=1&pageSize=10",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "api",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "List all published events with pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Outbox Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{event_bus_base_url}}/api/outbox?status=pending&pageNumber=1&pageSize=10",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "api",
+                "outbox"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter by status: pending, published, failed"
+                },
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "View outbox items (events waiting to be published to Kafka)"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{event_bus_base_url}}/health",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check Event Bus Service health (Database + Kafka)"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{event_bus_base_url}}/swagger/index.html",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "swagger",
+                "index.html"
+              ]
+            },
+            "description": "Interactive API documentation for Event Bus Service"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👤 User Service (Port 5008)",
+      "description": "User profile management service that consumes USER_REGISTERED events and creates user profiles.",
+      "item": [
+        {
+          "name": "1. Get User Profile by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{user_service_base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            },
+            "description": "Retrieve user profile by ID.\n\n📍 This profile is created by the User Service consumer:\n1. Event Bus publishes USER_REGISTERED to Kafka\n2. User Service consumer receives event\n3. UserProfileEventHandler processes it\n4. User profile stored in SQLite"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{user_service_base_url}}/api/users?pageNumber=1&pageSize=10",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "List all user profiles with pagination"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get User by Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{user_service_base_url}}/api/users/email/john.doe@techbirdsfly.com",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "email",
+                "john.doe@techbirdsfly.com"
+              ]
+            },
+            "description": "Retrieve user profile by email address"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"bio\": \"Senior Software Engineer at TechBirdsFly\",\n  \"profilePictureUrl\": \"https://example.com/profile.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{user_service_base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            },
+            "description": "Update user profile information"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{user_service_base_url}}/health",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check User Service health (Database + Event Bus connectivity)"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{user_service_base_url}}/swagger/index.html",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "swagger",
+                "index.html"
+              ]
+            },
+            "description": "Interactive API documentation for User Service"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧪 End-to-End Testing Workflow",
+      "description": "Complete workflow demonstrating Use Case U1: User Registration → Profile Creation",
+      "item": [
+        {
+          "name": "Step 1: Register New User (Auth Service)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('\\n=== STEP 1: USER REGISTRATION ===');",
+                  "console.log('📍 Location: Auth Service (Port 5000)');",
+                  "console.log('📋 Action: Create new user account');",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('auth_token', jsonData.data.token);",
+                  "    pm.environment.set('user_id', jsonData.data.id);",
+                  "    pm.environment.set('workflow_email', jsonData.data.email);",
+                  "    console.log('✅ SUCCESS - User registered');",
+                  "    console.log('   User ID:', jsonData.data.id);",
+                  "    console.log('   Email:', jsonData.data.email);",
+                  "    console.log('   Token received: YES');",
+                  "    console.log('');",
+                  "    console.log('🔄 Next: Event flows through bus → Outbox → Kafka → User Service');",
+                  "} else {",
+                  "    console.log('❌ FAILED - Registration error:', pm.response.code);",
+                  "    console.log('   Response:', pm.response.text());",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"workflow.user@techbirdsfly.com\",\n  \"password\": \"WorkflowPassword123!\",\n  \"firstName\": \"Workflow\",\n  \"lastName\": \"Test\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_base_url}}/api/auth/register",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2: Wait for Event Processing (5-10 seconds)",
+          "event": [
+            {
+              "listen": "test",
+              "script": [
+                "console.log('\\n=== STEP 2: EVENT PROCESSING ===');",
+                "console.log('⏳ Waiting for event to flow through system...');",
+                "console.log('');",
+                "console.log('📍 Flow:');",
+                "console.log('   1. Event Bus receives UserRegisteredEvent (HTTP POST)');",
+                "console.log('   2. Event stored in PostgreSQL Outbox table');",
+                "console.log('   3. OutboxPublisherBackgroundService picks up (runs every 10s)');",
+                "console.log('   4. Event published to Kafka topic: USER_REGISTERED');",
+                "console.log('   5. User Service consumer polls Kafka (every 5s)');",
+                "console.log('   6. UserProfileEventHandler processes event');",
+                "console.log('   7. User profile stored in SQLite');",
+                "console.log('');",
+                "console.log('⏱️  Total time: ~5-10 seconds (depends on worker cycles)');",
+                "console.log('');",
+                "console.log('Tip: Check Event Bus /api/outbox endpoint to see queue status')"
+              ]
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{auth_base_url}}/health",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Placeholder - just triggers 5-10 second wait"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3: Check Event Bus Outbox Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('\\n=== STEP 3: EVENT BUS OUTBOX STATUS ===');",
+                  "console.log('📍 Location: Event Bus Service (Port 5020)');",
+                  "console.log('📋 Action: Check if event was processed');",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('✅ Outbox query successful');",
+                  "    console.log('   Total items:', jsonData.data.total);",
+                  "    if (jsonData.data.total > 0) {",
+                  "        jsonData.data.items.forEach((item, index) => {",
+                  "            console.log('   Item ' + (index + 1) + ':', item.status);",
+                  "        });",
+                  "    }",
+                  "} else {",
+                  "    console.log('❌ Failed to check outbox:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{event_bus_base_url}}/api/outbox?pageNumber=1&pageSize=5",
+              "host": [
+                "{{event_bus_base_url}}"
+              ],
+              "path": [
+                "api",
+                "outbox"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4: Retrieve User Profile (User Service)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('\\n=== STEP 4: USER PROFILE RETRIEVAL ===');",
+                  "console.log('📍 Location: User Service (Port 5008)');",
+                  "console.log('📋 Action: Verify profile was created from event');",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('✅ SUCCESS - User profile found!');",
+                  "    console.log('   Name:', jsonData.data.firstName + ' ' + jsonData.data.lastName);",
+                  "    console.log('   Email:', jsonData.data.email);",
+                  "    console.log('   Created At:', jsonData.data.createdAt);",
+                  "    console.log('');",
+                  "    console.log('🎉 EVENT FLOW COMPLETE!');",
+                  "    console.log('   User registered in Auth Service');",
+                  "    console.log('   Event published through Event Bus');",
+                  "    console.log('   Profile created in User Service');",
+                  "} else if (pm.response.code === 404) {",
+                  "    console.log('⏳ Profile not yet created');",
+                  "    console.log('   Wait longer and try again (event processing in progress)');",
+                  "} else {",
+                  "    console.log('❌ Error retrieving profile:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{user_service_base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{user_service_base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5: Test Idempotency (Retry Registration)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('\\n=== STEP 5: IDEMPOTENCY TEST ===');",
+                  "console.log('📋 Action: Re-register same user (should update, not duplicate)');",
+                  "console.log('');",
+                  "console.log('🔒 Protection Mechanism:');",
+                  "console.log('   - Email uniqueness constraint in Auth Service');",
+                  "console.log('   - Idempotency check in UserProfileEventHandler');",
+                  "console.log('   - User.Id prevents duplicate profiles in User Service');",
+                  "",
+                  "if (pm.response.code === 400) {",
+                  "    console.log('✅ EXPECTED - Email already registered');",
+                  "    console.log('   This is correct behavior (prevents duplicates)');",
+                  "} else if (pm.response.code === 201) {",
+                  "    console.log('⚠️  Registration succeeded (new registration)');",
+                  "} else {",
+                  "    console.log('Response code:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{$guid}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"workflow.user@techbirdsfly.com\",\n  \"password\": \"DifferentPassword456!\",\n  \"firstName\": \"Workflow\",\n  \"lastName\": \"Test\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_base_url}}/api/auth/register",
+              "host": [
+                "{{auth_base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Configuration & Utilities",
+      "description": "Helper endpoints and configuration references",
+      "item": [
+        {
+          "name": "View All Environment Variables",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('');",
+                  "console.log('=== ACTIVE ENVIRONMENT VARIABLES ===');",
+                  "console.log('Auth Service Base URL:', pm.environment.get('auth_base_url'));",
+                  "console.log('Event Bus Base URL:', pm.environment.get('event_bus_base_url'));",
+                  "console.log('User Service Base URL:', pm.environment.get('user_service_base_url'));",
+                  "console.log('Auth Token:', pm.environment.get('auth_token') ? '✅ Set' : '❌ Not set');",
+                  "console.log('User ID:', pm.environment.get('user_id') || '(not set)');",
+                  "console.log('User Email:', pm.environment.get('user_email') || '(not set)');",
+                  "console.log('Event ID:', pm.environment.get('event_id') || '(not set)');",
+                  "console.log('');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://postman-echo.com/status/200",
+              "protocol": "https",
+              "host": [
+                "postman-echo",
+                "com"
+              ],
+              "path": [
+                "status",
+                "200"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Architecture Diagram (Info)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://postman-echo.com/status/200",
+              "protocol": "https",
+              "host": [
+                "postman-echo",
+                "com"
+              ],
+              "path": [
+                "status",
+                "200"
+              ]
+            },
+            "description": "Architecture Flow:\n\n```\n┌─────────────────┐\n│  Auth Service   │ (Port 5000)\n│   - Register    │\n│   - Login       │\n└────────┬────────┘\n         │ HTTP POST\n         │ /api/events/publish\n         ▼\n┌─────────────────────────────────────┐\n│    Event Bus Service                │ (Port 5020)\n│  ┌─────────────────────────────────┐ │\n│  │  REST API                       │ │\n│  │  /api/events/publish            │ │\n│  │  /api/events/{id}               │ │\n│  │  /api/outbox                    │ │\n│  └─────────────────────────────────┘ │\n│           │                          │\n│           ▼                          │\n│  ┌─────────────────────────────────┐ │\n│  │  Outbox Storage (PostgreSQL)    │ │\n│  │  - Pending events               │ │\n│  │  - Published events             │ │\n│  └─────────────────────────────────┘ │\n│           │                          │\n│           ▼ (Every 10s)             │\n│  ┌─────────────────────────────────┐ │\n│  │  OutboxPublisher Worker         │ │\n│  │  - Batch processing             │ │\n│  │  - Exponential backoff retry    │ │\n│  └─────────────────────────────────┘ │\n└─────────────────┬───────────────────┘\n                  │ Kafka Publish\n                  │ Topic: USER_REGISTERED\n                  ▼\n┌──────────────────────────────────────────┐\n│       Apache Kafka Message Queue         │\n│       Topic: USER_REGISTERED             │\n└──────────────────────────┬───────────────┘\n                           │ Consumer Poll\n                           │ (Every 5s)\n                           ▼\n┌─────────────────────────────────────────┐\n│    User Service (Port 5008)             │\n│  ┌────────────────────────────────────┐ │\n│  │  EventConsumerService              │ │\n│  │  - Health checks                   │ │\n│  │  - Subscription registration       │ │\n│  │  - Event polling                   │ │\n│  └────────────────────────────────────┘ │\n│           │                             │\n│           ▼                             │\n│  ┌────────────────────────────────────┐ │\n│  │  UserProfileEventHandler           │ │\n│  │  - Process UserRegisteredEvent     │ │\n│  │  - Idempotency check               │ │\n│  │  - Create user profile             │ │\n│  └────────────────────────────────────┘ │\n│           │                             │\n│           ▼                             │\n│  ┌────────────────────────────────────┐ │\n│  │  User Service Database (SQLite)    │ │\n│  │  - User profiles                   │ │\n│  │  - User data                       │ │\n│  └────────────────────────────────────┘ │\n└─────────────────────────────────────────┘\n```"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_base_url",
+      "value": "http://localhost:5000",
+      "type": "string",
+      "description": "Auth Service base URL"
+    },
+    {
+      "key": "event_bus_base_url",
+      "value": "http://localhost:5020",
+      "type": "string",
+      "description": "Event Bus Service base URL"
+    },
+    {
+      "key": "user_service_base_url",
+      "value": "http://localhost:5008",
+      "type": "string",
+      "description": "User Service base URL"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token from Auth Service (auto-set by login/register)"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string",
+      "description": "User ID from Auth Service (auto-set by register)"
+    },
+    {
+      "key": "user_email",
+      "value": "",
+      "type": "string",
+      "description": "User email (auto-set by register)"
+    },
+    {
+      "key": "event_id",
+      "value": "",
+      "type": "string",
+      "description": "Event ID from Event Bus (auto-set by publish)"
+    },
+    {
+      "key": "outbox_id",
+      "value": "",
+      "type": "string",
+      "description": "Outbox ID from Event Bus (auto-set by publish)"
+    }
+  ]
+}

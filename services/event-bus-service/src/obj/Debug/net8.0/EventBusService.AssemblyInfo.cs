@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EventBusService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bf0294037af3384494b5eb51480f413aa568297")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29576b7d586206b98dcde7a889c38e71562a04db")]
 [assembly: System.Reflection.AssemblyProductAttribute("EventBusService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EventBusService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

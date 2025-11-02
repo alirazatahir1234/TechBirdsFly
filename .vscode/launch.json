@@ -1,14 +1,10 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // ---------------------------------------------------------------------
-    // 🧩 AUTH SERVICE
-    // ---------------------------------------------------------------------
     {
-      "name": ".NET Auth Service",
+      "name": "🔐 .NET Auth Service (Port 5000)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build-auth-service",
       "program": "${workspaceFolder}/services/auth-service/src/bin/Debug/net8.0/AuthService.dll",
       "cwd": "${workspaceFolder}/services/auth-service/src",
       "stopAtEntry": false,
@@ -16,31 +12,32 @@
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5010;https://localhost:5011"
+        "ASPNETCORE_URLS": "http://localhost:5000",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5010/swagger",
+        "uriFormat": "http://localhost:5000/swagger",
         "action": "openExternally"
       }
     },
 
-    // ---------------------------------------------------------------------
-    // 💳 BILLING SERVICE
-    // ---------------------------------------------------------------------
     {
-      "name": ".NET Billing Service",
+      "name": "� .NET Event Bus Service (Port 5020)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build-billing-service",
-      "program": "${workspaceFolder}/services/billing-service/src/BillingService/bin/Debug/net8.0/BillingService.dll",
-      "cwd": "${workspaceFolder}/services/billing-service/src/BillingService",
+      "program": "${workspaceFolder}/services/event-bus-service/src/bin/Debug/net8.0/EventBusService.dll",
+      "cwd": "${workspaceFolder}/services/event-bus-service/src",
       "stopAtEntry": false,
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5020;https://localhost:5021"
+        "ASPNETCORE_URLS": "http://localhost:5020",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
+        "ConnectionStrings:DefaultConnection": "Host=localhost;Port=5432;Database=techbirdsfly_eventbus;Username=postgres;Password=Alisheikh@123"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
@@ -49,86 +46,10 @@
       }
     },
 
-    // ---------------------------------------------------------------------
-    // ⚙️ GENERATOR SERVICE
-    // ---------------------------------------------------------------------
     {
-      "name": ".NET Generator Service",
+      "name": "👤 .NET User Service (Port 5008)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build-generator-service",
-      "program": "${workspaceFolder}/services/generator-service/src/bin/Debug/net8.0/GeneratorService.dll",
-      "cwd": "${workspaceFolder}/services/generator-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5030;https://localhost:5031"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5030/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    // ---------------------------------------------------------------------
-    // 🛠 ADMIN SERVICE
-    // ---------------------------------------------------------------------
-    {
-      "name": ".NET Admin Service",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build-admin-service",
-      "program": "${workspaceFolder}/services/admin-service/src/AdminService/bin/Debug/net8.0/AdminService.dll",
-      "cwd": "${workspaceFolder}/services/admin-service/src/AdminService",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5040;https://localhost:5041"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5040/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    // ---------------------------------------------------------------------
-    // 🖼 IMAGE SERVICE
-    // ---------------------------------------------------------------------
-    {
-      "name": ".NET Image Service",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build-image-service",
-      "program": "${workspaceFolder}/services/image-service/src/ImageService/bin/Debug/net8.0/ImageService.dll",
-      "cwd": "${workspaceFolder}/services/image-service/src/ImageService",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5050;https://localhost:5051"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5050/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    // ---------------------------------------------------------------------
-    // 👤 USER SERVICE
-    // ---------------------------------------------------------------------
-    {
-      "name": ".NET User Service",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build-user-service",
       "program": "${workspaceFolder}/services/user-service/src/UserService/bin/Debug/net8.0/UserService.dll",
       "cwd": "${workspaceFolder}/services/user-service/src/UserService",
       "stopAtEntry": false,
@@ -136,23 +57,110 @@
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5060;https://localhost:5061"
+        "ASPNETCORE_URLS": "http://localhost:5008",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
+        "EventBusUrl": "http://localhost:5020"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5060/swagger",
+        "uriFormat": "http://localhost:5008/swagger",
         "action": "openExternally"
       }
     },
 
-    // ---------------------------------------------------------------------
-    // 🚪 API GATEWAY (YARP)
-    // ---------------------------------------------------------------------
     {
-      "name": ".NET API Gateway (YARP)",
+      "name": "💳 .NET Billing Service (Port 5002)",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build-gateway",
+      "program": "${workspaceFolder}/services/billing-service/src/bin/Debug/net8.0/BillingService.dll",
+      "cwd": "${workspaceFolder}/services/billing-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5002",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5002/swagger",
+        "action": "openExternally"
+      }
+    },
+
+    {
+      "name": "⚙️ .NET Generator Service (Port 5003)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/generator-service/src/bin/Debug/net8.0/GeneratorService.dll",
+      "cwd": "${workspaceFolder}/services/generator-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5003",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5003/swagger",
+        "action": "openExternally"
+      }
+    },
+
+    {
+      "name": "🖼 .NET Image Service (Port 5007)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/image-service/src/bin/Debug/net8.0/ImageService.dll",
+      "cwd": "${workspaceFolder}/services/image-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5007",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5007/swagger",
+        "action": "openExternally"
+      }
+    },
+
+    {
+      "name": "🛠 .NET Admin Service (Port 5006)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/admin-service/src/bin/Debug/net8.0/AdminService.dll",
+      "cwd": "${workspaceFolder}/services/admin-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5006",
+        "Kafka:BootstrapServers": "localhost:9092",
+        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5006/swagger",
+        "action": "openExternally"
+      }
+    },
+
+    {
+      "name": "🚪 .NET API Gateway (Port 8000)",
+      "type": "coreclr",
+      "request": "launch",
       "program": "${workspaceFolder}/gateway/yarp-gateway/src/bin/Debug/net8.0/YarpGateway.dll",
       "cwd": "${workspaceFolder}/gateway/yarp-gateway/src",
       "stopAtEntry": false,
@@ -160,7 +168,7 @@
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:8000;https://localhost:8001"
+        "ASPNETCORE_URLS": "http://localhost:8000"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
@@ -169,11 +177,8 @@
       }
     },
 
-    // ---------------------------------------------------------------------
-    // 🌐 NEXT.JS FRONTEND
-    // ---------------------------------------------------------------------
     {
-      "name": "Next.js Frontend",
+      "name": "🌐 Next.js Frontend (Port 3000)",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/web-frontend/techbirdsfly-frontend-nextjs/node_modules/.bin/next",
@@ -182,42 +187,32 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "NEXT_PUBLIC_API_URL": "http://localhost:8000",
+        "NEXT_PUBLIC_AUTH_URL": "http://localhost:5000"
       },
       "serverReadyAction": {
         "pattern": "ready - started server on",
         "uriFormat": "http://localhost:3000",
         "action": "openExternally"
       }
-    },
-
-    // ---------------------------------------------------------------------
-    // 🚀 COMPOSITE LAUNCH (OPTIONAL)
-    // ---------------------------------------------------------------------
-    {
-      "name": "🚀 Launch All Services (Composite)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/.vscode/launch-all.js",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
     }
   ],
   "compounds": [
     {
       "name": "🔵 All .NET Services + Frontend",
       "configurations": [
-        ".NET API Gateway (YARP)",
-        ".NET Auth Service",
-        ".NET Billing Service",
-        ".NET Generator Service",
-        ".NET Admin Service",
-        ".NET Image Service",
-        ".NET User Service",
-        "Next.js Frontend"
+        "🚪 .NET API Gateway (Port 8000)",
+        "🔐 .NET Auth Service (Port 5000)",
+        "📨 .NET Event Bus Service (Port 5020)",
+        "👤 .NET User Service (Port 5008)",
+        "💳 .NET Billing Service (Port 5002)",
+        "⚙️ .NET Generator Service (Port 5003)",
+        "🖼 .NET Image Service (Port 5007)",
+        "🛠 .NET Admin Service (Port 5006)",
+        "🌐 Next.js Frontend (Port 3000)"
       ],
-      "stopAll": true,
-      "preLaunchTask": "start-observability-stack"
+      "stopAll": true
     }
   ]
 }

@@ -29,17 +29,32 @@
 
 ## Service Ports @ a Glance
 
+### .NET Microservices
 ```
-Auth Service       → localhost:5000 (HTTP)  / :5001 (HTTPS)
-Billing Service    → localhost:5001 (HTTP)  / :5002 (HTTPS)
-Generator Service  → localhost:5002 (HTTP)  / :5003 (HTTPS)
-Admin Service      → localhost:5003 (HTTP)  / :5004 (HTTPS)
-Image Service      → localhost:5004 (HTTP)  / :5005 (HTTPS)
-User Service       → localhost:5005 (HTTP)  / :5006 (HTTPS)
-Frontend           → localhost:3000 (Next.js)
+🔐 Auth Service            → localhost:5000 (HTTP)
+📨 Event Bus Service       → localhost:5020 (HTTP)
+👤 User Service            → localhost:5008 (HTTP)
+💳 Billing Service         → localhost:5002 (HTTP)
+⚙️  Generator Service       → localhost:5003 (HTTP)
+🖼  Image Service           → localhost:5007 (HTTP)
+🛠  Admin Service           → localhost:5006 (HTTP)
+🚪 API Gateway (YARP)      → localhost:8000 (HTTP)
+🌐 Next.js Frontend        → localhost:3000
+```
 
-Seq Logs           → localhost:5341 (Dashboard)
-Jaeger Traces      → localhost:16686 (Dashboard)
+### Event Streaming & Infrastructure
+```
+🔄 Kafka Bootstrap         → localhost:9092
+📊 Schema Registry         → localhost:8081
+🗄  PostgreSQL              → localhost:5432
+💾 Redis Cache             → localhost:6379
+```
+
+### Observability & Monitoring
+```
+📝 Seq Logs                → localhost:5341 (Dashboard)
+🔍 Jaeger Traces           → localhost:16686 (Dashboard)
+📍 Zookeeper               → localhost:2181
 ```
 
 ---
@@ -48,29 +63,54 @@ Jaeger Traces      → localhost:16686 (Dashboard)
 
 ### Via VS Code Debugger
 1. Ctrl+Shift+D
-2. Select service name
-3. Click ▶️
+2. Select service name from dropdown
+3. Click ▶️ (Green Play Button)
+
+**Example:** Select "🔐 .NET Auth Service (Port 5000)"
 
 ### Via Command Line
+
+**Start Infrastructure First:**
 ```bash
+cd /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly
+docker compose -f docker-compose.debug.yml up -d
+```
+
+**Then Start Services (each in separate terminal):**
+```bash
+# Auth Service (Port 5000)
 cd services/auth-service/src
 dotnet run
 
-cd services/billing-service/src/BillingService
+# Event Bus Service (Port 5020)
+cd services/event-bus-service/src
 dotnet run
 
-cd services/generator-service/src
-dotnet run
-
-cd services/admin-service/src/AdminService
-dotnet run
-
-cd services/image-service/src/ImageService
-dotnet run
-
+# User Service (Port 5008)
 cd services/user-service/src/UserService
 dotnet run
 
+# Billing Service (Port 5002)
+cd services/billing-service/src
+dotnet run
+
+# Generator Service (Port 5003)
+cd services/generator-service/src
+dotnet run
+
+# Image Service (Port 5007)
+cd services/image-service/src
+dotnet run
+
+# Admin Service (Port 5006)
+cd services/admin-service/src
+dotnet run
+
+# API Gateway (Port 8000)
+cd gateway/yarp-gateway/src
+dotnet run
+
+# Frontend (Port 3000)
 cd web-frontend/techbirdsfly-frontend-nextjs
 npm run dev
 ```
@@ -93,13 +133,54 @@ dotnet build TechBirdsFly.sln
 
 ### Seq (Centralized Logs)
 - **URL:** http://localhost:5341
-- **Purpose:** View all structured logs from all 6 services
-- **Features:** Full-text search, filtering, alerting
+- **Purpose:** Real-time logs from all 8 microservices
+- **Features:** Structured logging, full-text search, filtering, alerting
+- **Includes:** Request tracing, error tracking, performance metrics
 
 ### Jaeger (Distributed Tracing)
 - **URL:** http://localhost:16686
-- **Purpose:** Trace requests across all services
-- **Features:** Request timing, service calls, error tracking
+- **Purpose:** Track requests across all services with correlation IDs
+- **Features:** Request timing, service dependencies, error tracking, latency analysis
+- **Integration:** All services publish traces via OpenTelemetry
+
+### Kafka Topics (Event Streaming)
+```bash
+# List all topics
+docker exec techbirdsfly-kafka-debug kafka-topics.sh \
+  --bootstrap-server localhost:9092 --list
+
+# Monitor USER_REGISTERED topic
+docker exec techbirdsfly-kafka-debug kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic USER_REGISTERED \
+  --from-beginning
+
+# Check consumer group status
+docker exec techbirdsfly-kafka-debug kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group event-bus-service-group --describe
+```
+
+### PostgreSQL (Event Bus Outbox)
+```bash
+# Connect to database
+psql -h localhost -U postgres -d techbirdsfly_eventbus
+
+# View outbox events
+SELECT id, event_type, status, created_at FROM outbox ORDER BY created_at DESC LIMIT 10;
+```
+
+### Redis Cache
+```bash
+# Connect to Redis CLI
+redis-cli
+
+# Check connection
+ping
+
+# View all keys
+KEYS *
+```
 
 ---
 
@@ -158,35 +239,90 @@ dotnet build TechBirdsFly.sln
 
 ### Port in Use?
 ```bash
-lsof -ti:5000 | xargs kill -9  # Kill port 5000
+# macOS/Linux: Kill process on port
+lsof -ti:5000 | xargs kill -9  # Port 5000
+lsof -ti:5020 | xargs kill -9  # Port 5020
+lsof -ti:9092 | xargs kill -9  # Port 9092 (Kafka)
 ```
 
-### Can't Debug Frontend?
-1. Ensure Node.js installed: `node --version`
-2. Refresh browser: Cmd+R / Ctrl+R
-3. Check console for errors: F12
+### Kafka Connection Refused?
+```bash
+# Start Docker infrastructure
+docker compose -f docker-compose.debug.yml up -d
 
-### Breakpoints Not Hitting?
-1. Rebuild service: Ctrl+Shift+P → "build-[service]"
-2. Restart debug: Shift+F5
-3. Ensure debug build: Check bin/Debug/ folder
+# Verify Kafka is running
+docker ps | grep kafka
+
+# Check Kafka logs
+docker logs techbirdsfly-kafka-debug
+```
+
+### Database Does Not Exist?
+```bash
+# Create Event Bus database
+cd services/event-bus-service/src
+dotnet ef database update
+
+# Create Auth database (auto-migrated)
+# Create User database (auto-migrated)
+```
+
+### Can't Connect to PostgreSQL?
+```bash
+# Verify PostgreSQL is running
+docker ps | grep postgres
+
+# Test connection
+psql -h localhost -U postgres -c "SELECT version();"
+```
 
 ### Services Won't Start?
-1. Check Docker: `docker ps`
-2. View error logs: Ctrl+Shift+P → "view-logs-seq"
-3. Rebuild all: Ctrl+Shift+P → "build-all-services"
+1. **Clean & rebuild:**
+   ```bash
+   dotnet clean TechBirdsFly.sln
+   dotnet build TechBirdsFly.sln
+   ```
+
+2. **Check port availability:**
+   ```bash
+   netstat -an | grep LISTEN  # macOS/Linux
+   ```
+
+3. **View service logs:**
+   - Open Seq Dashboard: http://localhost:5341
+   - Search for error messages
+   - Filter by service name
 
 ---
 
 ## Configuration Files
 
-All settings in `.vscode/` folder:
+All settings in `.vscode/` and service directories:
 
-- **launch.json** - All debug configurations
-- **tasks.json** - Build and utility tasks
-- **settings.json** - VS Code preferences
-- **DEBUG_GUIDE.md** - Full documentation
-- **LAUNCH_CONFIG_SUMMARY.md** - Setup details
+### VS Code Debug Configs
+- **launch.json** - All 9 debug configurations (8 services + frontend)
+  - Includes Kafka URLs for each service
+  - Pre-configured ports (5000, 5020, 5008, 5002, 5003, 5007, 5006, 8000, 3000)
+  - Environment variables for each service
+
+### Service Configuration Files
+- **Auth Service:** `/services/auth-service/src/Properties/launchSettings.json`
+- **Event Bus:** `/services/event-bus-service/src/Properties/launchSettings.json`
+- **User Service:** `/services/user-service/src/Properties/launchSettings.json`
+- **Billing Service:** `/services/billing-service/src/Properties/launchSettings.json`
+- **Generator Service:** `/services/generator-service/src/Properties/launchSettings.json`
+- **Image Service:** `/services/image-service/src/Properties/launchSettings.json`
+- **Admin Service:** `/services/admin-service/src/Properties/launchSettings.json`
+- **API Gateway:** `/gateway/yarp-gateway/src/Properties/launchSettings.json`
+
+### Docker Infrastructure
+- **docker-compose.debug.yml** - Development infrastructure setup
+  - PostgreSQL (5432)
+  - Kafka (9092) + Zookeeper (2181)
+  - Schema Registry (8081)
+  - Seq (5341)
+  - Jaeger (16686)
+  - Redis (6379)
 
 ---
 
@@ -213,4 +349,11 @@ All settings in `.vscode/` folder:
 
 **Debug Status: ✅ READY**
 
-*Last Updated: October 30, 2025*
+**Total Services:** 8 (.NET) + 1 (Next.js Frontend) + 8 (Infrastructure)
+
+**Event-Driven Architecture:** ✅ Implemented
+- Auth Service → Event Bus (HTTP) → PostgreSQL Outbox → Kafka → User Service
+- Full correlation ID tracking across all services
+- Distributed tracing with Jaeger
+
+*Last Updated: November 2, 2025*
