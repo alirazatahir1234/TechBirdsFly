@@ -61,7 +61,7 @@ public class PublishEventService
 
             // Deserialize event from JSON
             var @event = EventFactory.CreateFromJson(request.EventData);
-            
+
             if (@event == null)
             {
                 _logger.LogWarning(
@@ -91,7 +91,7 @@ public class PublishEventService
 
             // Get topic for this event type
             var topic = EventTopics.GetTopic(@event.EventType);
-            
+
             if (string.IsNullOrEmpty(topic))
             {
                 _logger.LogWarning(
@@ -102,8 +102,8 @@ public class PublishEventService
             }
 
             // Serialize event to JSON for storage
-            var eventPayload = JsonSerializer.Serialize(@event, new JsonSerializerOptions 
-            { 
+            var eventPayload = JsonSerializer.Serialize(@event, new JsonSerializerOptions
+            {
                 WriteIndented = false,
                 PropertyNameCaseInsensitive = true
             });

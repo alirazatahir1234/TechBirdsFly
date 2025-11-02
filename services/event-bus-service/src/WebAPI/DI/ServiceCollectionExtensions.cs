@@ -72,10 +72,10 @@ public static class ServiceCollectionExtensions
             .AddDbContextCheck<EventBusDbContext>(
                 name: "EventBusDB",
                 failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
-            //.AddKafka(
-            //    kafkaBootstrapServers,
-            //    name: "Kafka",
-            //    failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded);
+        //.AddKafka(
+        //    kafkaBootstrapServers,
+        //    name: "Kafka",
+        //    failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded);
 
         return services;
     }

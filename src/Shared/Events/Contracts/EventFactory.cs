@@ -94,7 +94,7 @@ public static class EventFactory
             return null;
 
         var eventType = data["eventType"]?.ToString();
-        
+
         return eventType switch
         {
             "UserRegistered" => EventSerializer.DictionaryToObject<UserRegisteredEvent>(data),
@@ -135,7 +135,7 @@ public static class EventFactory
     {
         var kafkaMessage = KafkaEventMessage.FromEvent(@event);
         kafkaMessage.PartitionKey = partitionKey ?? @event.UserId;
-        
+
         if (headers != null)
         {
             foreach (var (key, value) in headers)

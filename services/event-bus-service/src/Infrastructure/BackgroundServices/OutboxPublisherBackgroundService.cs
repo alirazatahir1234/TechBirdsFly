@@ -62,7 +62,7 @@ public class OutboxPublisherBackgroundService : BackgroundService
                 _logger.LogError(
                     ex,
                     "❌ Unhandled exception in Outbox Publisher Background Service");
-                
+
                 // Continue running despite errors
                 await Task.Delay(_settings.ErrorRetryDelaySeconds * 1000, stoppingToken);
             }
