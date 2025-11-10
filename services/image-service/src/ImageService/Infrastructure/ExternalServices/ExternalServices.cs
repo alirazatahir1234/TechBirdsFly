@@ -29,7 +29,7 @@ public class ImageStorageService : IImageStorageService
         {
             string storagePath = Path.Combine(_basePath, fileName);
             Directory.CreateDirectory(Path.GetDirectoryName(storagePath)!);
-            
+
             await File.WriteAllBytesAsync(storagePath, fileData);
             return storagePath;
         }
@@ -198,7 +198,7 @@ public class ImageCdnService : ICdnService
     public string GetTransformedUrl(string storagePath, int? width = null, int? height = null, string? format = null, int quality = 85)
     {
         var url = new StringBuilder(GetCdnUrl(storagePath));
-        
+
         if (width.HasValue || height.HasValue || !string.IsNullOrEmpty(format) || quality != 100)
         {
             url.Append("?");
@@ -223,7 +223,7 @@ public class ImageCdnService : ICdnService
     {
         var url = GetCdnUrl(storagePath);
         var expirationTime = DateTimeOffset.UtcNow.Add(expiresIn).ToUnixTimeSeconds();
-        
+
         // Generate signature (simplified)
         var signatureData = $"{url}|{expirationTime}";
         using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes("secret-key")))

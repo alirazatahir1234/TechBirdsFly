@@ -6,33 +6,33 @@ namespace AdminService.Domain.Entities;
 public class Role
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
-    
+
     /// <summary>
     /// Role name (e.g., Admin, Creator, Viewer)
     /// </summary>
     public string Name { get; private set; } = string.Empty;
-    
+
     public string Description { get; private set; } = string.Empty;
-    
+
     /// <summary>
     /// Comma-separated or JSON list of permissions
     /// </summary>
     public List<string> Permissions { get; private set; } = new();
-    
+
     /// <summary>
     /// System roles cannot be deleted
     /// </summary>
     public bool IsSystem { get; private set; } = false;
-    
+
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-    
+
     public DateTime? UpdatedAt { get; private set; }
-    
+
     // Navigation properties
     public virtual ICollection<AdminUser> Users { get; set; } = new List<AdminUser>();
 
     // Domain Methods
-    
+
     /// <summary>
     /// Creates a new role
     /// </summary>
@@ -40,7 +40,7 @@ public class Role
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Role name cannot be empty", nameof(name));
-        
+
         return new Role
         {
             Name = name,
@@ -55,7 +55,7 @@ public class Role
     {
         if (IsSystem)
             throw new InvalidOperationException("System roles cannot be modified");
-        
+
         Description = description;
         Permissions = permissions ?? new();
         UpdatedAt = DateTime.UtcNow;

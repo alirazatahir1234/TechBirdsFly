@@ -95,7 +95,7 @@ public interface IUserService
     Task<UserDto?> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<UserDto?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default);
     Task<UserDto?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
-    
+
     Task<PaginatedResponse<UserListItemDto>> GetUsersAsync(
         ListUsersQuery query,
         CancellationToken cancellationToken = default);

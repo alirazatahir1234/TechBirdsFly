@@ -52,10 +52,10 @@ public class ImagesController : ControllerBase
             return Unauthorized();
 
         var result = await _uploadService.UploadImageAsync(request, userId);
-        
+
         if (result.Success)
             return CreatedAtAction(nameof(GetImage), new { imageId = result.Data?.Id }, result);
-        
+
         return BadRequest(result);
     }
 
@@ -70,10 +70,10 @@ public class ImagesController : ControllerBase
     public async Task<ActionResult<ApiResponse<ImageDto>>> GetImage(Guid imageId)
     {
         var result = await _uploadService.GetImageAsync(imageId);
-        
+
         if (!result.Success)
             return NotFound(result);
-        
+
         return Ok(result);
     }
 
@@ -99,7 +99,7 @@ public class ImagesController : ControllerBase
 
         var query = new ListImagesQuery(pageNumber, pageSize, sortBy, ascending);
         var result = await _uploadService.ListUserImagesAsync(userId, query);
-        
+
         return Ok(result);
     }
 
@@ -119,7 +119,7 @@ public class ImagesController : ControllerBase
     {
         var query = new ListImagesQuery(pageNumber, pageSize);
         var result = await _uploadService.GetImagesByAlbumAsync(albumId, query);
-        
+
         return Ok(result);
     }
 
@@ -139,14 +139,14 @@ public class ImagesController : ControllerBase
             return Unauthorized();
 
         var result = await _uploadService.DeleteImageAsync(imageId, userId);
-        
+
         if (!result.Success)
         {
             if (result.Message == "Unauthorized")
                 return Forbid();
             return NotFound(result);
         }
-        
+
         return NoContent();
     }
 
@@ -166,14 +166,14 @@ public class ImagesController : ControllerBase
             return Unauthorized();
 
         var result = await _uploadService.ArchiveImageAsync(imageId, userId);
-        
+
         if (!result.Success)
         {
             if (result.Message == "Unauthorized")
                 return Forbid();
             return NotFound(result);
         }
-        
+
         return NoContent();
     }
 
@@ -243,10 +243,10 @@ public class ImagesController : ControllerBase
     public async Task<IActionResult> UpdateMetadata(Guid imageId, [FromBody] UpdateImageMetadataRequest request)
     {
         var result = await _metadataService.UpdateMetadataAsync(imageId, request);
-        
+
         if (!result.Success)
             return NotFound(result);
-        
+
         return NoContent();
     }
 
@@ -262,10 +262,10 @@ public class ImagesController : ControllerBase
     public async Task<IActionResult> AddTags(Guid imageId, [FromBody] List<string> tags)
     {
         var result = await _metadataService.AddTagsAsync(imageId, tags);
-        
+
         if (!result.Success)
             return NotFound(result);
-        
+
         return NoContent();
     }
 
@@ -281,10 +281,10 @@ public class ImagesController : ControllerBase
     public async Task<IActionResult> RemoveTag(Guid imageId, string tag)
     {
         var result = await _metadataService.RemoveTagAsync(imageId, tag);
-        
+
         if (!result.Success)
             return NotFound(result);
-        
+
         return NoContent();
     }
 
@@ -339,14 +339,14 @@ public class GenerationController : ControllerBase
             return Unauthorized();
 
         var result = await _generationService.GenerateImageAsync(request, userId);
-        
+
         if (!result.Success)
         {
             if (result.Message?.Contains("unavailable") == true)
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, result);
             return BadRequest(result);
         }
-        
+
         return CreatedAtAction(nameof(GetGenerationStatus), new { generationId = result.Data?.GenerationId }, result);
     }
 
@@ -361,10 +361,10 @@ public class GenerationController : ControllerBase
     public async Task<ActionResult<ApiResponse<GenerationStatusDto>>> GetGenerationStatus(Guid generationId)
     {
         var result = await _generationService.GetGenerationStatusAsync(generationId);
-        
+
         if (!result.Success)
             return NotFound(result);
-        
+
         return Ok(result);
     }
 }

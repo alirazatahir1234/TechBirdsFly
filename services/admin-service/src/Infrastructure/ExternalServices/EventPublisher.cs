@@ -19,7 +19,7 @@ public class EventPublisher : IEventPublisher
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
+
         // Default to localhost for local development, can be overridden via HttpClient configuration
         _eventBusServiceUrl = "http://localhost:5020";
     }

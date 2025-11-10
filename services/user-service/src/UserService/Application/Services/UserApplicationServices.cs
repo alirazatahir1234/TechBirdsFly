@@ -58,7 +58,7 @@ public class AuthService : IAuthService
             var passwordHash = _passwordHashService.HashPassword(request.Password);
             var email = new EmailAddress(request.Email);
             var phone = request.Phone != null ? new PhoneNumber(request.Phone) : null;
-            
+
             var userResult = User.Create(
                 request.Username,
                 email,
@@ -73,12 +73,12 @@ public class AuthService : IAuthService
             await _userRepository.SaveChangesAsync(cancellationToken);
 
             // Publish registration event
-            var registeredEvent = new UserRegisteredEvent 
-            { 
+            var registeredEvent = new UserRegisteredEvent
+            {
                 AggregateId = addedUser.Id,
-                Username = addedUser.Username, 
-                Email = addedUser.Email.Value, 
-                FullName = addedUser.FullName 
+                Username = addedUser.Username,
+                Email = addedUser.Email.Value,
+                FullName = addedUser.FullName
             };
             await _eventPublisher.PublishEventAsync(registeredEvent, cancellationToken);
 
@@ -138,11 +138,11 @@ public class AuthService : IAuthService
             await _userRepository.SaveChangesAsync(cancellationToken);
 
             // Publish login event
-            var loginEvent = new UserLoggedInEvent 
-            { 
-                AggregateId = user.Id, 
-                Username = user.Username, 
-                LoginTime = DateTime.UtcNow 
+            var loginEvent = new UserLoggedInEvent
+            {
+                AggregateId = user.Id,
+                Username = user.Username,
+                LoginTime = DateTime.UtcNow
             };
             await _eventPublisher.PublishEventAsync(loginEvent, cancellationToken);
 
@@ -277,10 +277,10 @@ public class AuthService : IAuthService
             await _userRepository.SaveChangesAsync(cancellationToken);
 
             // Publish password changed event
-            var passwordChangedEvent = new PasswordChangedEvent 
-            { 
+            var passwordChangedEvent = new PasswordChangedEvent
+            {
                 AggregateId = user.Id,
-                ChangedAt = DateTime.UtcNow 
+                ChangedAt = DateTime.UtcNow
             };
             await _eventPublisher.PublishEventAsync(passwordChangedEvent, cancellationToken);
 
@@ -443,11 +443,11 @@ public class UserApplicationService : IUserService
             await _userRepository.SaveChangesAsync(cancellationToken);
 
             // Publish profile updated event
-            var profileUpdatedEvent = new ProfileUpdatedEvent 
-            { 
+            var profileUpdatedEvent = new ProfileUpdatedEvent
+            {
                 AggregateId = user.Id,
                 UpdatedFields = "FullName, Phone, Bio, ProfileImageUrl",
-                UpdatedAt = DateTime.UtcNow 
+                UpdatedAt = DateTime.UtcNow
             };
             await _eventPublisher.PublishEventAsync(profileUpdatedEvent, cancellationToken);
 
@@ -476,11 +476,11 @@ public class UserApplicationService : IUserService
             await _userRepository.UpdateAsync(user, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            var deactivatedEvent = new UserDeactivatedEvent 
-            { 
-                AggregateId = user.Id, 
+            var deactivatedEvent = new UserDeactivatedEvent
+            {
+                AggregateId = user.Id,
                 Reason = reason ?? "User account deactivation",
-                DeactivatedAt = DateTime.UtcNow 
+                DeactivatedAt = DateTime.UtcNow
             };
             await _eventPublisher.PublishEventAsync(deactivatedEvent, cancellationToken);
 
@@ -562,12 +562,12 @@ public class UserApplicationService : IUserService
             await _userRepository.UpdateAsync(user, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            var roleAssignedEvent = new RoleAssignedEvent 
-            { 
-                AggregateId = user.Id, 
-                Role = role, 
-                AssignedBy = assignedBy, 
-                AssignedAt = DateTime.UtcNow 
+            var roleAssignedEvent = new RoleAssignedEvent
+            {
+                AggregateId = user.Id,
+                Role = role,
+                AssignedBy = assignedBy,
+                AssignedAt = DateTime.UtcNow
             };
             await _eventPublisher.PublishEventAsync(roleAssignedEvent, cancellationToken);
 

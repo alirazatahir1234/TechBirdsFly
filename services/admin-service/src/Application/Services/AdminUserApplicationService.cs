@@ -49,7 +49,7 @@ public class AdminUserApplicationService : IAdminUserApplicationService
             FullName = adminUser.FullName,
             CreatedAt = adminUser.CreatedAt
         };
-        
+
         await _eventPublisher.PublishAsync(@event, cancellationToken);
 
         _logger.LogInformation("✅ Admin user created: {AdminUserId}", adminUser.Id);
@@ -111,7 +111,7 @@ public class AdminUserApplicationService : IAdminUserApplicationService
             Reason = reason,
             SuspendedAt = adminUser.SuspendedAt ?? DateTime.UtcNow
         };
-        
+
         await _eventPublisher.PublishAsync(@event, cancellationToken);
 
         _logger.LogInformation("✅ Admin user suspended: {AdminUserId}", id);
@@ -136,7 +136,7 @@ public class AdminUserApplicationService : IAdminUserApplicationService
             Email = adminUser.Email,
             UnsuspendedAt = DateTime.UtcNow
         };
-        
+
         await _eventPublisher.PublishAsync(@event, cancellationToken);
 
         _logger.LogInformation("✅ Admin user unsuspended: {AdminUserId}", id);
@@ -161,7 +161,7 @@ public class AdminUserApplicationService : IAdminUserApplicationService
             Email = adminUser.Email,
             BannedAt = DateTime.UtcNow
         };
-        
+
         await _eventPublisher.PublishAsync(@event, cancellationToken);
 
         _logger.LogInformation("✅ Admin user banned: {AdminUserId}", id);
@@ -187,7 +187,7 @@ public class AdminUserApplicationService : IAdminUserApplicationService
             IpAddress = "0.0.0.0", // Will be captured from HttpContext in controller
             LoginAt = adminUser.LastLoginAt ?? DateTime.UtcNow
         };
-        
+
         await _eventPublisher.PublishAsync(@event, cancellationToken);
     }
 }

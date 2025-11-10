@@ -61,8 +61,8 @@ public record FileMetadata(string FileName, string MimeType, long FileSizeBytes)
 {
     public FileMetadata() : this(string.Empty, string.Empty, 0) { }
 
-    public bool IsValid() => !string.IsNullOrWhiteSpace(FileName) && 
-                             !string.IsNullOrWhiteSpace(MimeType) && 
+    public bool IsValid() => !string.IsNullOrWhiteSpace(FileName) &&
+                             !string.IsNullOrWhiteSpace(MimeType) &&
                              FileSizeBytes > 0;
 
     public string GetFileExtension() => Path.GetExtension(FileName);

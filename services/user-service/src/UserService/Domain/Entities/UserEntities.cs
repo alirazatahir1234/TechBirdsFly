@@ -31,9 +31,9 @@ public enum UserStatus
 /// </summary>
 public record EmailAddress(string Value)
 {
-    public bool IsValid() => 
-        !string.IsNullOrWhiteSpace(Value) && 
-        Value.Contains("@") && 
+    public bool IsValid() =>
+        !string.IsNullOrWhiteSpace(Value) &&
+        Value.Contains("@") &&
         Value.Length >= 5;
 
     public override string ToString() => Value;
@@ -44,7 +44,7 @@ public record EmailAddress(string Value)
 /// </summary>
 public record PhoneNumber(string? Value)
 {
-    public bool IsValid() => 
+    public bool IsValid() =>
         string.IsNullOrEmpty(Value) || (Value.Length >= 10 && Value.All(char.IsDigit));
 }
 
@@ -268,9 +268,9 @@ public class User
     /// <summary>
     /// Check if account is active
     /// </summary>
-    public bool IsActive() => 
-        Status == UserStatus.Active && 
-        EmailVerified && 
+    public bool IsActive() =>
+        Status == UserStatus.Active &&
+        EmailVerified &&
         !IsLockedOut();
 }
 

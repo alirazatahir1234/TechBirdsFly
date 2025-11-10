@@ -90,9 +90,9 @@ public interface IAuditLogApplicationService
         string? oldValues = null,
         string? newValues = null,
         CancellationToken cancellationToken = default);
-    
+
     Task<AuditLog?> GetAuditLogAsync(Guid id, CancellationToken cancellationToken = default);
-    
+
     Task<(IEnumerable<AuditLogDto> Items, int TotalCount)> GetAuditLogsAsync(
         AuditLogFilterRequest filter,
         CancellationToken cancellationToken = default);

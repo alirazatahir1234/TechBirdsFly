@@ -412,7 +412,7 @@ public class ImageMetadataService : IImageMetadataService
                 // Clear and add new tags
                 foreach (var tag in image.Tags.ToList())
                     image.RemoveTag(tag);
-                
+
                 foreach (var tag in request.Tags)
                 {
                     try { image.AddTag(tag); }
@@ -423,7 +423,7 @@ public class ImageMetadataService : IImageMetadataService
             await _imageRepository.UpdateAsync(image);
 
             var metadata = await _metadataRepository.GetByImageIdAsync(imageId) ?? new ImageMetadata(imageId);
-            
+
             if (request.ExifData != null)
                 metadata.UpdateExifData(request.ExifData);
 

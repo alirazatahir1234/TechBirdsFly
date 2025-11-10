@@ -113,7 +113,7 @@ public class TemplatesController : ControllerBase
         try
         {
             var template = await _templateService.CreateTemplateAsync(request, cancellationToken);
-            return CreatedAtAction(nameof(GetTemplate), new { id = template.Id }, 
+            return CreatedAtAction(nameof(GetTemplate), new { id = template.Id },
                 ApiResponse<TemplateDto>.SuccessResponse(template, "Template created successfully"));
         }
         catch (ArgumentException ex)
