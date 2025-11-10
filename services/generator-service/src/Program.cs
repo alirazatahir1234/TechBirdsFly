@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using GeneratorService.Data;
-using GeneratorService.Services;
-using GeneratorService.Services.Cache;
+using GeneratorService.Infrastructure;
+using GeneratorService.Infrastructure.Persistence;
 using GeneratorService.Middleware;
 using Serilog;
 using Serilog.Context;
@@ -86,12 +85,14 @@ try
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddHealthChecks();
 
-    // EF Core SQLite
-    builder.Services.AddDbContext<GeneratorDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("GeneratorDb") ?? "Data Source=generator.db"));
+    // Application & Infrastructure Services
+    builder.Services.AddApplicationServices();
+    builder.Services.AddInfrastructureServices(
+        builder.Configuration.GetConnectionString("GeneratorDb") ?? "Data Source=generator.db");
 
-    // Add Redis Distributed Cache
+    // Add Redis Distributed Cache (optional, for future caching needs)
     builder.Services.AddStackExchangeRedisCache(options =>
     {
         var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
@@ -99,25 +100,14 @@ try
         options.InstanceName = "GeneratorService_";
     });
 
-    // Register Cache Service
-    builder.Services.AddScoped<ICacheService, RedisCacheService>();
-
-    // Services (no RabbitMQ for MVP local dev)
-    builder.Services.AddScoped<IGeneratorService, GeneratorService.Services.GeneratorService>();
-    builder.Services.AddScoped<IMessagePublisher, LocalMessagePublisher>();
-
     // ========================================================================
     // BUILD APP & MIDDLEWARE PIPELINE
     // ========================================================================
 
     var app = builder.Build();
 
-    // Migrate DB
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<GeneratorDbContext>();
-        db.Database.Migrate();
-    }
+    // Initialize database
+    await app.Services.InitializeDatabaseAsync();
 
     if (app.Environment.IsDevelopment())
     {

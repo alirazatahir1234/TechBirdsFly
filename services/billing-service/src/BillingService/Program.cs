@@ -2,10 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using BillingService.Data;
-using BillingService.Services;
-using BillingService.Services.Cache;
-using BillingService.Middleware;
+using BillingService.Infrastructure;
+using BillingService.Infrastructure.Persistence;
 using Serilog;
 using Serilog.Context;
 using OpenTelemetry.Resources;
@@ -89,42 +87,14 @@ try
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddHealthChecks();
 
     // EF Core SQLite
     builder.Services.AddDbContext<BillingDbContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("BillingDb") ?? "Data Source=billing.db"));
 
-    // Add Redis Distributed Cache
-    builder.Services.AddStackExchangeRedisCache(options =>
-    {
-        var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
-        options.Configuration = redisConnectionString;
-        options.InstanceName = "BillingService_";
-    });
-
-    // Register Cache Service
-    builder.Services.AddScoped<ICacheService, RedisCacheService>();
-
-    // JWT Authentication
-    var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-secret-key-change-in-production";
-    var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TechBirdsFly";
-
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-                ValidateIssuer = true,
-                ValidIssuer = jwtIssuer,
-                ValidateAudience = false,
-                ValidateLifetime = true
-            };
-        });
-
-    // Services
-    builder.Services.AddScoped<IBillingService, BillingService.Services.BillingService>();
+    // Add Billing Services (DI)
+    builder.Services.AddBillingServices(builder.Configuration);
 
     // ========================================================================
     // BUILD APP & MIDDLEWARE PIPELINE
@@ -147,12 +117,6 @@ try
 
     // Request/Response logging with correlation ID
     app.UseSerilogRequestLogging();
-
-    // Add correlation ID to all requests
-    app.UseMiddleware<CorrelationIdMiddleware>();
-
-    // Global exception handling
-    app.UseMiddleware<GlobalExceptionMiddleware>();
 
     app.UseAuthentication();
     app.UseAuthorization();

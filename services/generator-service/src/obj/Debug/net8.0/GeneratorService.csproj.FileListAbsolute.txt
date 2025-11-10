@@ -348,3 +348,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/obj/Debug/net8.0/GeneratorService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/obj/Debug/net8.0/GeneratorService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/obj/Debug/net8.0/ref/GeneratorService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/generator-service/src/obj/Debug/net8.0/GeneratorService.sourcelink.json

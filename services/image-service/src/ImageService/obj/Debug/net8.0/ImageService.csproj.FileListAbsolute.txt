@@ -323,3 +323,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/image-service/src/ImageService/obj/Debug/net8.0/ImageSer.4959AB5E.Up2Date
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/image-service/src/ImageService/obj/Debug/net8.0/ImageService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/image-service/src/ImageService/obj/Debug/net8.0/ref/ImageService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/image-service/src/ImageService/obj/Debug/net8.0/ImageService.sourcelink.json

@@ -366,3 +366,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/billing-service/src/BillingService/obj/Debug/net8.0/BillingService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/billing-service/src/BillingService/obj/Debug/net8.0/BillingService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/billing-service/src/BillingService/obj/Debug/net8.0/ref/BillingService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/billing-service/src/BillingService/obj/Debug/net8.0/BillingService.sourcelink.json

@@ -326,3 +326,5 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/UserService.sourcelink.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/TechBirdsFly.Shared.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/TechBirdsFly.Shared.pdb
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/BCrypt.Net-Core.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251111.json

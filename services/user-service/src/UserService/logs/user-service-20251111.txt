@@ -1,0 +1,428 @@
+2025-11-11 03:19:56.281 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-11-11 03:19:56.523 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'EmailAddress.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:19:56.524 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'PhoneNumber.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:19:56.533 +04:00 [WRN] [Microsoft.EntityFrameworkCore.Model.Validation] The entity type 'PhoneNumber' is an optional dependent using table sharing without any required non shared property that could be used to identify whether the entity exists. If all nullable properties contain a null value in database then an object instance won't be created in the query. Add a required property to create instances with null values for other properties or mark the incoming navigation as required to always create an instance.
+2025-11-11 03:19:56.567 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] Entity Framework Core 8.0.8 initialized 'UserDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:8.0.8' with options: MigrationsAssembly=UserService.Infrastructure 
+2025-11-11 03:19:56.571 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] 'UserDbContext' disposed.
+2025-11-11 03:23:11.488 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-11-11 03:23:11.679 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'EmailAddress.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:23:11.680 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'PhoneNumber.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:23:11.689 +04:00 [WRN] [Microsoft.EntityFrameworkCore.Model.Validation] The entity type 'PhoneNumber' is an optional dependent using table sharing without any required non shared property that could be used to identify whether the entity exists. If all nullable properties contain a null value in database then an object instance won't be created in the query. Add a required property to create instances with null values for other properties or mark the incoming navigation as required to always create an instance.
+2025-11-11 03:23:11.720 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] Entity Framework Core 8.0.8 initialized 'UserDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:8.0.8' with options: None
+2025-11-11 03:23:11.729 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'EmailAddress.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:23:11.729 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'PhoneNumber.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:23:11.730 +04:00 [WRN] [Microsoft.EntityFrameworkCore.Model.Validation] The entity type 'PhoneNumber' is an optional dependent using table sharing without any required non shared property that could be used to identify whether the entity exists. If all nullable properties contain a null value in database then an object instance won't be created in the query. Add a required property to create instances with null values for other properties or mark the incoming navigation as required to always create an instance.
+2025-11-11 03:23:11.891 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] 'UserDbContext' disposed.
+2025-11-11 03:25:17.022 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-11-11 03:25:17.218 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'EmailAddress.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:25:17.218 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'PhoneNumber.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:25:17.228 +04:00 [WRN] [Microsoft.EntityFrameworkCore.Model.Validation] The entity type 'PhoneNumber' is an optional dependent using table sharing without any required non shared property that could be used to identify whether the entity exists. If all nullable properties contain a null value in database then an object instance won't be created in the query. Add a required property to create instances with null values for other properties or mark the incoming navigation as required to always create an instance.
+2025-11-11 03:25:17.261 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] Entity Framework Core 8.0.8 initialized 'UserDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:8.0.8' with options: None
+2025-11-11 03:25:17.263 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:25:17.266 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (1ms).
+2025-11-11 03:25:17.266 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Migrations] Migrating using database 'main' on server 'user.db'.
+2025-11-11 03:25:17.267 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:25:17.267 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (0ms).
+2025-11-11 03:25:17.268 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.272 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.273 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.275 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.277 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteScalar'.
+2025-11-11 03:25:17.278 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:25:17.278 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteScalar' (1ms).
+2025-11-11 03:25:17.279 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.280 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.281 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:25:17.287 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:25:17.288 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.289 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.289 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:25:17.289 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (0ms).
+2025-11-11 03:25:17.289 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.289 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteScalar'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:25:17.290 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.290 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteReader'.
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:25:17.293 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2025-11-11 03:25:17.294 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2025-11-11 03:25:17.295 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Closing data reader to 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.295 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] A data reader for 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db' is being disposed after spending 1ms reading results.
+2025-11-11 03:25:17.295 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.295 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.299 +04:00 [INF] [Microsoft.EntityFrameworkCore.Migrations] Applying migration '20251110232311_InitialCreate'.
+2025-11-11 03:25:17.313 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.313 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.314 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Transaction] Beginning transaction with isolation level 'Unspecified'.
+2025-11-11 03:25:17.315 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Transaction] Began transaction with isolation level 'Serializable'.
+2025-11-11 03:25:17.316 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.316 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.316 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.316 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "Users" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Users" PRIMARY KEY,
+    "Username" TEXT NOT NULL,
+    "Email" TEXT NOT NULL,
+    "PasswordHash" TEXT NOT NULL,
+    "FullName" TEXT NOT NULL,
+    "Phone" TEXT NULL,
+    "Role" TEXT NOT NULL,
+    "Status" TEXT NOT NULL,
+    "EmailVerified" INTEGER NOT NULL,
+    "ProfileImageUrl" TEXT NULL,
+    "Bio" TEXT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "UpdatedAt" TEXT NULL,
+    "LastLoginAt" TEXT NULL,
+    "LoginAttempts" INTEGER NOT NULL,
+    "LockoutUntil" TEXT NULL
+);
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "Users" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Users" PRIMARY KEY,
+    "Username" TEXT NOT NULL,
+    "Email" TEXT NOT NULL,
+    "PasswordHash" TEXT NOT NULL,
+    "FullName" TEXT NOT NULL,
+    "Phone" TEXT NULL,
+    "Role" TEXT NOT NULL,
+    "Status" TEXT NOT NULL,
+    "EmailVerified" INTEGER NOT NULL,
+    "ProfileImageUrl" TEXT NULL,
+    "Bio" TEXT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "UpdatedAt" TEXT NULL,
+    "LastLoginAt" TEXT NULL,
+    "LoginAttempts" INTEGER NOT NULL,
+    "LockoutUntil" TEXT NULL
+);
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "UserProfiles" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_UserProfiles" PRIMARY KEY,
+    "UserId" TEXT NOT NULL,
+    "CompanyName" TEXT NULL,
+    "Department" TEXT NULL,
+    "JobTitle" TEXT NULL,
+    "Location" TEXT NULL,
+    "Website" TEXT NULL,
+    "SocialMediaLinks" TEXT NULL,
+    "Preferences" TEXT NULL,
+    "NotificationsEnabled" INTEGER NOT NULL,
+    "EmailNotifications" INTEGER NOT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "UpdatedAt" TEXT NULL,
+    CONSTRAINT "FK_UserProfiles_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+);
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "UserProfiles" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_UserProfiles" PRIMARY KEY,
+    "UserId" TEXT NOT NULL,
+    "CompanyName" TEXT NULL,
+    "Department" TEXT NULL,
+    "JobTitle" TEXT NULL,
+    "Location" TEXT NULL,
+    "Website" TEXT NULL,
+    "SocialMediaLinks" TEXT NULL,
+    "Preferences" TEXT NULL,
+    "NotificationsEnabled" INTEGER NOT NULL,
+    "EmailNotifications" INTEGER NOT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "UpdatedAt" TEXT NULL,
+    CONSTRAINT "FK_UserProfiles_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+);
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_UserProfiles_CreatedAt" ON "UserProfiles" ("CreatedAt");
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_UserProfiles_CreatedAt" ON "UserProfiles" ("CreatedAt");
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_UserProfiles_UserId_Unique" ON "UserProfiles" ("UserId");
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_UserProfiles_UserId_Unique" ON "UserProfiles" ("UserId");
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_CreatedAt" ON "Users" ("CreatedAt");
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_CreatedAt" ON "Users" ("CreatedAt");
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Email_Unique" ON "Users" ("Email");
+2025-11-11 03:25:17.317 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Email_Unique" ON "Users" ("Email");
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.317 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_LastLoginAt" ON "Users" ("LastLoginAt");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_LastLoginAt" ON "Users" ("LastLoginAt");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_LockoutUntil" ON "Users" ("LockoutUntil");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_LockoutUntil" ON "Users" ("LockoutUntil");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Phone" ON "Users" ("Phone");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Phone" ON "Users" ("Phone");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Role" ON "Users" ("Role");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Role" ON "Users" ("Role");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Status" ON "Users" ("Status");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Users_Status" ON "Users" ("Status");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Username_Unique" ON "Users" ("Username");
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Username_Unique" ON "Users" ("Username");
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteNonQuery'.
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-11-11 03:25:17.318 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20251110232311_InitialCreate', '8.0.8');
+2025-11-11 03:25:17.318 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20251110232311_InitialCreate', '8.0.8');
+2025-11-11 03:25:17.319 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Transaction] Committing transaction.
+2025-11-11 03:25:17.319 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Transaction] Committed transaction.
+2025-11-11 03:25:17.320 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Transaction] Disposing transaction.
+2025-11-11 03:25:17.320 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.320 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.331 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Query] Compiling query expression: 
+'DbSet<User>()
+    .Any()'
+2025-11-11 03:25:17.372 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Query] Generated query execution expression: 
+'queryContext => ShapedQueryCompilingExpressionVisitor.SingleAsync<bool>(
+    asyncEnumerable: new SingleQueryingEnumerable<bool>(
+        (RelationalQueryContext)queryContext, 
+        RelationalCommandCache.QueryExpression(
+            Projection Mapping:
+                EmptyProjectionMember -> 0
+            SELECT EXISTS (
+                SELECT 1
+                FROM Users AS u)), 
+        null, 
+        Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, bool>, 
+        UserService.Infrastructure.Persistence.UserDbContext, 
+        False, 
+        False, 
+        True
+    ), 
+    cancellationToken: queryContext.CancellationToken)'
+2025-11-11 03:25:17.377 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.377 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.377 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteReader'.
+2025-11-11 03:25:17.377 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:25:17.377 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:25:17.378 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS "u")
+2025-11-11 03:25:17.378 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS "u")
+2025-11-11 03:25:17.378 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Closing data reader to 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.378 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] A data reader for 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db' is being disposed after spending 0ms reading results.
+2025-11-11 03:25:17.378 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:25:17.378 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.714 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] 'UserDbContext' disposed.
+2025-11-11 03:25:17.714 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:25:17.714 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:25:17.715 +04:00 [INF] [UserService] Database initialized successfully
+2025-11-11 03:25:17.727 +04:00 [DBG] [Microsoft.AspNetCore.Mvc.ModelBinding.ModelBinderFactory] Registered model binder providers, in the following order: ["Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2025-11-11 03:25:17.740 +04:00 [INF] [UserService] Starting User Service on Production
+2025-11-11 03:25:17.741 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting starting
+2025-11-11 03:25:17.745 +04:00 [INF] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] User profile is available. Using '/Users/alirazatahir/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2025-11-11 03:25:17.749 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository] Reading data from file '/Users/alirazatahir/.aspnet/DataProtection-Keys/key-5bd00143-30f1-4f14-b775-3d0d77adc8b3.xml'.
+2025-11-11 03:25:17.751 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository] Reading data from file '/Users/alirazatahir/.aspnet/DataProtection-Keys/key-bc40faca-8ff1-4b44-aa76-c2a46d00abf9.xml'.
+2025-11-11 03:25:17.752 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] Found key {5bd00143-30f1-4f14-b775-3d0d77adc8b3}.
+2025-11-11 03:25:17.753 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] Found key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9}.
+2025-11-11 03:25:17.754 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.DefaultKeyResolver] Considering key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} with expiration date 2026-01-27 21:20:16Z as default key.
+2025-11-11 03:25:17.755 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.TypeForwardingActivator] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-11-11 03:25:17.755 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ManagedAuthenticatedEncryptorFactory] Using managed symmetric algorithm 'System.Security.Cryptography.Aes'.
+2025-11-11 03:25:17.755 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ManagedAuthenticatedEncryptorFactory] Using managed keyed hash algorithm 'System.Security.Cryptography.HMACSHA256'.
+2025-11-11 03:25:17.756 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingProvider] Using key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} as the default key.
+2025-11-11 03:25:17.756 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Internal.DataProtectionHostedService] Key ring with default key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} was loaded during application startup.
+2025-11-11 03:25:17.781 +04:00 [INF] [Microsoft.Hosting.Lifetime] Now listening on: http://localhost:5005
+2025-11-11 03:25:17.781 +04:00 [DBG] [Microsoft.AspNetCore.Hosting.Diagnostics] Loaded hosting startup assembly UserService
+2025-11-11 03:25:17.781 +04:00 [INF] [Microsoft.Hosting.Lifetime] Application started. Press Ctrl+C to shut down.
+2025-11-11 03:25:17.781 +04:00 [INF] [Microsoft.Hosting.Lifetime] Hosting environment: Production
+2025-11-11 03:25:17.781 +04:00 [INF] [Microsoft.Hosting.Lifetime] Content root path: /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService
+2025-11-11 03:25:17.781 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting started
+2025-11-11 03:26:03.843 +04:00 [INF] [Microsoft.Hosting.Lifetime] Application is shutting down...
+2025-11-11 03:26:03.844 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting stopping
+2025-11-11 03:26:03.851 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting stopped
+2025-11-11 03:26:17.295 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-11-11 03:26:17.489 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'EmailAddress.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:26:17.489 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Model.Validation] The property 'PhoneNumber.UserId' was created in shadow state because there are no eligible CLR members with a matching name.
+2025-11-11 03:26:17.499 +04:00 [WRN] [Microsoft.EntityFrameworkCore.Model.Validation] The entity type 'PhoneNumber' is an optional dependent using table sharing without any required non shared property that could be used to identify whether the entity exists. If all nullable properties contain a null value in database then an object instance won't be created in the query. Add a required property to create instances with null values for other properties or mark the incoming navigation as required to always create an instance.
+2025-11-11 03:26:17.531 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] Entity Framework Core 8.0.8 initialized 'UserDbContext' using provider 'Microsoft.EntityFrameworkCore.Sqlite:8.0.8' with options: None
+2025-11-11 03:26:17.533 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:26:17.535 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (1ms).
+2025-11-11 03:26:17.536 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Migrations] Migrating using database 'main' on server 'user.db'.
+2025-11-11 03:26:17.537 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:26:17.537 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (0ms).
+2025-11-11 03:26:17.538 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.540 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.541 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.542 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.544 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteScalar'.
+2025-11-11 03:26:17.546 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:26:17.546 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteScalar' (1ms).
+2025-11-11 03:26:17.547 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.547 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.549 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:26:17.554 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:26:17.555 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Creating DbConnection.
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Created DbConnection. (0ms).
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.556 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteScalar'.
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:26:17.557 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.557 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteReader'.
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:26:17.560 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2025-11-11 03:26:17.560 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2025-11-11 03:26:17.562 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Closing data reader to 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.562 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] A data reader for 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db' is being disposed after spending 1ms reading results.
+2025-11-11 03:26:17.562 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.562 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.565 +04:00 [INF] [Microsoft.EntityFrameworkCore.Migrations] No migrations were applied. The database is already up to date.
+2025-11-11 03:26:17.576 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Query] Compiling query expression: 
+'DbSet<User>()
+    .Any()'
+2025-11-11 03:26:17.617 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Query] Generated query execution expression: 
+'queryContext => ShapedQueryCompilingExpressionVisitor.SingleAsync<bool>(
+    asyncEnumerable: new SingleQueryingEnumerable<bool>(
+        (RelationalQueryContext)queryContext, 
+        RelationalCommandCache.QueryExpression(
+            Projection Mapping:
+                EmptyProjectionMember -> 0
+            SELECT EXISTS (
+                SELECT 1
+                FROM Users AS u)), 
+        null, 
+        Func<QueryContext, DbDataReader, ResultContext, SingleQueryResultCoordinator, bool>, 
+        UserService.Infrastructure.Persistence.UserDbContext, 
+        False, 
+        False, 
+        True
+    ), 
+    cancellationToken: queryContext.CancellationToken)'
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opening connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Opened connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Creating DbCommand for 'ExecuteReader'.
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Created DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-11-11 03:26:17.622 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS "u")
+2025-11-11 03:26:17.623 +04:00 [INF] [Microsoft.EntityFrameworkCore.Database.Command] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS "u")
+2025-11-11 03:26:17.623 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] Closing data reader to 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.623 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Command] A data reader for 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db' is being disposed after spending 0ms reading results.
+2025-11-11 03:26:17.623 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closing connection to database 'main' on server '/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/user.db'.
+2025-11-11 03:26:17.623 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Closed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.885 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Infrastructure] 'UserDbContext' disposed.
+2025-11-11 03:26:17.886 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposing connection to database 'main' on server 'user.db'.
+2025-11-11 03:26:17.886 +04:00 [DBG] [Microsoft.EntityFrameworkCore.Database.Connection] Disposed connection to database 'main' on server 'user.db' (0ms).
+2025-11-11 03:26:17.887 +04:00 [INF] [UserService] Database initialized successfully
+2025-11-11 03:26:17.898 +04:00 [DBG] [Microsoft.AspNetCore.Mvc.ModelBinding.ModelBinderFactory] Registered model binder providers, in the following order: ["Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2025-11-11 03:26:17.910 +04:00 [INF] [UserService] Starting User Service on Production
+2025-11-11 03:26:17.911 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting starting
+2025-11-11 03:26:17.915 +04:00 [INF] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] User profile is available. Using '/Users/alirazatahir/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2025-11-11 03:26:17.918 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository] Reading data from file '/Users/alirazatahir/.aspnet/DataProtection-Keys/key-5bd00143-30f1-4f14-b775-3d0d77adc8b3.xml'.
+2025-11-11 03:26:17.919 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository] Reading data from file '/Users/alirazatahir/.aspnet/DataProtection-Keys/key-bc40faca-8ff1-4b44-aa76-c2a46d00abf9.xml'.
+2025-11-11 03:26:17.920 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] Found key {5bd00143-30f1-4f14-b775-3d0d77adc8b3}.
+2025-11-11 03:26:17.921 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager] Found key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9}.
+2025-11-11 03:26:17.922 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.DefaultKeyResolver] Considering key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} with expiration date 2026-01-27 21:20:16Z as default key.
+2025-11-11 03:26:17.923 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.TypeForwardingActivator] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-11-11 03:26:17.923 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ManagedAuthenticatedEncryptorFactory] Using managed symmetric algorithm 'System.Security.Cryptography.Aes'.
+2025-11-11 03:26:17.923 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ManagedAuthenticatedEncryptorFactory] Using managed keyed hash algorithm 'System.Security.Cryptography.HMACSHA256'.
+2025-11-11 03:26:17.924 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingProvider] Using key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} as the default key.
+2025-11-11 03:26:17.924 +04:00 [DBG] [Microsoft.AspNetCore.DataProtection.Internal.DataProtectionHostedService] Key ring with default key {bc40faca-8ff1-4b44-aa76-c2a46d00abf9} was loaded during application startup.
+2025-11-11 03:26:17.952 +04:00 [INF] [Microsoft.Hosting.Lifetime] Now listening on: http://localhost:5005
+2025-11-11 03:26:17.952 +04:00 [DBG] [Microsoft.AspNetCore.Hosting.Diagnostics] Loaded hosting startup assembly UserService
+2025-11-11 03:26:17.952 +04:00 [INF] [Microsoft.Hosting.Lifetime] Application started. Press Ctrl+C to shut down.
+2025-11-11 03:26:17.952 +04:00 [INF] [Microsoft.Hosting.Lifetime] Hosting environment: Production
+2025-11-11 03:26:17.952 +04:00 [INF] [Microsoft.Hosting.Lifetime] Content root path: /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService
+2025-11-11 03:26:17.952 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting started

@@ -1,0 +1,25 @@
+  Determining projects to restore...
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1603: TechBirdsFly.AdminService depends on OpenTelemetry.Instrumentation.EntityFrameworkCore (>= 1.0.0-beta.13) but OpenTelemetry.Instrumentation.EntityFrameworkCore 1.0.0-beta.13 was not found. OpenTelemetry.Instrumentation.EntityFrameworkCore 1.10.0-beta.1 was resolved instead.
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1603: TechBirdsFly.AdminService depends on System.Net.Http.Json (>= 4.5.0) but System.Net.Http.Json 4.5.0 was not found. System.Net.Http.Json 5.0.0 was resolved instead.
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1101: Unable to find package Microsoft.EntityFrameworkCore.Npgsql. No packages exist with this id in source(s): /usr/local/share/dotnet/library-packs, nuget.org
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102: Unable to find package OpenTelemetry.Exporter.Jaeger with version (>= 1.7.0)
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102:   - Found 58 version(s) in nuget.org [ Nearest version: 1.6.0-rc.1 ]
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102:   - Found 0 version(s) in /usr/local/share/dotnet/library-packs
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1902: Package 'OpenTelemetry.Instrumentation.AspNetCore' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1902: Package 'OpenTelemetry.Instrumentation.Http' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f
+  Failed to restore /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj (in 714 ms).
+
+Build FAILED.
+
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1603: TechBirdsFly.AdminService depends on OpenTelemetry.Instrumentation.EntityFrameworkCore (>= 1.0.0-beta.13) but OpenTelemetry.Instrumentation.EntityFrameworkCore 1.0.0-beta.13 was not found. OpenTelemetry.Instrumentation.EntityFrameworkCore 1.10.0-beta.1 was resolved instead.
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1603: TechBirdsFly.AdminService depends on System.Net.Http.Json (>= 4.5.0) but System.Net.Http.Json 4.5.0 was not found. System.Net.Http.Json 5.0.0 was resolved instead.
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1902: Package 'OpenTelemetry.Instrumentation.AspNetCore' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : warning NU1902: Package 'OpenTelemetry.Instrumentation.Http' 1.7.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-vh2m-22xx-q94f
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1101: Unable to find package Microsoft.EntityFrameworkCore.Npgsql. No packages exist with this id in source(s): /usr/local/share/dotnet/library-packs, nuget.org
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102: Unable to find package OpenTelemetry.Exporter.Jaeger with version (>= 1.7.0)
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102:   - Found 58 version(s) in nuget.org [ Nearest version: 1.6.0-rc.1 ]
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService.csproj : error NU1102:   - Found 0 version(s) in /usr/local/share/dotnet/library-packs
+    4 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:01.00

@@ -367,3 +367,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/obj/Debug/net8.0/AdminService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/obj/Debug/net8.0/AdminService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/obj/Debug/net8.0/ref/AdminService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/admin-service/src/AdminService/obj/Debug/net8.0/AdminService.sourcelink.json
