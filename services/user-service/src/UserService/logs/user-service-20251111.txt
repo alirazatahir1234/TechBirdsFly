@@ -427,3 +427,6 @@ SELECT EXISTS (
 2025-11-11 03:26:17.952 +04:00 [INF] [Microsoft.Hosting.Lifetime] Content root path: /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService
 2025-11-11 03:26:17.952 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting started
 2025-11-11 03:27:09.790 +04:00 [DBG] [Microsoft.AspNetCore.Server.Kestrel] Config reload token fired. Checking for changes...
+2025-11-11 03:28:03.027 +04:00 [INF] [Microsoft.Hosting.Lifetime] Application is shutting down...
+2025-11-11 03:28:03.033 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting stopping
+2025-11-11 03:28:03.059 +04:00 [DBG] [Microsoft.Extensions.Hosting.Internal.Host] Hosting stopped
