@@ -34,6 +34,11 @@
     <PackageReference Include="System.Net.Http.Json" Version="4.5.0" />
   </ItemGroup>
 
+  <!-- Project References -->
+  <ItemGroup>
+    <ProjectReference Include="../../cache-service/src/CacheClient/CacheClient.csproj" />
+  </ItemGroup>
+
   <!-- TODO: Add shared project reference -->
   <!-- <ItemGroup>
     <ProjectReference Include="../../../shared/TechBirdsFly.Shared.csproj" />

@@ -10,6 +10,16 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../../src/Shared/TechBirdsFly.Shared.csproj" />
+    <ProjectReference Include="../../../cache-service/src/CacheClient/CacheClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

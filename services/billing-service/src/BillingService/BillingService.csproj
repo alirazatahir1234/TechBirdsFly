@@ -30,4 +30,9 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
   </ItemGroup>
 
+  <!-- Project References -->
+  <ItemGroup>
+    <ProjectReference Include="../../../cache-service/src/CacheClient/CacheClient.csproj" />
+  </ItemGroup>
+
 </Project>

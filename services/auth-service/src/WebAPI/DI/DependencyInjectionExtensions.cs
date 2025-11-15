@@ -34,24 +34,26 @@ public static class DependencyInjectionExtensions
         services.AddDbContext<AuthDbContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? "Host=localhost;Port=5432;Database=techbirdsfly_auth;Username=postgres;Password=Alisheikh@123";
+                ?? "Data Source=auth.db";
 
             if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
             {
                 options.UseNpgsql(connectionString);
             }
-            else if (connectionString.Contains("sqlite", StringComparison.OrdinalIgnoreCase))
-            {
-                options.UseSqlite(connectionString);
-            }
             else if (connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase))
             {
                 options.UseSqlServer(connectionString);
             }
+            else if (connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase) || 
+                     connectionString.Contains("sqlite", StringComparison.OrdinalIgnoreCase) ||
+                     connectionString.EndsWith(".db", StringComparison.OrdinalIgnoreCase))
+            {
+                options.UseSqlite(connectionString);
+            }
             else
             {
-                // Default to PostgreSQL
-                options.UseNpgsql(connectionString);
+                // Default to SQLite for local development
+                options.UseSqlite(connectionString);
             }
         });
 

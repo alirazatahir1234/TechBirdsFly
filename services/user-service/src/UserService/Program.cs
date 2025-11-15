@@ -12,6 +12,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Json;
+using TechBirdsFly.CacheClient;
 using UserService.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -114,6 +115,11 @@ builder.Services.AddAuthorization(options =>
 
 // Infrastructure Services
 builder.Services.AddInfrastructureServices(connectionString, jwtSecret);
+
+// Centralized Cache Client
+var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+var jwtTokenForCache = jwtSecret; // Use same JWT for cache service
+builder.Services.AddCacheClient(cacheServiceUrl, jwtTokenForCache);
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>

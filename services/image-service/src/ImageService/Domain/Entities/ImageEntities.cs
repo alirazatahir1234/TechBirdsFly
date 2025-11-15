@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace ImageService.Domain.Entities;
@@ -300,6 +301,7 @@ public class ImageMetadata
     public int? DPI { get; set; }
     public bool HasTransparency { get; set; }
     public string? AnimationFrameCount { get; set; }
+    [NotMapped]
     public Dictionary<string, string> CustomProperties { get; set; } = new();
     public DateTime CreatedAt { get; private set; }
     public DateTime? ModifiedAt { get; private set; }

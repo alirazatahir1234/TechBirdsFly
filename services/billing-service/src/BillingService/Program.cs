@@ -8,6 +8,7 @@ using Serilog;
 using Serilog.Context;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using TechBirdsFly.CacheClient;
 
 // ============================================================================
 // SERILOG CONFIGURATION - MUST BE FIRST
@@ -95,6 +96,11 @@ try
 
     // Add Billing Services (DI)
     builder.Services.AddBillingServices(builder.Configuration);
+
+    // Add CacheClient for centralized caching
+    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+    var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-key";
+    builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 
     // ========================================================================
     // BUILD APP & MIDDLEWARE PIPELINE

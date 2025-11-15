@@ -2,6 +2,7 @@ using Serilog;
 using Microsoft.EntityFrameworkCore;
 using TechBirdsFly.AdminService.Infrastructure.Persistence;
 using TechBirdsFly.AdminService.WebAPI.DI;
+using TechBirdsFly.CacheClient;
 
 var builder = WebApplicationBuilder.CreateBuilder(args);
 
@@ -18,6 +19,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Add Admin Services (DbContext, Repositories, Services, EventPublisher)
 builder.Services.AddAdminServices(builder.Configuration);
+
+// Add CacheClient for centralized caching
+var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-key";
+builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 
 // TODO: Add OpenTelemetry for distributed tracing
 // builder.Services.AddOpenTelemetryInstrumentation(builder.Configuration, "AdminService");

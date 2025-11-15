@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EventBusService.WebAPI.DI;
 using TechBirdsFly.Shared.Configuration;
+using TechBirdsFly.CacheClient;
 
 // Configure Serilog
 var logger = new LoggerConfiguration()
@@ -24,6 +25,11 @@ try
 
     // Add services to the container
     builder.Services.AddEventBusServices(builder.Configuration);
+
+    // Add CacheClient
+    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+    var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "dev-secret-key";
+    builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 
     // JWT Authentication
     var jwtSettings = builder.Configuration.GetSection("Jwt");

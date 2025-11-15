@@ -59,4 +59,9 @@
     <ProjectReference Include="..\..\..\src\Shared\TechBirdsFly.Shared.csproj" />
   </ItemGroup>
 
+  <!-- Reference CacheClient -->
+  <ItemGroup>
+    <ProjectReference Include="../../cache-service/src/CacheClient/CacheClient.csproj" />
+  </ItemGroup>
+
 </Project>

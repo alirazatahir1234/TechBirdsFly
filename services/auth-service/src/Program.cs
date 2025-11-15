@@ -7,6 +7,7 @@ using Serilog.Events;
 using Serilog.Context;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using TechBirdsFly.CacheClient;
 
 using AuthService.Infrastructure.Persistence;
 using AuthService.WebAPI.Middlewares;
@@ -98,25 +99,16 @@ try
     builder.Services.AddHealthChecks()
         .AddDbContextCheck<AuthDbContext>("Database");
 
-    // Redis check is optional - only add if running with Docker/dedicated Redis instance
-    if (builder.Configuration.GetValue<bool>("Features:IncludeRedisHealthCheck"))
-    {
-        builder.Services.AddHealthChecks()
-            .AddRedis(
-                builder.Configuration["ConnectionStrings:Redis"] ?? "localhost:6379",
-                name: "Redis");
-    }
-
     // =========================================================================
     // DEPENDENCY INJECTION LAYERS
     // =========================================================================
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
 
-    // =========================================================================
-    // JWT AUTHENTICATION
-    // =========================================================================
+    // Centralized Cache Client (replaces local Redis)
+    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
     var jwtKey = builder.Configuration["Jwt:Key"] ?? "development-secret-key-please-change";
+    builder.Services.AddCacheClient(cacheServiceUrl, jwtKey);
     var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TechBirdsFly";
     var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 

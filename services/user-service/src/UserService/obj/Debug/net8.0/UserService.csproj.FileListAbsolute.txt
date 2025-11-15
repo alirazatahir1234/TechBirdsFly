@@ -143,7 +143,6 @@
 /Applications/My Drive/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/appsettings.Development.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/appsettings.Development.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService.staticwebassets.endpoints.json
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/appsettings.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService.deps.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService.runtimeconfig.json
@@ -328,3 +327,10 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/TechBirdsFly.Shared.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/BCrypt.Net-Core.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251111.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/appsettings.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251113.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Microsoft.Extensions.Http.Polly.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Polly.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Polly.Extensions.Http.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/CacheClient.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/CacheClient.pdb

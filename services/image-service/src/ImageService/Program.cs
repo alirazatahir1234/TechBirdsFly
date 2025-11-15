@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using Serilog;
 using System.Text;
+using TechBirdsFly.CacheClient;
 
 // ============================================================================
 // SERILOG BOOTSTRAP - MUST BE FIRST
@@ -123,6 +124,11 @@ try
         ?? "Data Source=image.db";
 
     builder.Services.AddInfrastructureServices(connectionString);
+
+    // Add CacheClient for centralized caching
+    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+    var jwtSecret = builder.Configuration["Jwt:Secret"] ?? builder.Configuration["JwtSettings:SecretKey"] ?? "dev-secret-key";
+    builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 
     // ========================================================================
     // SWAGGER/OPENAPI CONFIGURATION

@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Context;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using TechBirdsFly.CacheClient;
 
 // ============================================================================
 // SERILOG CONFIGURATION - MUST BE FIRST
@@ -92,13 +93,10 @@ try
     builder.Services.AddInfrastructureServices(
         builder.Configuration.GetConnectionString("GeneratorDb") ?? "Data Source=generator.db");
 
-    // Add Redis Distributed Cache (optional, for future caching needs)
-    builder.Services.AddStackExchangeRedisCache(options =>
-    {
-        var redisConnectionString = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
-        options.Configuration = redisConnectionString;
-        options.InstanceName = "GeneratorService_";
-    });
+    // Centralized Cache Client (replaces local Redis)
+    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
+    var jwtToken = builder.Configuration["Jwt:Secret"] ?? "dev-secret";
+    builder.Services.AddCacheClient(cacheServiceUrl, jwtToken);
 
     // ========================================================================
     // BUILD APP & MIDDLEWARE PIPELINE
