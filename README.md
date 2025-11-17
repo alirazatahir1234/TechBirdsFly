@@ -31,9 +31,9 @@ A modern, full-stack application that uses AI to generate professional, ready-to
     │ 5001  │  │   5177    │  │   5007   │  │  5006  │
     └───────┘  └───────────┘  └──────────┘  └────────┘
          │           │            │            │
-    ┌────▼──┐  ┌─────▼────┐  ┌───▼────┐      │
-    │ SQLite│  │  SQLite  │  │MongoDB  │      │
-    └───────┘  └──────────┘  └─────────┘      │
+    ┌────▼──────┐  ┌─────▼────┐  ┌───▼────┐      │
+    │PostgreSQL │  │PostgreSQL│  │MongoDB  │      │
+    └───────────┘  └──────────┘  └─────────┘      │
                                                │
             ┌──────────────────────────────────┤
             │                                  │
@@ -43,11 +43,11 @@ A modern, full-stack application that uses AI to generate professional, ready-to
       └───────────┘  └─────────────┘  └────────────┘
             │              │                   │
       ┌─────▼──┐     ┌─────▼─────┐       ┌────▼───┐
-      │SQLite  │     │PostgreSQL │       │ Redis  │
-      └────────┘     └───────────┘       └────────┘
+      │PostgreSQL    │PostgreSQL │       │ Redis  │
+      └──────────┘   └───────────┘       └────────┘
 
 Infrastructure:
-- PostgreSQL (5433): Auth, EventBus
+- PostgreSQL (5433): Auth, User, Billing, EventBus, Admin, Generator services
 - MongoDB (27017): Image Service
 - Redis (6379): Caching
 - Kafka (9092): Event streaming
@@ -59,12 +59,12 @@ Infrastructure:
 |---------|------|---------|----------|--------|
 | **API Gateway** | 5500 | Route requests to services | - | ✅ Running |
 | **Auth Service** | 5001 | User registration, login, JWT tokens | PostgreSQL | ✅ Running |
-| **User Service** | 5005 | User profiles, settings management | SQLite | ✅ Running |
-| **Billing Service** | 5177 | Billing, subscriptions, payments | SQLite | ⏳ Ready |
+| **User Service** | 5005 | User profiles, settings management | PostgreSQL | ✅ Running |
+| **Billing Service** | 5177 | Billing, subscriptions, payments | PostgreSQL | ⏳ Ready |
 | **Image Service** | 5007 | Image processing, AI image generation | MongoDB | ⏳ Ready |
 | **EventBus Service** | 5030 | Async events, event publishing | PostgreSQL | ⏳ Ready |
-| **Admin Service** | 5006 | Admin dashboard, monitoring | SQLite | ⏳ Ready |
-| **Generator Service** | 5003 | Website generation, project management | SQLite | ⏳ Ready |
+| **Admin Service** | 5006 | Admin dashboard, monitoring | PostgreSQL | ⏳ Ready |
+| **Generator Service** | 5003 | Website generation, project management | PostgreSQL | ⏳ Ready |
 | **Cache Service** | 8100 | Distributed caching layer | Redis | ⏳ Ready |
 | **Frontend** | 3000 | React SPA - User interface | - | ✅ Running |
 
@@ -229,14 +229,24 @@ curl http://localhost:5500/api/auth/me \
 
 Ensure these match your environment:
 
-**PostgreSQL (Local)**
+**PostgreSQL Databases (Local)**
 ```
-Host=localhost;Port=5432;Database=techbirdsfly_auth;Username=postgres;Password=postgres123
+Auth Service:        Host=localhost;Port=5432;Database=techbirdsfly_auth;Username=postgres;Password=postgres123
+User Service:        Host=localhost;Port=5432;Database=techbirdsfly_user;Username=postgres;Password=postgres123
+Billing Service:     Host=localhost;Port=5432;Database=techbirdsfly_billing;Username=postgres;Password=postgres123
+EventBus Service:    Host=localhost;Port=5432;Database=techbirdsfly_eventbus;Username=postgres;Password=postgres123
+Admin Service:       Host=localhost;Port=5432;Database=techbirdsfly_admin;Username=postgres;Password=postgres123
+Generator Service:   Host=localhost;Port=5432;Database=techbirdsfly_generator;Username=postgres;Password=postgres123
 ```
 
-**PostgreSQL (Docker)**
+**PostgreSQL Databases (Docker)**
 ```
-Host=localhost;Port=5433;Database=techbirdsfly_auth;Username=postgres;Password=postgres123
+Auth Service:        Host=localhost;Port=5433;Database=techbirdsfly_auth;Username=postgres;Password=postgres123
+User Service:        Host=localhost;Port=5433;Database=techbirdsfly_user;Username=postgres;Password=postgres123
+Billing Service:     Host=localhost;Port=5433;Database=techbirdsfly_billing;Username=postgres;Password=postgres123
+EventBus Service:    Host=localhost;Port=5433;Database=techbirdsfly_eventbus;Username=postgres;Password=postgres123
+Admin Service:       Host=localhost;Port=5433;Database=techbirdsfly_admin;Username=postgres;Password=postgres123
+Generator Service:   Host=localhost;Port=5433;Database=techbirdsfly_generator;Username=postgres;Password=postgres123
 ```
 
 **MongoDB**
@@ -383,9 +393,8 @@ curl -X POST http://localhost:5500/api/auth/register \
 ### Databases
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| PostgreSQL | 12+ | Auth, EventBus services |
+| PostgreSQL | 12+ | All microservices (Auth, User, Billing, EventBus, Admin, Generator) |
 | MongoDB | 5+ | Image Service storage |
-| SQLite | 3.0 | Development databases |
 | Redis | 6+ | Distributed caching |
 
 ### Message Queue & Events
@@ -848,13 +857,13 @@ A: Gateway has health checks every 30 seconds. If a service is down, Gateway rem
 A: Use Kafka events (async) or direct REST calls via Gateway (sync). For frequent access, cache results in CacheService.
 
 **Q: Can I use SQL Server instead of PostgreSQL?**  
-A: Yes! Change connection strings in `appsettings.json` and adjust EF Core provider. But PostgreSQL is recommended for this project.
+A: Yes! Change connection strings in `appsettings.json` and adjust EF Core provider. But PostgreSQL is recommended for this project as all services are configured to use it.
 
 **Q: How do I debug issues?**  
 A: Check logs with `docker logs <container>`, test endpoints directly with curl, use Gateway health check `/health`, and verify service ports with `lsof -i :5001`.
 
 **Q: What happens if I restart a service?**  
-A: State is preserved in databases (PostgreSQL, MongoDB, SQLite). Sessions/tokens remain valid until expiration.
+A: State is preserved in databases (PostgreSQL for transactional data, MongoDB for images, Redis for cache). Sessions/tokens remain valid until expiration.
 
 **Q: How is authentication handled across services?**  
 A: JWT tokens issued by Auth Service, validated by Gateway. Each service trusts the Gateway's validation.
