@@ -161,7 +161,7 @@ External Services:
 
 **Persistence (BillingDbContext.cs - 150 lines):**
 - Entity Framework Core DbContext
-- SQLite configuration (can switch to PostgreSQL)
+- PostgreSQL configuration for all environments
 - Entity mappings and constraints
 - Index configuration for performance:
   - UserId indices for quick lookups
@@ -212,7 +212,7 @@ External Services:
 
 **Dependency Injection (DependencyInjection.cs - 60 lines):**
 - `AddBillingServices()` extension method
-- Registers DbContext with SQLite
+- Registers DbContext with PostgreSQL
 - Registers all repositories
 - Registers all application services
 - Registers external services

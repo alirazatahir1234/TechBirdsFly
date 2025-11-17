@@ -146,17 +146,17 @@ POST /api/billing/webhook/stripe
 
 ## Database
 
-- **Type**: SQLite (development), SQL Server (production)
+- **Type**: PostgreSQL (development and production)
 - **Tables**: BillingAccounts, Invoices, UsageMetrics
 - **Migrations**: EF Core Code-First
-- **File**: `billing.db`
+- **Connection**: Host=localhost;Port=5432;Database=techbirdsfly_billing;Username=postgres;Password=postgres123
 
 ## Configuration
 
 ```json
 {
   "ConnectionStrings": {
-    "BillingDb": "Data Source=billing.db"
+    "BillingDb": "Host=localhost;Port=5432;Database=techbirdsfly_billing;Username=postgres;Password=postgres123"
   },
   "Jwt": {
     "Key": "your-secret-key",
@@ -173,7 +173,7 @@ POST /api/billing/webhook/stripe
 
 ### Prerequisites
 - .NET 8.0 SDK
-- SQLite (included with .NET)
+- PostgreSQL 12+
 
 ### Setup
 ```bash
@@ -194,10 +194,10 @@ Use `BillingService.http` in VS Code REST Client extension:
 GET http://localhost:5005/api/billing/user/550e8400-e29b-41d4-a716-446655440000
 ```
 
-## Dependencies
+### Dependencies
 
 ### NuGet Packages
-- Microsoft.EntityFrameworkCore.Sqlite 9.0.10
+- Microsoft.EntityFrameworkCore.PostgreSQL 8.0.0
 - Microsoft.EntityFrameworkCore.Design 9.0.10
 - Microsoft.AspNetCore.Authentication.JwtBearer 8.0.8
 - System.IdentityModel.Tokens.Jwt 8.14.0
@@ -263,7 +263,7 @@ ENTRYPOINT ["dotnet", "BillingService.dll"]
 
 ### Environment Variables (Production)
 ```bash
-ConnectionStrings__BillingDb=<sql-server-connection>
+ConnectionStrings__BillingDb=Host=<postgres-server>;Port=5432;Database=techbirdsfly_billing;Username=postgres;Password=<SecurePassword>
 Jwt__Key=<your-jwt-key>
 Jwt__Issuer=TechBirdsFly
 Stripe__ApiKey=<stripe-api-key>

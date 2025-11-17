@@ -155,7 +155,7 @@ cd services/[service-name]/src
 dotnet new webapi -name [ServiceName]Service
 
 # 2. Add NuGet packages
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.PostgreSQL
 dotnet add package System.IdentityModel.Tokens.JsonWebTokenHandler
 
 # 3. Create directory structure

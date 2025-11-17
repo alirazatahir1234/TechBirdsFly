@@ -76,8 +76,7 @@ User (Core)
 ### Prerequisites
 
 - .NET 8.0 SDK or later
-- SQLite (for development)
-- PostgreSQL (for production - optional)
+- PostgreSQL 12+ (for development and production)
 - VS Code or Visual Studio
 
 ### Project Structure
@@ -351,7 +350,7 @@ dotnet ef migrations remove
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| Microsoft.EntityFrameworkCore.Sqlite | 8.0.8 | SQLite database provider |
+| Microsoft.EntityFrameworkCore.PostgreSQL | 8.0.0 | PostgreSQL database provider |
 | Microsoft.AspNetCore.Authentication.JwtBearer | 8.0.8 | JWT authentication |
 | Swashbuckle.AspNetCore | 6.5.0 | Swagger/OpenAPI documentation |
 | System.IdentityModel.Tokens.Jwt | 7.1.2 | JWT token handling |
@@ -383,7 +382,7 @@ user-service:
 
 ### Production Considerations
 
-- ✅ Use PostgreSQL instead of SQLite
+- ✅ PostgreSQL configured for all environments
 - ✅ Set strong JWT secret key
 - ✅ Configure HTTPS certificates
 - ✅ Set up database backups
@@ -505,7 +504,7 @@ app.MapHealthChecks("/health/db", new HealthCheckOptions {
 - ✅ Basic user management
 - ✅ Subscription tracking
 - ✅ JWT authentication
-- ✅ SQLite persistence
+- ✅ PostgreSQL persistence
 
 ### Phase 2
 - [ ] User preferences API (theme, language, AI settings)

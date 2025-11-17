@@ -24,7 +24,7 @@ The **User Service** manages user profiles, preferences, subscriptions, and conn
 ### Prerequisites
 
 - .NET 8.0 SDK or later
-- SQLite (development) / PostgreSQL (production)
+- PostgreSQL 12+ (development and production)
 - Docker (optional, for containerization)
 
 ### Local Setup
@@ -169,12 +169,12 @@ Expected response:
 
 **Development:**
 ```
-Data Source=user.db
+Host=localhost;Port=5432;Database=techbirdsfly_user;Username=postgres;Password=postgres123
 ```
 
 **Production:**
 ```
-Server=postgres-server;Database=users;User Id=postgres;Password=SecurePassword
+Host=postgres-server;Port=5432;Database=techbirdsfly_user;Username=postgres;Password=SecurePassword
 ```
 
 ### Migrations
@@ -220,7 +220,7 @@ See project's `docker-compose.yml` for multi-service setup.
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Data Source=user.db"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=techbirdsfly_user;Username=postgres;Password=postgres123"
   },
   "JwtSettings": {
     "SecretKey": "your-secret-key",

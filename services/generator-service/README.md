@@ -63,6 +63,7 @@ X-User-Id: <user-guid>
 
 ### Prerequisites
 - .NET 8 SDK
+- PostgreSQL 12+
 - Optional: RabbitMQ (for production message queue)
 
 ### Development
@@ -76,14 +77,14 @@ dotnet run --urls http://localhost:5003
 
 The service will:
 1. Restore NuGet packages
-2. Apply EF Core migrations (creates SQLite database)
+2. Apply EF Core migrations (creates PostgreSQL database)
 3. Start on http://localhost:5003
 4. Swagger UI available at http://localhost:5003/swagger
 
 ## Database
 
-- **Type**: SQLite (local dev)
-- **File**: `generator.db` (created on first run)
+- **Type**: PostgreSQL (local dev and production)
+- **Connection**: Host=localhost;Port=5432;Database=techbirdsfly_generator;Username=postgres;Password=postgres123
 - **Tables**: 
   - `Projects` - website generation projects
   - `GenerateWebsiteJobs` - async job tracking
@@ -145,7 +146,7 @@ Environment variables (appsettings.Development.json):
     "Host": "localhost"
   },
   "ConnectionStrings": {
-    "GeneratorDb": "Data Source=generator.db"
+    "GeneratorDb": "Host=localhost;Port=5432;Database=techbirdsfly_generator;Username=postgres;Password=postgres123"
   }
 }
 ```
