@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechBirdsFly.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c105a999bf56633ddedc7c9952c9ee68f66ad4f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20c3fcfb37216673869b8244973c5e261edd06e3")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechBirdsFly.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechBirdsFly.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
