@@ -336,6 +336,7 @@
 /Applications/My Drive/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.pdb
 /Applications/My Drive/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.genruntimeconfig.cache
 /Applications/My Drive/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/ref/AuthService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/appsettings.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/WebAPI/appsettings.Development.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/WebAPI/appsettings.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/AuthService.staticwebassets.endpoints.json
@@ -380,6 +381,7 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.FileProviders.Abstractions.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Http.Polly.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Logging.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Logging.Configuration.dll
@@ -410,6 +412,8 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/OpenTelemetry.Instrumentation.Http.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/OpenTelemetry.Instrumentation.Runtime.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Pipelines.Sockets.Unofficial.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Polly.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Polly.Extensions.Http.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Serilog.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Serilog.AspNetCore.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Serilog.Enrichers.Context.dll
@@ -547,8 +551,10 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/runtimes/browser/lib/net8.0/System.Text.Encodings.Web.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/runtimes/win/lib/net6.0/System.Windows.Extensions.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/CacheClient.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/TechBirdsFly.Shared.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/TechBirdsFly.Shared.pdb
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/CacheClient.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.csproj.AssemblyReference.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/rpswa.dswa.cache.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.GeneratedMSBuildEditorConfig.editorconfig
@@ -572,9 +578,3 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/AuthService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/obj/Debug/net8.0/ref/AuthService.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/appsettings.json
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Microsoft.Extensions.Http.Polly.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Polly.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/Polly.Extensions.Http.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/CacheClient.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/auth-service/src/bin/Debug/net8.0/CacheClient.pdb
