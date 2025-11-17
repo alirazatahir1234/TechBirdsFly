@@ -299,7 +299,7 @@ app.MapGet("/info", () => new
 // Map YARP Reverse Proxy
 app.MapReverseProxy();
 
-Log.Information("🚀 TechBirdsFly API Gateway starting on port 5000");
+Log.Information("🚀 TechBirdsFly API Gateway starting on port 5500");
 Log.Information("✅ JWT Authentication: Enabled");
 Log.Information("✅ Rate Limiting: 100 requests/min per user, 50 requests/30s per IP");
 Log.Information("✅ CORS: Configured for frontend origins");

@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "🔐 .NET Auth Service (Port 5000)",
+      "name": "🔐 .NET Auth Service (Port 5001)",
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/services/auth-service/src/bin/Debug/net8.0/AuthService.dll",
@@ -12,13 +12,13 @@
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5000",
+        "ASPNETCORE_URLS": "http://localhost:5001",
         "Kafka:BootstrapServers": "localhost:9092",
         "Kafka:SchemaRegistry:Url": "http://localhost:8081"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5000/swagger",
+        "uriFormat": "http://localhost:5001/swagger",
         "action": "openExternally"
       }
     },
@@ -189,7 +189,7 @@
       "env": {
         "NODE_ENV": "development",
         "NEXT_PUBLIC_API_URL": "http://localhost:8000",
-        "NEXT_PUBLIC_AUTH_URL": "http://localhost:5000"
+        "NEXT_PUBLIC_AUTH_URL": "http://localhost:5001"
       },
       "serverReadyAction": {
         "pattern": "ready - started server on",
@@ -203,7 +203,7 @@
       "name": "🔵 All .NET Services + Frontend",
       "configurations": [
         "🚪 .NET API Gateway (Port 8000)",
-        "🔐 .NET Auth Service (Port 5000)",
+        "🔐 .NET Auth Service (Port 5001)",
         "📨 .NET Event Bus Service (Port 5020)",
         "👤 .NET User Service (Port 5008)",
         "💳 .NET Billing Service (Port 5002)",

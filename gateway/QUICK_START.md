@@ -25,12 +25,12 @@ Edit `appsettings.Development.json`:
 
 ### 3. Start Gateway
 ```bash
-dotnet run --urls http://localhost:5000
+dotnet run --urls http://localhost:5500
 ```
 
 Expected output:
 ```
-🚀 TechBirdsFly API Gateway starting on port 5000
+🚀 TechBirdsFly API Gateway starting on port 5500
 ✅ JWT Authentication: Enabled
 ✅ Rate Limiting: 100 requests/min per user, 50 requests/30s per IP
 ✅ CORS: Configured for frontend origins
@@ -40,13 +40,13 @@ Expected output:
 ### 4. Verify Gateway
 ```bash
 # Check health
-curl http://localhost:5000/health
+curl http://localhost:5500/health
 
 # Check info
-curl http://localhost:5000/info
+curl http://localhost:5500/info
 
 # Open Swagger
-open http://localhost:5000/swagger
+open http://localhost:5500/swagger
 ```
 
 ---
@@ -55,22 +55,47 @@ open http://localhost:5000/swagger
 
 ### Test 1: Public Route (No Auth)
 ```bash
-# Register a new user
-curl -X POST http://localhost:5000/api/auth/register \
+## Testing Endpoints
+
+### Health & Info
+```bash
+curl -X POST http://localhost:5500/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
-    "password": "Test123!",
+    "password": "Test@123",
     "fullName": "Test User"
   }'
+```
 
-# Login to get JWT token
-curl -X POST http://localhost:5000/api/auth/login \
+### Login
+```bash
+curl -X POST http://localhost:5500/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
-    "password": "Test123!"
+    "password": "Test@123"
   }'
+```
+
+### Get Current User
+```bash
+curl http://localhost:5500/api/users/me \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### Monitor Gateway Activity
+```bash
+  curl -s http://localhost:5500/info | grep -o "version"
+```
+
+### CORS Preflight
+```bash
+curl -X OPTIONS http://localhost:5500/api/auth/login \
+  -H "Origin: http://localhost:3000" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: Content-Type, Authorization"
+```
 ```
 
 ### Test 2: Protected Route (JWT Required)
@@ -79,7 +104,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 TOKEN="your_jwt_token_here"
 
 # Get user profile
-curl http://localhost:5000/api/users/me \
+curl http://localhost:5500/api/users/me \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -87,7 +112,7 @@ curl http://localhost:5000/api/users/me \
 ```bash
 # Run 110 requests quickly (should get 429 after 100)
 for i in {1..110}; do
-  curl -s http://localhost:5000/info | grep -o "version"
+  curl -s http://localhost:5500/info | grep -o "version"
   echo " - Request $i"
 done
 ```
@@ -96,7 +121,7 @@ Expected: First 100 succeed, then get 429 Too Many Requests
 
 ### Test 4: CORS
 ```bash
-curl -X OPTIONS http://localhost:5000/api/auth/login \
+curl -X OPTIONS http://localhost:5500/api/auth/login \
   -H "Origin: http://localhost:3000" \
   -H "Access-Control-Request-Method: POST" \
   -v
@@ -117,7 +142,7 @@ docker build -t yarp-gateway .
 # Run
 docker run -d \
   --name yarp-gateway \
-  -p 5000:5000 \
+  -p 5500:5500 \
   -e JWT__KEY="dev-secret-key-minimum-32-characters-long" \
   yarp-gateway:latest
 
@@ -125,7 +150,7 @@ docker run -d \
 docker logs -f yarp-gateway
 
 # Test health
-curl http://localhost:5000/health
+curl http://localhost:5500/health
 ```
 
 ---
@@ -135,7 +160,7 @@ curl http://localhost:5000/health
 ### Real-time Logs
 ```bash
 # Terminal 1: Start gateway
-dotnet run --urls http://localhost:5000
+dotnet run --urls http://localhost:5500
 
 # Terminal 2: Monitor logs
 tail -f /path/to/logs
@@ -150,7 +175,7 @@ tail -f /path/to/logs
 ### Health Check
 ```bash
 # Check all services
-curl http://localhost:5000/health | jq
+curl http://localhost:5500/health | jq
 
 # Expected response:
 {
@@ -169,7 +194,7 @@ curl http://localhost:5000/health | jq
 
 ### Change Port
 ```bash
-# Default: 5000
+# Default: 5500
 dotnet run --urls http://localhost:8080
 ```
 

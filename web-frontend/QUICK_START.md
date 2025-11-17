@@ -4,7 +4,7 @@
 
 ### Prerequisites
 - Node.js 16+
-- YARP Gateway running on port 5000
+- YARP Gateway running on port 5500
 - All microservices running
 
 ### Install & Run
@@ -116,7 +116,7 @@ src/
 | Delete Image | DELETE /api/images/{id} | Image (5007) |
 | Image Stats | GET /api/images/stats/summary | Image (5007) |
 
-**All requests flow through YARP Gateway (5000)**
+**All requests flow through YARP Gateway (5500)**
 
 ## 🐛 Troubleshooting
 
@@ -131,10 +131,10 @@ npm install
 ```bash
 # Check gateway is running
 cd gateway/yarp-gateway/src
-dotnet run --urls http://localhost:5000
+dotnet run --urls http://localhost:5500
 
 # In another terminal, check it's working
-curl http://localhost:5000/health
+curl http://localhost:5500/health
 ```
 
 ### Blank page at localhost:3000
@@ -150,7 +150,7 @@ curl http://localhost:5000/health
 curl http://localhost:5001/swagger
 
 # Verify YARP is routing correctly
-curl http://localhost:5000/api/auth/login -X POST
+curl http://localhost:5500/api/auth/login -X POST
 ```
 
 ### Images won't generate
@@ -180,14 +180,14 @@ serve -s build -l 3000
 
 - **Full Documentation**: [PHASE3_3_DASHBOARD_IMPLEMENTATION.md](PHASE3_3_DASHBOARD_IMPLEMENTATION.md)
 - **Dashboard README**: [techbirdsfly-frontend/README.md](techbirdsfly-frontend/README.md)
-- **API Documentation**: Access Swagger at http://localhost:5000/swagger
+- **API Documentation**: Access Swagger at http://localhost:5500/swagger
 
 ## ✅ Checklist
 
 - [ ] Node.js 16+ installed
 - [ ] npm install completed
 - [ ] All services running
-- [ ] YARP Gateway running on 5000
+- [ ] YARP Gateway running on 5500
 - [ ] http://localhost:3000 opens in browser
 - [ ] Can register new account
 - [ ] Can login with credentials
