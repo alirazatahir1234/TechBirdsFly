@@ -16,7 +16,7 @@ using TechBirdsFly.Shared.Events.Contracts;
 
 namespace AuthService.IntegrationTests.Setup;
 
-public class CustomWebApplicationFactory 
+public class CustomWebApplicationFactory
     : WebApplicationFactory<Program>
 {
     static CustomWebApplicationFactory()

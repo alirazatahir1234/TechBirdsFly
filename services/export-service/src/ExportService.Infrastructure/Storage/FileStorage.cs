@@ -13,13 +13,13 @@ public class LocalFileStorage : IFileStorage
     public LocalFileStorage(IConfiguration configuration, ILogger<LocalFileStorage> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
+
         // Read export directory from configuration, default to ./exports
         _exportDirectory = configuration["Storage:ExportDirectory"] ?? Path.Combine(Directory.GetCurrentDirectory(), "exports");
-        
+
         // Create directory if it doesn't exist
         Directory.CreateDirectory(_exportDirectory);
-        
+
         _logger.LogInformation("File storage initialized at: {ExportDirectory}", _exportDirectory);
     }
 
@@ -80,7 +80,7 @@ public class LocalFileStorage : IFileStorage
         try
         {
             var projectDirectory = Path.Combine(_exportDirectory, projectId);
-            
+
             if (!Directory.Exists(projectDirectory))
             {
                 _logger.LogWarning("Project directory not found: {ProjectDirectory}", projectDirectory);
@@ -88,7 +88,7 @@ public class LocalFileStorage : IFileStorage
             }
 
             Directory.Delete(projectDirectory, recursive: true);
-            
+
             _logger.LogInformation("Deleted exports for project {ProjectId}", projectId);
             return Task.FromResult(true);
         }
@@ -112,7 +112,7 @@ public class AzureBlobStorage : IFileStorage
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _containerName = configuration["Storage:AzureContainer"] ?? "exports";
-        
+
         _logger.LogInformation("Azure Blob Storage initialized with container: {ContainerName}", _containerName);
     }
 

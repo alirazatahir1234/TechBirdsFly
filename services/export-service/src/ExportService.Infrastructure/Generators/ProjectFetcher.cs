@@ -42,7 +42,7 @@ public class ProjectFetcher : IProjectFetcher
                 return project ?? throw new InvalidOperationException("Invalid project data");
             }
 
-            _logger.LogWarning("GeneratorService returned {StatusCode} for project {ProjectId}", 
+            _logger.LogWarning("GeneratorService returned {StatusCode} for project {ProjectId}",
                 response.StatusCode, projectId);
         }
         catch (HttpRequestException ex)
