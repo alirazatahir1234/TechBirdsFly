@@ -19,6 +19,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// 3. Cache invalidation
 /// 4. Error handling
 /// </summary>
+[Collection("Integration Tests")]
 public class LogoutIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

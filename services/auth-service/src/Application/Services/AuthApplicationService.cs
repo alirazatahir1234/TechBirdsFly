@@ -197,4 +197,38 @@ public class AuthApplicationService
         // Invalidate cache
         await _cacheService.RemoveAsync($"user_profile_{userId}", cancellationToken);
     }
+
+    /// <summary>
+    /// Reset user password
+    /// </summary>
+    public async Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request, CancellationToken cancellationToken = default)
+    {
+        // Validate input
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ArgumentException("Email is required");
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 6)
+            throw new ArgumentException("Password must be at least 6 characters");
+
+        // Find user by email
+        var user = await _unitOfWork.UserRepository.GetByEmailAsync(request.Email, cancellationToken)
+            ?? throw new KeyNotFoundException($"User with email {request.Email} not found");
+
+        // Hash new password
+        var newPasswordHash = _passwordService.HashPassword(request.NewPassword);
+
+        // Update password
+        user.UpdatePassword(newPasswordHash);
+
+        // Persist changes
+        await _unitOfWork.UserRepository.UpdateAsync(user, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Invalidate cache
+        await _cacheService.RemoveAsync($"user_profile_{user.Id}", cancellationToken);
+
+        _logger.LogInformation("Password reset successfully for user: {UserId}", user.Id);
+
+        return true;
+    }
 }

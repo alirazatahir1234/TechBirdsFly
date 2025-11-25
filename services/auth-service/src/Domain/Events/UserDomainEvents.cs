@@ -59,3 +59,15 @@ public class UserLoginDomainEvent : DomainEvent
         IpAddress = ipAddress;
     }
 }
+
+public class UserPasswordChangedDomainEvent : DomainEvent
+{
+    public Guid UserId { get; }
+    public string Email { get; }
+
+    public UserPasswordChangedDomainEvent(Guid userId, string email)
+    {
+        UserId = userId;
+        Email = email;
+    }
+}

@@ -1,42 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
 
-// Protected routes that require authentication
-const protectedRoutes = ['/dashboard', '/builder', '/projects', '/settings', '/profile'];
+/**
+ * ⚠️ IMPORTANT: JWT Authentication Architecture
+ * 
+ * This app uses JWT tokens stored in localStorage (client-side).
+ * Middleware CANNOT access localStorage, so we CANNOT validate tokens here.
+ * 
+ * Authentication is handled 100% client-side by Zustand authStore:
+ * - User logs in → Backend returns JWT tokens
+ * - Tokens stored in localStorage
+ * - Dashboard checks useAuthStore() hook
+ * - If not authenticated → redirects to /login (client-side)
+ * 
+ * Therefore, middleware should NOT block any routes.
+ * Client-side components handle auth validation.
+ */
 
-export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  // Check if route is protected
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  if (!isProtectedRoute) {
-    return NextResponse.next();
-  }
-
-  // Get session
-  const session = await auth();
-
-  // If no session and trying to access protected route, redirect to login
-  if (!session) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // If authenticated, allow access
+export function middleware(request: NextRequest) {
+  // Allow all routes to load
+  // Client-side Zustand store will handle authentication checks
   return NextResponse.next();
 }
 
-// Configure which routes trigger the middleware
+// Don't run middleware on any routes
+// All auth is client-side via Zustand
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/builder/:path*',
-    '/projects/:path*',
-    '/settings/:path*',
-    '/profile/:path*',
-  ],
+  matcher: [],
 };

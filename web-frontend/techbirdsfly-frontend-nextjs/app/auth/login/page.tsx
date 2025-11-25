@@ -11,6 +11,9 @@ import { FormCheckbox } from '@/components/forms/FormCheckbox';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
+import { AppLogoIcon, AppLogoText } from '@/components/AppLogo';
+
+const REMEMBER_ME_KEY = 'login_remember_email';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,6 +24,7 @@ export default function LoginPage() {
     control,
     handleSubmit,
     formState: { isSubmitting },
+    setValue,
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -30,11 +34,40 @@ export default function LoginPage() {
     },
   });
 
+  // Load saved email on mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedEmail = localStorage.getItem(REMEMBER_ME_KEY);
+      if (savedEmail) {
+        setValue('email', savedEmail);
+        setValue('rememberMe', true);
+      }
+    }
+  }, [setValue]);
+
   const onSubmit = async (data: LoginFormData) => {
     setApiError('');
     try {
       await login(data.email, data.password);
-      router.push('/dashboard');
+      
+      // Save or clear email based on remember me
+      if (typeof window !== 'undefined') {
+        if (data.rememberMe) {
+          localStorage.setItem(REMEMBER_ME_KEY, data.email);
+        } else {
+          localStorage.removeItem(REMEMBER_ME_KEY);
+        }
+      }
+      
+      // Get the callback URL from query params, default to dashboard
+      const searchParams = new URLSearchParams(window.location.search);
+      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+      const redirectUrl = decodeURIComponent(callbackUrl);
+      
+      // Small delay to ensure Zustand state is persisted before redirect
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 100);
     } catch (error) {
       setApiError(error instanceof Error ? error.message : 'Login failed');
     }
@@ -55,6 +88,12 @@ export default function LoginPage() {
       {/* Left Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-gray-50">
         <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="mb-8 flex flex-col items-center justify-center gap-1">
+            <AppLogoIcon size="lg" />
+            <AppLogoText size="md" />
+          </div>
+
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Login</h1>
@@ -101,7 +140,7 @@ export default function LoginPage() {
 
             {/* Forgot Password */}
             <div className="text-right">
-              <Link href="/forgot-password" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
+              <Link href="/auth/forgot-password" className="text-purple-600 hover:text-purple-700 font-medium text-sm">
                 Forgot password?
               </Link>
             </div>
@@ -147,7 +186,7 @@ export default function LoginPage() {
           {/* Sign Up Link */}
           <p className="text-center text-gray-600 mt-8">
             Don't have an account?{' '}
-            <Link href="/register" className="text-purple-600 hover:text-purple-700 font-semibold">
+            <Link href="/auth/register" className="text-purple-600 hover:text-purple-700 font-semibold">
               Sign up
             </Link>
           </p>
@@ -175,7 +214,7 @@ export default function LoginPage() {
           {/* Features List */}
           <div className="space-y-4 my-8">
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-purple-900 text-sm font-bold">✓</span>
               </div>
               <div className="text-left">
@@ -185,7 +224,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-purple-900 text-sm font-bold">✓</span>
               </div>
               <div className="text-left">
@@ -195,7 +234,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-purple-900 text-sm font-bold">✓</span>
               </div>
               <div className="text-left">
@@ -205,7 +244,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-purple-300 flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-purple-900 text-sm font-bold">✓</span>
               </div>
               <div className="text-left">

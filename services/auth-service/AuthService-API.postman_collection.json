@@ -1,0 +1,343 @@
+{
+  "info": {
+    "_postman_id": "authservice-api-collection",
+    "name": "TechBirdsFly Auth Service API",
+    "description": "Complete API collection for TechBirdsFly Authentication Service\n\n**Base URL**: http://localhost:5001\n**Version**: 1.0.0\n**Last Updated**: November 17, 2025",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('userId', jsonData.userId);",
+                  "    pm.environment.set('userEmail', pm.request.body.raw ? JSON.parse(pm.request.body.raw).email : '');",
+                  "    console.log('✅ User registered successfully');",
+                  "    console.log('User ID:', jsonData.userId);",
+                  "} else {",
+                  "    console.log('❌ Registration failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"confirmPassword\": \"SecurePassword123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user account\n\n**Request Body**:\n- `email` (string, required): User email address\n- `password` (string, required): Password (min 6 characters)\n- `confirmPassword` (string, required): Must match password\n- `firstName` (string, required): User's first name\n- `lastName` (string, required): User's last name\n\n**Response**:\n- **201 Created**: User successfully registered\n- **400 Bad Request**: Validation error\n- **409 Conflict**: Email already exists"
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('accessToken', jsonData.accessToken);",
+                  "    pm.environment.set('refreshToken', jsonData.refreshToken);",
+                  "    console.log('✅ Login successful');",
+                  "    console.log('Access Token saved');",
+                  "} else {",
+                  "    console.log('❌ Login failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Authenticate user and receive JWT tokens\n\n**Request Body**:\n- `email` (string, required): User email\n- `password` (string, required): User password\n\n**Response**:\n- **200 OK**: Authentication successful, returns access and refresh tokens\n- **400 Bad Request**: Missing email or password\n- **401 Unauthorized**: Invalid credentials"
+          }
+        },
+        {
+          "name": "Validate Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('✅ Token validation result:');",
+                  "    console.log('Valid:', jsonData.valid);",
+                  "    console.log('From Cache:', jsonData.fromCache);",
+                  "} else {",
+                  "    console.log('❌ Token validation failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/validate-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "validate-token"
+              ]
+            },
+            "description": "Validate JWT token and check if it's cached\n\n**Request Body**:\n- `token` (string, required): JWT token to validate\n\n**Response**:\n- **200 OK**: Token validation result with `valid` and `fromCache` flags\n- **400 Bad Request**: Token is required"
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout?email={{userEmail}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{userEmail}}"
+                }
+              ]
+            },
+            "description": "Logout user and invalidate session\n\n**Query Parameters**:\n- `email` (string, required): User email address\n\n**Response**:\n- **200 OK**: Successfully logged out (idempotent operation)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    console.log('✅ Profile retrieved successfully');",
+                  "    console.log('User ID:', jsonData.userId);",
+                  "    console.log('Email:', jsonData.email);",
+                  "} else if (pm.response.code === 404) {",
+                  "    console.log('❌ User not found');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile",
+                "{{userId}}"
+              ]
+            },
+            "description": "Retrieve user profile information\n\n**Path Parameters**:\n- `userId` (UUID, required): User ID\n\n**Headers**:\n- `Authorization`: Bearer token (optional)\n\n**Response**:\n- **200 OK**: User profile details\n- **404 Not Found**: User doesn't exist"
+          }
+        },
+        {
+          "name": "Confirm Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/confirm-email/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "confirm-email",
+                "{{userId}}"
+              ]
+            },
+            "description": "Confirm user's email address\n\n**Path Parameters**:\n- `userId` (UUID, required): User ID\n\n**Response**:\n- **200 OK**: Email confirmed successfully\n- **404 Not Found**: User not found"
+          }
+        },
+        {
+          "name": "Deactivate Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('✅ Account deactivated successfully');",
+                  "    pm.environment.unset('userId');",
+                  "    pm.environment.unset('accessToken');",
+                  "} else if (pm.response.code === 404) {",
+                  "    console.log('❌ User not found');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/deactivate/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "deactivate",
+                "{{userId}}"
+              ]
+            },
+            "description": "Deactivate user account and clear associated cache\n\n**Path Parameters**:\n- `userId` (UUID, required): User ID\n\n**Response**:\n- **200 OK**: Account deactivated successfully\n- **404 Not Found**: User not found"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check Auth Service health status and database connectivity\n\n**Response**:\n- **200 OK**: Service is healthy\n- **503 Service Unavailable**: Service or database is down"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set default base URL if not already set",
+          "if (!pm.environment.get('baseUrl')) {",
+          "    pm.environment.set('baseUrl', 'http://localhost:5001');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userEmail",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

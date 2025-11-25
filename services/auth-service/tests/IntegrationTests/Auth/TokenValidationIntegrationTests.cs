@@ -20,6 +20,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// 3. Cache behavior
 /// 4. Error handling
 /// </summary>
+[Collection("Integration Tests")]
 public class TokenValidationIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

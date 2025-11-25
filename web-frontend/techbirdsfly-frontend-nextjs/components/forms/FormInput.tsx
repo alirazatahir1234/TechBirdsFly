@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface FormInputProps<TFieldValues extends FieldValues = any> {
   control: Control<TFieldValues>;
@@ -37,6 +38,10 @@ export const FormInput = React.forwardRef<
     },
     ref
   ) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const isPasswordField = type === 'password';
+    const inputType = isPasswordField && showPassword ? 'text' : type;
+
     return (
       <Controller
         control={control}
@@ -56,17 +61,32 @@ export const FormInput = React.forwardRef<
                 </div>
               )}
               <Input
-                type={type}
+                type={inputType}
                 placeholder={placeholder}
                 disabled={disabled}
                 className={cn(
                   'w-full',
                   icon && 'pl-10',
+                  isPasswordField && 'pr-10',
                   fieldError && 'border-red-500 focus-visible:ring-red-500'
                 )}
                 {...field}
                 value={field.value || ''}
               />
+              {isPasswordField && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              )}
             </div>
             {fieldError && (
               <p className="mt-1 text-sm text-red-500">

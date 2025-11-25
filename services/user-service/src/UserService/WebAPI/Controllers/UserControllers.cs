@@ -10,268 +10,29 @@ using UserService.Application.Interfaces;
 namespace UserService.WebAPI.Controllers;
 
 /// <summary>
-/// Authentication controller for user registration, login, and token management
+/// User Management Controller
+/// 
+/// Handles all user-related operations including profile management, role assignment,
+/// and account status operations. Authentication-related operations (login, register, etc.)
+/// are handled by the AuthController.
+/// 
+/// Authorization:
+/// - [Authorize] - Requires authentication token
+/// - [Authorize(Roles = "Admin")] - Requires Admin role
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class AuthController : ControllerBase
-{
-    private readonly IAuthService _authService;
-    private readonly ILogger<AuthController> _logger;
-
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
-    {
-        _authService = authService ?? throw new ArgumentNullException(nameof(authService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
-    /// <summary>
-    /// Register a new user
-    /// </summary>
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<AuthResponse>> Register(
-        [FromBody] RegisterRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            _logger.LogInformation("User registration attempt for {Username}", request.Username);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var response = await _authService.RegisterAsync(request, cancellationToken);
-
-            if (!response.Success)
-                return BadRequest(new { message = response.Message });
-
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during user registration");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Registration failed" });
-        }
-    }
-
-    /// <summary>
-    /// Login user with credentials
-    /// </summary>
-    [HttpPost("login")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<AuthResponse>> Login(
-        [FromBody] LoginRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            _logger.LogInformation("User login attempt for {Username}", request.Username);
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var response = await _authService.LoginAsync(request, cancellationToken);
-
-            if (!response.Success)
-                return Unauthorized(new { message = response.Message });
-
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during user login");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Login failed" });
-        }
-    }
-
-    /// <summary>
-    /// Verify user email
-    /// </summary>
-    [HttpPost("verify-email")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<AuthResponse>> VerifyEmail(
-        [FromBody] VerifyEmailRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var response = await _authService.VerifyEmailAsync(request, cancellationToken);
-
-            if (!response.Success)
-                return BadRequest(new { message = response.Message });
-
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error verifying email");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Email verification failed" });
-        }
-    }
-
-    /// <summary>
-    /// Resend verification email
-    /// </summary>
-    [HttpPost("resend-verification-email")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse>> ResendVerificationEmail(
-        [FromBody] ForgotPasswordRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _authService.ResendVerificationEmailAsync(request.Email, cancellationToken);
-
-            if (!result)
-                return BadRequest(new { message = "Unable to resend verification email" });
-
-            return Ok(new ApiResponse(true, "Verification email sent"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error resending verification email");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to resend verification email" });
-        }
-    }
-
-    /// <summary>
-    /// Forgot password request
-    /// </summary>
-    [HttpPost("forgot-password")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse>> ForgotPassword(
-        [FromBody] ForgotPasswordRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _authService.ForgotPasswordAsync(request, cancellationToken);
-
-            if (!result)
-                return BadRequest(new { message = "Unable to process forgot password request" });
-
-            return Ok(new ApiResponse(true, "Password reset email sent"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error processing forgot password");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to process forgot password request" });
-        }
-    }
-
-    /// <summary>
-    /// Reset password with token
-    /// </summary>
-    [HttpPost("reset-password")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse>> ResetPassword(
-        [FromBody] ResetPasswordRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _authService.ResetPasswordAsync(request, cancellationToken);
-
-            if (!result)
-                return BadRequest(new { message = "Unable to reset password" });
-
-            return Ok(new ApiResponse(true, "Password reset successfully"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error resetting password");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to reset password" });
-        }
-    }
-
-    /// <summary>
-    /// Logout user
-    /// </summary>
-    [Authorize]
-    [HttpPost("logout")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse>> Logout(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-                return Unauthorized();
-
-            await _authService.LogoutAsync(userId, cancellationToken);
-            return Ok(new ApiResponse(true, "Logged out successfully"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during logout");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Logout failed" });
-        }
-    }
-
-    /// <summary>
-    /// Validate token
-    /// </summary>
-    [HttpPost("validate-token")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResponse>> ValidateToken(
-        [FromBody] TokenValidationRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var isValid = await _authService.ValidateTokenAsync(request.Token, cancellationToken);
-            return isValid ? Ok(new ApiResponse(true, "Token is valid")) : Unauthorized(new ApiResponse(false, "Invalid token"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error validating token");
-            return Unauthorized(new ApiResponse(false, "Token validation failed"));
-        }
-    }
-}
-
-/// <summary>
-/// User management controller
-/// </summary>
-[ApiController]
-[Route("api/[controller]")]
 [Authorize]
-[Produces("application/json")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IProfileService _profileService;
     private readonly ILogger<UsersController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the UsersController
+    /// </summary>
     public UsersController(
         IUserService userService,
         IProfileService profileService,
@@ -282,11 +43,21 @@ public class UsersController : ControllerBase
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    // =========================================================================
+    // GET USER BY ID (Admin + User Owner)
+    // =========================================================================
+
     /// <summary>
     /// Get user by ID
+    /// 
+    /// Only Admin users or the user owner can retrieve a user profile.
     /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>User details or error</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse<UserDto>>> GetUser(
@@ -295,56 +66,124 @@ public class UsersController : ControllerBase
     {
         try
         {
+            // Ensure user can access only their profile unless Admin
+            var userId = GetUserId();
+
+            if (userId != id && !User.IsInRole("Admin"))
+                return Forbid();
+
             var user = await _userService.GetUserByIdAsync(id, cancellationToken);
 
             if (user == null)
                 return NotFound(new ApiResponse<UserDto>(false, null, "User not found"));
 
+            _logger.LogInformation("User {RequestorId} retrieved user {UserId}", userId, id);
             return Ok(new ApiResponse<UserDto>(true, user));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting user {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<UserDto>(false, null, "Error retrieving user"));
+            _logger.LogError(ex, "Error getting user by ID");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse<UserDto>(false, null, "Error retrieving user"));
         }
     }
 
+    // =========================================================================
+    // CURRENT USER PROFILE (Self)
+    // =========================================================================
+
     /// <summary>
-    /// Get current user
+    /// Get current authenticated user's profile
+    /// 
+    /// Returns the profile of the currently authenticated user.
     /// </summary>
-    [HttpGet("profile/current")]
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Current user's profile</returns>
+    [HttpGet("profile/me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse<UserDto>>> GetCurrentUser(CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ApiResponse<UserDto>>> GetCurrentUser(
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-                return Unauthorized();
-
+            var userId = GetUserId();
             var user = await _userService.GetUserByIdAsync(userId, cancellationToken);
 
             if (user == null)
-                return NotFound(new ApiResponse<UserDto>(false, null, "User not found"));
+                return NotFound(new ApiResponse<UserDto>(false, null, "User profile not found"));
 
             return Ok(new ApiResponse<UserDto>(true, user));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting current user");
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<UserDto>(false, null, "Error retrieving user"));
+            _logger.LogError(ex, "Error retrieving current user profile");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse<UserDto>(false, null, "Error retrieving profile"));
         }
     }
 
+    // =========================================================================
+    // UPDATE PROFILE (Self Only)
+    // =========================================================================
+
     /// <summary>
-    /// Get users with pagination
+    /// Update current user's profile
+    /// 
+    /// Users can only update their own profile (firstName, lastName, etc.).
+    /// Password changes are handled by the AuthController.
     /// </summary>
+    /// <param name="request">Profile update request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Updated user profile</returns>
+    [HttpPut("profile/update")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<ApiResponse<UserDto>>> UpdateProfile(
+        [FromBody] UpdateProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var userId = GetUserId();
+
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse<UserDto>(false, null, "Invalid request"));
+
+            var updated = await _profileService.UpdateProfileAsync(userId, request, cancellationToken);
+
+            _logger.LogInformation("User {UserId} updated their profile", userId);
+            return Ok(new ApiResponse<UserDto>(true, updated));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating profile");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse<UserDto>(false, null, "Error updating profile"));
+        }
+    }
+
+    // =========================================================================
+    // LIST USERS (Admin Only)
+    // =========================================================================
+
+    /// <summary>
+    /// Get paginated list of users with filtering and sorting
+    /// 
+    /// Admin only. Supports pagination, filtering by role/status, and search.
+    /// </summary>
+    /// <param name="pageNumber">Page number (default: 1)</param>
+    /// <param name="pageSize">Page size (default: 20)</param>
+    /// <param name="sortBy">Sort by field (default: null)</param>
+    /// <param name="ascending">Sort order (default: true)</param>
+    /// <param name="filterByRole">Filter by role (default: null)</param>
+    /// <param name="search">Search term (default: null)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated list of users</returns>
     [Authorize(Roles = "Admin")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse<PaginatedResponse<UserListItemDto>>>> GetUsers(
@@ -353,137 +192,83 @@ public class UsersController : ControllerBase
         [FromQuery] string? sortBy = null,
         [FromQuery] bool ascending = true,
         [FromQuery] string? filterByRole = null,
-        [FromQuery] string? filterByStatus = null,
-        [FromQuery] string? searchTerm = null,
+        [FromQuery] string? search = null,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var query = new ListUsersQuery(pageNumber, pageSize, sortBy, ascending, filterByRole, filterByStatus, searchTerm);
+            var query = new ListUsersQuery(pageNumber, pageSize, sortBy, ascending, filterByRole, search);
             var result = await _userService.GetUsersAsync(query, cancellationToken);
 
+            _logger.LogInformation("Admin retrieved user list: page {PageNumber}, size {PageSize}", pageNumber, pageSize);
             return Ok(new ApiResponse<PaginatedResponse<UserListItemDto>>(true, result));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting users");
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<PaginatedResponse<UserListItemDto>>(false, null, "Error retrieving users"));
+            _logger.LogError(ex, "Error listing users");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse<PaginatedResponse<UserListItemDto>>(false, null, "Error retrieving users"));
         }
     }
 
-    /// <summary>
-    /// Update user profile
-    /// </summary>
-    [HttpPut("{id}/profile")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse<UserDto>>> UpdateProfile(
-        [FromRoute] Guid id,
-        [FromBody] UpdateProfileRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            // Verify user can only update their own profile
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var currentUserId))
-                return Unauthorized();
-
-            if (currentUserId != id)
-                return Forbid();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _userService.UpdateUserAsync(id, request, cancellationToken);
-            return Ok(new ApiResponse<UserDto>(true, result));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating user profile {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<UserDto>(false, null, "Error updating profile"));
-        }
-    }
+    // =========================================================================
+    // ADMIN: DEACTIVATE USER
+    // =========================================================================
 
     /// <summary>
-    /// Change user password
+    /// Deactivate a user account
+    /// 
+    /// Admin only. Sets the user's IsActive flag to false.
     /// </summary>
-    [HttpPost("{id}/change-password")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse>> ChangePassword(
-        [FromRoute] Guid id,
-        [FromBody] ChangePasswordRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var currentUserId))
-                return Unauthorized();
-
-            if (currentUserId != id)
-                return Forbid();
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // Use auth service to change password
-            var authService = HttpContext.RequestServices.GetRequiredService<IAuthService>();
-            var result = await authService.ChangePasswordAsync(id, request, cancellationToken);
-
-            if (!result)
-                return BadRequest(new ApiResponse(false, "Unable to change password"));
-
-            return Ok(new ApiResponse(true, "Password changed successfully"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error changing password for user {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse(false, "Error changing password"));
-        }
-    }
-
-    /// <summary>
-    /// Deactivate user account
-    /// </summary>
+    /// <param name="id">User ID to deactivate</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Success or error</returns>
     [Authorize(Roles = "Admin")]
     [HttpPost("{id}/deactivate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse>> DeactivateUser(
         [FromRoute] Guid id,
-        [FromBody] DeactivateUserRequest? request = null,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _userService.DeactivateUserAsync(id, request?.Reason, cancellationToken);
+            var adminId = GetUserId();
+            var success = await _userService.DeactivateUserAsync(id, cancellationToken);
 
-            if (!result)
+            if (!success)
                 return NotFound(new ApiResponse(false, "User not found"));
 
+            _logger.LogInformation("Admin {AdminId} deactivated user {UserId}", adminId, id);
             return Ok(new ApiResponse(true, "User deactivated successfully"));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deactivating user {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse(false, "Error deactivating user"));
+            _logger.LogError(ex, "Error deactivating user");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse(false, "Error deactivating user"));
         }
     }
 
+    // =========================================================================
+    // ADMIN: REACTIVATE USER
+    // =========================================================================
+
     /// <summary>
-    /// Reactivate user account
+    /// Reactivate a deactivated user account
+    /// 
+    /// Admin only. Sets the user's IsActive flag back to true.
     /// </summary>
+    /// <param name="id">User ID to reactivate</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Success or error</returns>
     [Authorize(Roles = "Admin")]
     [HttpPost("{id}/reactivate")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse>> ReactivateUser(
         [FromRoute] Guid id,
@@ -491,27 +276,42 @@ public class UsersController : ControllerBase
     {
         try
         {
+            var adminId = GetUserId();
             var result = await _userService.ReactivateUserAsync(id, cancellationToken);
 
             if (!result)
                 return NotFound(new ApiResponse(false, "User not found"));
 
+            _logger.LogInformation("Admin {AdminId} reactivated user {UserId}", adminId, id);
             return Ok(new ApiResponse(true, "User reactivated successfully"));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error reactivating user {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse(false, "Error reactivating user"));
+            _logger.LogError(ex, "Error reactivating user");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse(false, "Error reactivating user"));
         }
     }
 
+    // =========================================================================
+    // ADMIN: ASSIGN ROLE
+    // =========================================================================
+
     /// <summary>
-    /// Assign role to user
+    /// Assign a role to a user
+    /// 
+    /// Admin only. Assigns the specified role to the target user.
     /// </summary>
+    /// <param name="id">User ID</param>
+    /// <param name="request">Role assignment request containing the role</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Success or error</returns>
     [Authorize(Roles = "Admin")]
     [HttpPost("{id}/assign-role")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse>> AssignRole(
         [FromRoute] Guid id,
@@ -520,31 +320,41 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var assignedBy))
-                return Unauthorized();
+            var adminId = GetUserId();
 
-            var result = await _userService.AssignRoleAsync(id, request.Role, assignedBy, cancellationToken);
+            if (!ModelState.IsValid)
+                return BadRequest(new ApiResponse(false, "Invalid request"));
+
+            var result = await _userService.AssignRoleAsync(id, request.Role, adminId, cancellationToken);
 
             if (!result)
                 return NotFound(new ApiResponse(false, "User not found or invalid role"));
 
+            _logger.LogInformation("Admin {AdminId} assigned role {Role} to user {UserId}", adminId, request.Role, id);
             return Ok(new ApiResponse(true, "Role assigned successfully"));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error assigning role to user {UserId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse(false, "Error assigning role"));
+            _logger.LogError(ex, "Error assigning role");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse(false, "Error assigning role"));
         }
     }
 
+    // =========================================================================
+    // ADMIN: USER STATISTICS
+    // =========================================================================
+
     /// <summary>
-    /// Get user statistics (Admin only)
+    /// Get user statistics and analytics
+    /// 
+    /// Admin only. Returns statistics like total users, active users, by role, etc.
     /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>User statistics</returns>
     [Authorize(Roles = "Admin")]
-    [HttpGet("admin/statistics")]
+    [HttpGet("statistics")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ApiResponse<UserStatisticsDto>>> GetStatistics(
@@ -553,20 +363,47 @@ public class UsersController : ControllerBase
         try
         {
             var stats = await _userService.GetUserStatisticsAsync(cancellationToken);
+            _logger.LogInformation("Admin retrieved user statistics");
             return Ok(new ApiResponse<UserStatisticsDto>(true, stats));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting user statistics");
-            return StatusCode(StatusCodes.Status500InternalServerError, new ApiResponse<UserStatisticsDto>(false, null, "Error retrieving statistics"));
+            _logger.LogError(ex, "Error retrieving statistics");
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse<UserStatisticsDto>(false, null, "Error retrieving statistics"));
         }
+    }
+
+    // =========================================================================
+    // HELPER METHODS
+    // =========================================================================
+
+    /// <summary>
+    /// Extract user ID from JWT token claims
+    /// </summary>
+    /// <returns>User ID as GUID</returns>
+    /// <exception cref="UnauthorizedAccessException">Thrown if token is invalid</exception>
+    private Guid GetUserId()
+    {
+        var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+        if (claim == null || !Guid.TryParse(claim.Value, out var userId))
+            throw new UnauthorizedAccessException("Invalid token: user ID not found");
+
+        return userId;
     }
 }
 
-#region Supporting DTOs for Controllers
+#region Supporting DTOs for User Controller
 
-public record TokenValidationRequest(string Token);
+/// <summary>
+/// Request for assigning a role to a user
+/// </summary>
+public record AssignRoleRequest(string Role);
 
+/// <summary>
+/// Request for deactivating a user account
+/// </summary>
 public record DeactivateUserRequest(string? Reason = null);
 
 #endregion

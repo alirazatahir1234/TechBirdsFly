@@ -1,124 +1,85 @@
 using System;
+using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using AuthService.Application.Interfaces;
-using AuthService.Application.Services;
 using AuthService.Infrastructure.Persistence;
 using AuthService.WebAPI;
 using TechBirdsFly.Shared.Events.Contracts;
 
 namespace AuthService.IntegrationTests.Setup;
 
-/// <summary>
-/// Custom Web Application Factory for integration testing
-/// 
-/// Provides:
-/// - In-memory SQLite database for isolation
-/// - Mocked ICacheService (external dependency)
-/// - Mocked IEventPublisher (external dependency)
-/// - Real AuthApplicationService (service under test)
-/// - Real EF Core repositories with real database context
-/// - Real dependency injection container
-/// 
-/// This ensures tests use real controllers, routing, and business logic
-/// while isolating external dependencies like cache and event bus.
-/// </summary>
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>
+public class CustomWebApplicationFactory 
+    : WebApplicationFactory<Program>
 {
-    /// <summary>
-    /// Configure web host for testing environment
-    /// </summary>
+    static CustomWebApplicationFactory()
+    {
+        // CRITICAL: Set environment BEFORE WebApplicationFactory tries to load Program
+        // Use Process target so it's visible to reflection-based Program resolution
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test", EnvironmentVariableTarget.Process);
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Test");
+        builder.UseTestServer();
+
         builder.ConfigureServices(services =>
         {
-            // ======================================================================
-            // STEP 1: Remove production database context
-            // ======================================================================
-            var dbDescriptor = services.SingleOrDefault(
+            // Remove real EF DbContext
+            var descriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<AuthDbContext>)
             );
-            
-            if (dbDescriptor != null)
-            {
-                services.Remove(dbDescriptor);
-            }
 
-            // ======================================================================
-            // STEP 2: Add SQLite in-memory database
-            // Supports relational features (foreign keys, constraints)
-            // Automatically recreated for each test
-            // ======================================================================
+            if (descriptor != null)
+                services.Remove(descriptor);
+
+            // Add in-memory SQLite
             services.AddDbContext<AuthDbContext>(options =>
             {
-                options.UseSqlite("Filename=:memory:");
+                options.UseSqlite("Data Source=:memory:");
             });
 
-            // ======================================================================
-            // STEP 3: Replace ICacheService with mock
-            // Prevents external cache dependency (Redis, Memcached, etc.)
-            // ======================================================================
-            var mockCacheService = new Mock<ICacheService>();
-            
-            // Default mock behavior: always return null for Gets, succeed for Sets/Removes
-            mockCacheService
-                .Setup(x => x.GetAsync<It.IsAnyType>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Returns((string _, CancellationToken __) => Task.FromResult<object?>(null));
-            
-            mockCacheService
+            // Mock ICacheService
+            var mockCache = new Mock<ICacheService>();
+            mockCache
+                .Setup(x => x.GetAsync<object>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((object?)null);
+            mockCache
                 .Setup(x => x.SetAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-            
-            mockCacheService
+            mockCache
                 .Setup(x => x.RemoveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-            
-            services.AddSingleton(mockCacheService.Object);
+            services.AddSingleton(mockCache.Object);
 
-            // ======================================================================
-            // STEP 4: Replace IEventPublisher with mock
-            // Prevents external event bus dependency (RabbitMQ, Azure ServiceBus, etc.)
-            // ======================================================================
-            var mockEventPublisher = new Mock<IEventPublisher>();
-            
-            mockEventPublisher
+            // Mock IEventPublisher
+            var mockPublisher = new Mock<IEventPublisher>();
+            mockPublisher
                 .Setup(x => x.PublishEventAsync(It.IsAny<IEventContract>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
-            
-            services.AddSingleton(mockEventPublisher.Object);
+            services.AddSingleton(mockPublisher.Object);
+        });
 
-            // ======================================================================
-            // STEP 5: Build service provider for database initialization
-            // ======================================================================
-            var serviceProvider = services.BuildServiceProvider();
-
-            // ======================================================================
-            // STEP 6: Create database schema and initialize
-            // This runs migrations and creates all tables in-memory
-            // ======================================================================
-            using (var scope = serviceProvider.CreateScope())
+        // Configure database after services are set up
+        builder.Configure(app =>
+        {
+            using (var scope = app.ApplicationServices.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-                
-                // Open connection for SQLite in-memory database
-                // Required to keep in-memory database alive during test
-                db.Database.OpenConnection();
-                
-                // Create all database objects (tables, indexes, etc.)
-                db.Database.EnsureCreated();
+                var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+                context.Database.OpenConnection();
+                context.Database.EnsureCreated();
             }
         });
     }
 
-    /// <summary>
-    /// Create a new test client with clean database for each test
-    /// </summary>
     public new HttpClient CreateClient()
     {
         return base.CreateClient();

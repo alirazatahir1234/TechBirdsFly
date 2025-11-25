@@ -79,4 +79,14 @@ public class User : BaseEntity, IAggregateRoot
         UpdateTimestamp();
         RaiseDomainEvent(new UserActivatedDomainEvent(Id));
     }
+
+    public void UpdatePassword(string newPasswordHash)
+    {
+        if (string.IsNullOrWhiteSpace(newPasswordHash))
+            throw new ArgumentException("Password hash cannot be empty", nameof(newPasswordHash));
+
+        PasswordHash = newPasswordHash;
+        UpdateTimestamp();
+        RaiseDomainEvent(new UserPasswordChangedDomainEvent(Id, Email));
+    }
 }

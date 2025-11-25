@@ -23,6 +23,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// Uses real database (in-memory SQLite) and real repositories
 /// but mocks external dependencies (cache, event publisher)
 /// </summary>
+[Collection("Integration Tests")]
 public class RegisterIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

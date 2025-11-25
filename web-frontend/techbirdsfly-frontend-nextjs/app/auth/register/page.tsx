@@ -11,6 +11,7 @@ import { FormCheckbox } from '@/components/forms/FormCheckbox';
 import { registerSchema } from '@/lib/schemas/auth';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
+import { AppLogoIcon, AppLogoText } from '@/components/AppLogo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,7 +25,8 @@ export default function RegisterPage() {
   } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -35,7 +37,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: any) => {
     setApiError('');
     try {
-      await register(data.email, data.fullName, data.password);
+      await register(data.email, data.firstName, data.lastName, data.password);
       router.push('/dashboard');
     } catch (error) {
       setApiError(error instanceof Error ? error.message : 'Registration failed');
@@ -57,6 +59,12 @@ export default function RegisterPage() {
       {/* Left Side - Register Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-gray-50">
         <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="mb-8 flex flex-col items-center justify-center gap-1">
+            <AppLogoIcon size="lg" />
+            <AppLogoText size="md" />
+          </div>
+
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
@@ -72,16 +80,27 @@ export default function RegisterPage() {
 
           {/* Register Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Full Name */}
-            <FormInput
-              control={control}
-              name="fullName"
-              label="Full Name"
-              placeholder="Enter your full name"
-              type="text"
-              icon={<User className="w-5 h-5" />}
-              required
-            />
+            {/* First Name & Last Name */}
+            <div className="grid grid-cols-2 gap-4">
+              <FormInput
+                control={control}
+                name="firstName"
+                label="First Name"
+                placeholder="Enter your first name"
+                type="text"
+                icon={<User className="w-5 h-5" />}
+                required
+              />
+              <FormInput
+                control={control}
+                name="lastName"
+                label="Last Name"
+                placeholder="Enter your last name"
+                type="text"
+                icon={<User className="w-5 h-5" />}
+                required
+              />
+            </div>
             {/* Email */}
             <FormInput
               control={control}
@@ -120,7 +139,7 @@ export default function RegisterPage() {
               label={
                 <span>
                   I agree to the{' '}
-                  <Link href="/terms" className="text-purple-600 hover:text-purple-700 font-medium">
+                  <Link href="/(marketing)/terms" className="text-purple-600 hover:text-purple-700 font-medium">
                     Terms and Conditions
                   </Link>
                 </span>
@@ -166,10 +185,10 @@ export default function RegisterPage() {
           </div>
 
           {/* Login Link */}
-          <p className="text-center text-gray-600 mt-8">
-            Already have an account?{' '}
-            <Link href="/login" className="text-purple-600 hover:text-purple-700 font-semibold">
-              Sign in
+          <p className="text-center text-gray-600">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-purple-600 hover:text-purple-700 font-semibold">
+              Log in
             </Link>
           </p>
         </div>

@@ -19,6 +19,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// 3. Verify email is marked as confirmed
 /// 4. Error handling for invalid users
 /// </summary>
+[Collection("Integration Tests")]
 public class EmailIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

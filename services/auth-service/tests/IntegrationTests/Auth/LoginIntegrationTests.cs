@@ -22,6 +22,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// Uses real database, repositories, and service layer
 /// Mocks external cache and event publisher dependencies
 /// </summary>
+[Collection("Integration Tests")]
 public class LoginIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

@@ -211,3 +211,116 @@ secrets/
 *.key
 *.pem
 private_key*
+
+## -----------------------------------------
+## Export Service specific
+## -----------------------------------------
+services/export-service/exports/
+services/export-service/src/*/bin/
+services/export-service/src/*/obj/
+services/export-service/obj/
+services/export-service/bin/
+
+## -----------------------------------------
+## Auth Service specific
+## -----------------------------------------
+services/auth-service/obj/
+services/auth-service/bin/
+
+## -----------------------------------------
+## Generator Service specific
+## -----------------------------------------
+services/generator-service/obj/
+services/generator-service/bin/
+
+## -----------------------------------------
+## User Service specific
+## -----------------------------------------
+services/user-service/obj/
+services/user-service/bin/
+
+## -----------------------------------------
+## Admin Service specific
+## -----------------------------------------
+services/admin-service/obj/
+services/admin-service/bin/
+
+## -----------------------------------------
+## Image Service specific
+## -----------------------------------------
+services/image-service/obj/
+services/image-service/bin/
+
+## -----------------------------------------
+## Billing Service specific
+## -----------------------------------------
+services/billing-service/obj/
+services/billing-service/bin/
+
+## -----------------------------------------
+## Gateway specific expanded
+## -----------------------------------------
+gateway/yarp-gateway/obj/
+gateway/yarp-gateway/bin/
+
+## -----------------------------------------
+## Runtime and Process files
+## -----------------------------------------
+*.pid
+*.sock
+.lock
+
+## -----------------------------------------
+## Backup and Recovery files
+## -----------------------------------------
+*.backup
+*.bak
+*.old
+
+## -----------------------------------------
+## Temporary compilation files
+## -----------------------------------------
+*.o
+*.so
+*.dylib
+
+## -----------------------------------------
+## Package manager specific
+## -----------------------------------------
+.yarn/
+pnpm-lock.yaml
+
+## -----------------------------------------
+## VS Code extensions and cache
+## -----------------------------------------
+.vscode/extensions/
+
+## -----------------------------------------
+## Shell/Bash script logs
+## -----------------------------------------
+*.sh.log
+start-services.log
+
+## -----------------------------------------
+## Azure specific
+## -----------------------------------------
+.env.azure
+
+## -----------------------------------------
+## Documentation build artifacts
+## -----------------------------------------
+docs/_build/
+site/
+
+## -----------------------------------------
+## Misc files that shouldn't be committed
+## -----------------------------------------
+*.code-workspace
+.projectile
+TAGS
+tags
+.todo
+.notes
+*.iml
+*.dll
+

@@ -19,6 +19,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// 3. Proper response format
 /// 4. Not found scenarios
 /// </summary>
+[Collection("Integration Tests")]
 public class ProfileIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

@@ -19,6 +19,7 @@ namespace AuthService.IntegrationTests.Auth;
 /// 3. Verify account is marked as inactive
 /// 4. Error handling for invalid users
 /// </summary>
+[Collection("Integration Tests")]
 public class DeactivateIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;

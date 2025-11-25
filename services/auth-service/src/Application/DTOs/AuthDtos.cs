@@ -57,4 +57,23 @@ public class UserProfileDto
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
 }
+
+/// <summary>
+/// Request DTO for forgot password
+/// </summary>
+public class ForgotPasswordRequestDto
+{
+    public string Email { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Request DTO for reset password
+/// </summary>
+public class ResetPasswordRequestDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string ResetToken { get; set; } = string.Empty;
+    public string NewPassword { get; set; } = string.Empty;
+}
+
 public record TokenValidationRequestDto(string Token);
