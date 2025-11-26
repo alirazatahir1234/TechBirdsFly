@@ -11,7 +11,7 @@ public class LocalStorageService : IFileStorageService
     {
         _storagePath = config["Storage:LocalPath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         _logger = logger;
-        
+
         if (!Directory.Exists(_storagePath))
             Directory.CreateDirectory(_storagePath);
     }
@@ -30,7 +30,7 @@ public class LocalStorageService : IFileStorageService
 
         var relativeUrl = $"/uploads/{uniqueFileName}";
         _logger.LogInformation("File saved successfully at: {Url}", relativeUrl);
-        
+
         return relativeUrl;
     }
 

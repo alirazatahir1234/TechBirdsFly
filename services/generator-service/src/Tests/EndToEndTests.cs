@@ -101,7 +101,7 @@ namespace GeneratorService.Tests
             );
 
             var llmResponse = await _ollamaClientMock.Object.GenerateAsync(command.Description);
-            
+
             await _projectRepositoryMock.Object.AddAsync(project);
 
             // Assert
@@ -168,7 +168,7 @@ namespace GeneratorService.Tests
             // Act & Assert
             Assert.Empty(invalidCommand.ProjectName);
             Assert.Empty(invalidCommand.Description);
-            
+
             // These should be caught by FluentValidation in the actual handler
         }
 
@@ -226,7 +226,7 @@ namespace GeneratorService.Tests
         public void GenerateWebsite_VerifiesFullStackArchitecture()
         {
             // This test verifies all layers are connected:
-            
+
             // ✓ Layer 1: Domain (Project entity exists)
             var project = new Project("Test", "Desc", "SaaS", "Purple");
             Assert.NotNull(project);

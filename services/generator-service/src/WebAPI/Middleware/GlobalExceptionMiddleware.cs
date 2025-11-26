@@ -25,7 +25,7 @@ public class GlobalExceptionMiddleware
         catch (Exception exception)
         {
             Log.Error(exception, "Unhandled exception occurred in request path {Path}", context.Request.Path);
-            
+
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

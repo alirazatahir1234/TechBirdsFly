@@ -32,7 +32,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.FinalHtml, opt => opt.MapFrom(src => src.Html.Value))
             .ForMember(dest => dest.Css, opt => opt.MapFrom(src => src.Css))
             .ForMember(dest => dest.JavaScript, opt => opt.MapFrom(src => src.JavaScript))
-            .ForMember(dest => dest.Metadata, opt => opt.MapFrom(src => 
+            .ForMember(dest => dest.Metadata, opt => opt.MapFrom(src =>
                 new MetadataDto
                 {
                     Title = src.Meta.Title,

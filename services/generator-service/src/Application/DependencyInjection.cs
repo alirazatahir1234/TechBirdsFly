@@ -21,7 +21,7 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-            
+
             // Register request/response logging behavior
             config.AddRequestPreProcessor(typeof(LoggingBehavior<>));
         });

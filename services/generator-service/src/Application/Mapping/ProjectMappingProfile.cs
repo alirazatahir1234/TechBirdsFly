@@ -20,7 +20,7 @@ public class ProjectMappingProfile : Profile
 
         // ProjectDto → Project (if needed for input)
         CreateMap<ProjectDto, Project>()
-            .ConstructUsing((dto, ctx) => 
+            .ConstructUsing((dto, ctx) =>
                 new Project(
                     dto.Name,
                     dto.Industry,

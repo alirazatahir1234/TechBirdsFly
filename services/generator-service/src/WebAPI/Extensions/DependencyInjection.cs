@@ -15,7 +15,7 @@ public static class DependencyInjection
     {
         // Controllers
         services.AddControllers();
-        
+
         // API Documentation
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>

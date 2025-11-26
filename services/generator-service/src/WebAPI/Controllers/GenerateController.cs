@@ -44,7 +44,7 @@ public class GenerateController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Website generation requested: {ProjectName} ({Industry})", 
+            _logger.LogInformation("Website generation requested: {ProjectName} ({Industry})",
                 command.ProjectName, command.Industry);
 
             var result = await _mediator.Send(command, cancellationToken);
@@ -55,11 +55,11 @@ public class GenerateController : ControllerBase
         }
         catch (FluentValidation.ValidationException ex)
         {
-            _logger.LogWarning("Validation failed: {Errors}", 
+            _logger.LogWarning("Validation failed: {Errors}",
                 string.Join(", ", ex.Errors.Select(e => e.ErrorMessage)));
-            return BadRequest(new 
-            { 
-                success = false, 
+            return BadRequest(new
+            {
+                success = false,
                 errors = ex.Errors.Select(e => e.ErrorMessage),
                 timestamp = DateTime.UtcNow
             });
@@ -67,11 +67,12 @@ public class GenerateController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error generating website: {Message}", ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, 
-                new { 
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                new
+                {
                     success = false,
                     error = "An error occurred while generating the website",
-                    timestamp = DateTime.UtcNow 
+                    timestamp = DateTime.UtcNow
                 });
         }
     }
@@ -84,13 +85,13 @@ public class GenerateController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Health()
     {
-        return Ok(new 
-        { 
+        return Ok(new
+        {
             success = true,
-            status = "healthy", 
+            status = "healthy",
             service = "GeneratorService",
             version = "1.0.0",
-            timestamp = DateTime.UtcNow 
+            timestamp = DateTime.UtcNow
         });
     }
 }

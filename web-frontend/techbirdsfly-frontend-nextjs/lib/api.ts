@@ -1,7 +1,12 @@
-import { GenerateWebsitePayload, ApiResponse, GeneratedWebsiteDto } from "./types";
+import {
+  GenerateWebsitePayload,
+  ApiResponse,
+  GeneratedWebsiteDto,
+} from "./types";
 
 // Gateway URL for all API calls
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:5500";
+const GATEWAY_URL =
+  process.env.NEXT_PUBLIC_GATEWAY_URL || "http://localhost:5500";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
 export async function generateWebsite(
@@ -9,14 +14,17 @@ export async function generateWebsite(
 ): Promise<ApiResponse<GeneratedWebsiteDto>> {
   try {
     // Route through gateway: /api/generator/** → Generator Service
-    const response = await fetch(`${API_BASE_URL}/api/generator/api/v1/generate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/generator/api/v1/generate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        cache: "no-store",
+      }
+    );
 
     if (!response.ok) {
       const error = await response.json();
@@ -50,9 +58,15 @@ export async function getHealthStatus(): Promise<boolean> {
   }
 }
 
-export async function exportAsHtml(html: string, filename: string): Promise<void> {
+export async function exportAsHtml(
+  html: string,
+  filename: string
+): Promise<void> {
   const element = document.createElement("a");
-  element.setAttribute("href", "data:text/html;charset=utf-8," + encodeURIComponent(html));
+  element.setAttribute(
+    "href",
+    "data:text/html;charset=utf-8," + encodeURIComponent(html)
+  );
   element.setAttribute("download", filename);
   element.style.display = "none";
   document.body.appendChild(element);

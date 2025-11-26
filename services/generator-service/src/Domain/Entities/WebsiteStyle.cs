@@ -5,12 +5,12 @@ namespace GeneratorService.Domain.Entities;
 /// </summary>
 public class WebsiteStyle
 {
-    public static readonly string[] Allowed = 
+    public static readonly string[] Allowed =
     {
         "Modern",
-        "Minimal", 
-        "Bold", 
-        "Corporate", 
+        "Minimal",
+        "Bold",
+        "Corporate",
         "Creative",
         "Luxury",
         "Playful",

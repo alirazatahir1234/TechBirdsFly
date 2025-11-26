@@ -15,7 +15,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Add JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] 
+var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT Key not configured");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TechBirdsFly";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TechBirdsFly";
@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             OnTokenValidated = context =>
             {
-                Log.Information("JWT Token validated for user: {User}", 
+                Log.Information("JWT Token validated for user: {User}",
                     context.Principal?.Identity?.Name ?? "Unknown");
                 return Task.CompletedTask;
             }
@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
             ?? new[] { "http://localhost:3000" };
 
         policy.WithOrigins(allowedOrigins)
@@ -76,7 +76,7 @@ builder.Services.AddRateLimiter(options =>
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
     {
         var username = context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
-        
+
         return RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: username,
             factory: partition => new FixedWindowRateLimiterOptions
@@ -91,7 +91,7 @@ builder.Services.AddRateLimiter(options =>
     options.AddPolicy("PerUserRateLimit", context =>
     {
         var username = context.User.Identity?.Name;
-        
+
         if (string.IsNullOrEmpty(username))
         {
             return RateLimitPartition.GetFixedWindowLimiter(
@@ -118,7 +118,7 @@ builder.Services.AddRateLimiter(options =>
     options.AddPolicy("PerIpRateLimit", context =>
     {
         var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        
+
         return RateLimitPartition.GetSlidingWindowLimiter(
             ipAddress,
             _ => new SlidingWindowRateLimiterOptions
@@ -133,7 +133,7 @@ builder.Services.AddRateLimiter(options =>
     options.OnRejected = async (context, token) =>
     {
         context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        
+
         if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
         {
             context.HttpContext.Response.Headers.Append("Retry-After", retryAfter.TotalSeconds.ToString());
@@ -146,7 +146,7 @@ builder.Services.AddRateLimiter(options =>
             statusCode = 429
         }, cancellationToken: token);
 
-        Log.Warning("Rate limit exceeded for {User} from {IP}", 
+        Log.Warning("Rate limit exceeded for {User} from {IP}",
             context.HttpContext.User.Identity?.Name ?? "anonymous",
             context.HttpContext.Connection.RemoteIpAddress);
     };
@@ -223,14 +223,14 @@ app.UseStaticFiles();
 app.Use(async (context, next) =>
 {
     var startTime = DateTime.UtcNow;
-    
-    Log.Information("Incoming Request: {Method} {Path} from {IP}", 
-        context.Request.Method, 
-        context.Request.Path, 
+
+    Log.Information("Incoming Request: {Method} {Path} from {IP}",
+        context.Request.Method,
+        context.Request.Path,
         context.Connection.RemoteIpAddress);
-    
+
     await next();
-    
+
     var duration = DateTime.UtcNow - startTime;
     Log.Information("Completed Request: {Method} {Path} {StatusCode} in {Duration}ms",
         context.Request.Method,

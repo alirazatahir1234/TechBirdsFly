@@ -74,7 +74,7 @@ public class HtmlTemplateBuilder : IHtmlTemplateBuilder
         html.AppendLine($"  <meta name=\"description\" content=\"{_metaDescription}\">");
         html.AppendLine("  <meta charset=\"UTF-8\">");
         html.AppendLine("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-        
+
         if (!string.IsNullOrWhiteSpace(_css))
         {
             html.AppendLine("  <style>");

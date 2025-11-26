@@ -104,7 +104,7 @@ public class MediaController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to capture screenshot");
-            return StatusCode(StatusCodes.Status500InternalServerError, 
+            return StatusCode(StatusCodes.Status500InternalServerError,
                 new { error = "Failed to capture screenshot", message = ex.Message });
         }
     }

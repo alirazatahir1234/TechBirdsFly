@@ -73,25 +73,25 @@ public class GeneratedPage : AuditableEntity
         html.AppendLine($"  <meta name=\"keywords\" content=\"{Meta.Keywords}\">");
         html.AppendLine("  <meta charset=\"UTF-8\">");
         html.AppendLine("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-        
+
         if (!string.IsNullOrWhiteSpace(Css))
         {
             html.AppendLine("  <style>");
             html.AppendLine(Css);
             html.AppendLine("  </style>");
         }
-        
+
         html.AppendLine("</head>");
         html.AppendLine("<body>");
         html.AppendLine(Html.Value);
-        
+
         if (!string.IsNullOrWhiteSpace(JavaScript))
         {
             html.AppendLine("  <script>");
             html.AppendLine(JavaScript);
             html.AppendLine("  </script>");
         }
-        
+
         html.AppendLine("</body>");
         html.AppendLine("</html>");
 
