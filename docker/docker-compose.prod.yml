@@ -1,0 +1,742 @@
+version: '3.9'
+
+# ============================================================================
+# PRODUCTION DOCKER COMPOSE - TechBirdsFly
+# ============================================================================
+# Usage:
+#   docker compose -f docker-compose.prod.yml up -d
+#   docker compose -f docker-compose.prod.yml down
+# ============================================================================
+
+services:
+  # ============================================================================
+  # INFRASTRUCTURE
+  # ============================================================================
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: techbirdsfly-postgres-prod
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=postgres"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: techbirdsfly-kafka-prod
+    restart: always
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "WARN"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    volumes:
+      - kafka_data_prod:/var/lib/kafka/data
+    labels:
+      - "com.techbirdsfly.service=kafka"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: techbirdsfly-zookeeper-prod
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: "WARN"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.techbirdsfly.service=zookeeper"
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.5.0
+    container_name: techbirdsfly-schema-registry-prod
+    restart: always
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:29092"
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 1
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: "WARN"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/subjects"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.techbirdsfly.service=schema-registry"
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: techbirdsfly-redis-prod
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis123}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.techbirdsfly.service=redis"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  mongodb:
+    image: mongo:7.0
+    container_name: techbirdsfly-mongo-prod
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin123}
+    volumes:
+      - mongo_data_prod:/data/db
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.techbirdsfly.service=mongodb"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # ============================================================================
+  # OBSERVABILITY
+  # ============================================================================
+
+  seq:
+    image: datalust/seq:2024.1
+    container_name: techbirdsfly-seq-prod
+    restart: always
+    ports:
+      - "5341:5341"
+      - "80:80"
+    environment:
+      - ACCEPT_EULA=Y
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5341/api/diagnostics"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=seq"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: techbirdsfly-jaeger-prod
+    restart: always
+    ports:
+      - "16686:16686"
+      - "6831:6831/udp"
+      - "14268:14268"
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:16686/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.techbirdsfly.service=jaeger"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  # ============================================================================
+  # MICROSERVICES - .NET
+  # ============================================================================
+
+  auth-service:
+    build:
+      context: ../services/auth-service
+      dockerfile: src/WebAPI/Dockerfile
+    image: techbirdsfly-auth-service:latest
+    container_name: techbirdsfly-auth-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5001
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_auth;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=auth-service"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  user-service:
+    build:
+      context: ../services/user-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-user-service:latest
+    container_name: techbirdsfly-user-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5008
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_users;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+      EventBusUrl: http://event-bus-service:5020
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=user-service"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  billing-service:
+    build:
+      context: ../services/billing-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-billing-service:latest
+    container_name: techbirdsfly-billing-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5002
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_billing;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=billing-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  event-bus-service:
+    build:
+      context: ../services/event-bus-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-event-bus-service:latest
+    container_name: techbirdsfly-event-bus-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5020
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_eventbus;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5020/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=event-bus-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  generator-service:
+    build:
+      context: ../services/generator-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-generator-service:latest
+    container_name: techbirdsfly-generator-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5003
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_generator;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=generator-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  admin-service:
+    build:
+      context: ../services/admin-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-admin-service:latest
+    container_name: techbirdsfly-admin-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5006
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_admin;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=admin-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  image-service:
+    build:
+      context: ../services/image-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-image-service:latest
+    container_name: techbirdsfly-image-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5007
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_images;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=image-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  export-service:
+    build:
+      context: ../services/export-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-export-service:latest
+    container_name: techbirdsfly-export-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5004
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_export;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=export-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  project-service:
+    build:
+      context: ../services/ProjectService
+      dockerfile: Dockerfile
+    image: techbirdsfly-project-service:latest
+    container_name: techbirdsfly-project-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5009
+      Kafka:BootstrapServers: kafka:29092
+      Kafka:SchemaRegistry:Url: http://schema-registry:8081
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_projects;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=project-service"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  cache-service:
+    build:
+      context: ../services/cache-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-cache-service:latest
+    container_name: techbirdsfly-cache-service-prod
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5021
+      Redis:Host: redis
+      Redis:Port: "6379"
+      Redis:Password: ${REDIS_PASSWORD:-redis123}
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_cache;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5021/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=cache-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  media-service:
+    build:
+      context: ../services/media-service
+      dockerfile: Dockerfile
+    image: techbirdsfly-media-service:latest
+    container_name: techbirdsfly-media-service-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5022
+      ConnectionStrings:DefaultConnection: "Host=postgres;Port=5432;Database=techbirdsfly_media;Username=postgres;Password=${DB_PASSWORD:-postgres123}"
+      MongoDB:ConnectionString: "mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongodb:27017"
+      MongoDB:Database: techbirdsfly_media
+      Redis:Host: redis
+      Redis:Port: "6379"
+      Redis:Password: ${REDIS_PASSWORD:-redis123}
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5022/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=media-service"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  # ============================================================================
+  # GATEWAY
+  # ============================================================================
+
+  api-gateway:
+    build:
+      context: ../gateway/yarp-gateway
+      dockerfile: Dockerfile
+    image: techbirdsfly-api-gateway:latest
+    container_name: techbirdsfly-api-gateway-prod
+    restart: always
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      project-service:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:9000
+      Logging:LogLevel:Default: Warning
+      Services:AuthService: http://auth-service:5001
+      Services:UserService: http://user-service:5008
+      Services:BillingService: http://billing-service:5002
+      Services:EventBusService: http://event-bus-service:5020
+      Services:GeneratorService: http://generator-service:5003
+      Services:AdminService: http://admin-service:5006
+      Services:ImageService: http://image-service:5007
+      Services:ExportService: http://export-service:5004
+      Services:ProjectService: http://project-service:5009
+      Services:CacheService: http://cache-service:5021
+      Services:MediaService: http://media-service:5022
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=api-gateway"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  # ============================================================================
+  # FRONTEND
+  # ============================================================================
+
+  frontend:
+    build:
+      context: ../web-frontend/techbirdsfly-frontend-nextjs
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    image: techbirdsfly-frontend:latest
+    container_name: techbirdsfly-frontend-prod
+    restart: always
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api-gateway:9000}
+      NEXT_PUBLIC_AUTH_URL: ${NEXT_PUBLIC_AUTH_URL:-http://auth-service:5001}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:9000}
+    networks:
+      - techbirdsfly_prod
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "com.techbirdsfly.service=frontend"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+
+volumes:
+  postgres_data_prod:
+    driver: local
+  kafka_data_prod:
+    driver: local
+  redis_data_prod:
+    driver: local
+  mongo_data_prod:
+    driver: local
+
+# ============================================================================
+# NETWORKS
+# ============================================================================
+
+networks:
+  techbirdsfly_prod:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.26.0.0/16

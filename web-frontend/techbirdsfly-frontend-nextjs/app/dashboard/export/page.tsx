@@ -1,255 +1,182 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Download, Loader, CheckCircle, AlertCircle, Code2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import toast from 'react-hot-toast';
-
-interface ExportFramework {
-  name: string;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-}
+import { exportAsHtml, exportAsZip } from "@/lib/api";
+import { Download, FileJson, FileCode, Package } from "lucide-react";
+import { useState } from "react";
 
 export default function ExportPage() {
-  const [loading, setLoading] = useState(false);
-  const [activeFramework, setActiveFramework] = useState<string>('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
-  // TODO: Replace with actual project ID from context/params
-  const PROJECT_ID = 'project-demo-001';
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5500/api';
-
-  const frameworks: ExportFramework[] = [
-    {
-      name: 'html',
-      label: 'HTML',
-      description: 'Pure HTML5 with CSS. Perfect for static sites and hosting anywhere.',
-      icon: <Code2 className="w-6 h-6" />,
-      color: 'from-orange-500 to-red-500',
-    },
-    {
-      name: 'react',
-      label: 'React',
-      description: 'React 19 components with Tailwind CSS. Ready for custom development.',
-      icon: <Code2 className="w-6 h-6" />,
-      color: 'from-blue-500 to-cyan-500',
-    },
-    {
-      name: 'nextjs',
-      label: 'Next.js',
-      description: 'Next.js 15 app router with TypeScript. Production-ready template.',
-      icon: <Code2 className="w-6 h-6" />,
-      color: 'from-gray-900 to-gray-700',
-    },
-  ];
-
-  const exportCode = async (frameworkName: string) => {
-    setLoading(true);
-    setActiveFramework(frameworkName);
-    setError('');
-    setSuccess(false);
-    setDownloadUrl('');
-
+  async function handleExportHTML() {
+    setIsExporting(true);
     try {
-      const exportUrl = `${API_BASE}/export/${PROJECT_ID}/${frameworkName}`;
-      console.log('📡 Exporting code from:', exportUrl);
-
-      const response = await fetch(exportUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error('❌ Export failed:', errorData);
-        setError(`Failed to export ${frameworkName} code. Status: ${response.status}`);
-        toast.error(`Export failed: ${response.statusText}`);
-        setLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      console.log('✅ Export successful:', data);
-
-      setDownloadUrl(data.downloadUrl);
-      setSuccess(true);
-      toast.success(`${frameworkName.toUpperCase()} code exported successfully!`);
-
-      // Auto-download the file
-      if (data.downloadUrl) {
-        setTimeout(() => {
-          const link = document.createElement('a');
-          link.href = data.downloadUrl;
-          link.download = `techbirdsfly-${frameworkName}-${Date.now()}.zip`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }, 500);
-      }
-    } catch (err) {
-      console.error('❌ Export error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(`Export error: ${errorMessage}`);
-      toast.error(errorMessage);
+      // Simulate getting HTML from previous generation
+      const sampleHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+</head>
+<body>
+    <h1>Welcome to Your Website</h1>
+    <p>This is your generated website.</p>
+</body>
+</html>`;
+      exportAsHtml(sampleHtml, "website.html");
     } finally {
-      setLoading(false);
-      setActiveFramework('');
+      setIsExporting(false);
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-linear-to-br from-purple-500 to-indigo-600 rounded-lg">
-              <Download className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900">Export Your Code</h1>
-          </div>
-          <p className="text-lg text-gray-600 max-w-2xl">
-            Download your website in multiple frameworks. Get production-ready, clean code that's ready to deploy.
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+          Export Website
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">
+          Download your generated website in various formats
+        </p>
+      </div>
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">📦 Complete Code</h3>
-            <p className="text-sm text-gray-600">Full website source code with all assets and configurations.</p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">⚡ Production Ready</h3>
-            <p className="text-sm text-gray-600">Optimized for performance and ready to deploy immediately.</p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">🔧 Full Customization</h3>
-            <p className="text-sm text-gray-600">Clean code structure makes it easy to modify and extend.</p>
-          </div>
-        </div>
-
-        {/* Export Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {frameworks.map((framework) => (
-            <div
-              key={framework.name}
-              className="bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300 p-6"
-            >
-              <div className={`p-3 bg-linear-to-br ${framework.color} rounded-lg w-fit mb-4`}>
-                <div className="text-white">{framework.icon}</div>
+      {/* Export Options */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* HTML Export */}
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                <FileCode size={24} className="text-orange-600 dark:text-orange-400" />
               </div>
-
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{framework.label}</h3>
-              <p className="text-sm text-gray-600 mb-6">{framework.description}</p>
-
-              <Button
-                onClick={() => exportCode(framework.name)}
-                disabled={loading}
-                className={`w-full transition-all duration-300 ${
-                  loading && activeFramework === framework.name
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold'
-                }`}
-              >
-                {loading && activeFramework === framework.name ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-4 h-4 mr-2" />
-                    Export {framework.label}
-                  </>
-                )}
-              </Button>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Export as HTML
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Single HTML file
+                </p>
+              </div>
             </div>
-          ))}
+          </div>
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Download your website as a standalone HTML file. Perfect for quick hosting or local development.
+          </p>
+
+          <button
+            onClick={handleExportHTML}
+            disabled={isExporting}
+            className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
+          >
+            <Download size={18} />
+            {isExporting ? "Exporting..." : "Download HTML"}
+          </button>
         </div>
 
-        {/* Error State */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-semibold text-red-900 mb-1">Export Failed</h4>
-              <p className="text-sm text-red-700">{error}</p>
+        {/* React Export */}
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6 hover:shadow-lg transition-shadow opacity-50">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <FileJson size={24} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Export as React
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  React component (Coming Soon)
+                </p>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Success State */}
-        {success && downloadUrl && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <h4 className="font-semibold text-green-900 mb-2">Export Successful!</h4>
-              <p className="text-sm text-green-700 mb-3">Your code has been exported and is ready for download.</p>
-              <a
-                href={downloadUrl}
-                download
-                className="inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-sm transition-colors"
-              >
-                <Download className="w-4 h-4 inline mr-2" />
-                Download Now
-              </a>
-            </div>
-          </div>
-        )}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Export as a reusable React component with props for customization.
+          </p>
 
-        {/* FAQ Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-8 mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Which framework should I choose?</h3>
-              <p className="text-gray-600 text-sm">
-                <strong>HTML:</strong> Best for simple, static sites. <strong>React:</strong> For dynamic, interactive websites with component reusability.
-                <strong>Next.js:</strong> For production-grade apps with server-side rendering and API routes.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Can I modify the exported code?</h3>
-              <p className="text-gray-600 text-sm">
-                Yes! All exported code is fully open-source and ready for customization. Make it your own and deploy wherever you want.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">How do I deploy the exported code?</h3>
-              <p className="text-gray-600 text-sm">
-                Deployment depends on your framework choice. HTML can be hosted on any static host. React/Next.js work great on Vercel, Netlify, or any Node.js host.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Is the exported code production-ready?</h3>
-              <p className="text-gray-600 text-sm">
-                Absolutely! Our export service generates optimized, minified code with best practices built-in. Ready to deploy immediately.
-              </p>
-            </div>
-          </div>
+          <button
+            disabled
+            className="w-full bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 cursor-not-allowed"
+          >
+            <Download size={18} />
+            Coming Soon
+          </button>
         </div>
 
-        {/* Debug Info */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg border border-gray-300 text-xs text-gray-700 font-mono">
-            <p>🔧 Debug Info (Development Only)</p>
-            <p>Project ID: {PROJECT_ID}</p>
-            <p>API Base: {API_BASE}</p>
-            <p>Export Endpoint: {API_BASE}/export/[projectId]/[framework]</p>
+        {/* Next.js Export */}
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6 hover:shadow-lg transition-shadow opacity-50">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-black dark:bg-white/10 rounded-lg">
+                <Package size={24} className="text-black dark:text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Export as Next.js
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Full Next.js project (Coming Soon)
+                </p>
+              </div>
+            </div>
           </div>
-        )}
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Export as a complete Next.js project ready to deploy.
+          </p>
+
+          <button
+            disabled
+            className="w-full bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 cursor-not-allowed"
+          >
+            <Download size={18} />
+            Coming Soon
+          </button>
+        </div>
+
+        {/* GitHub Export */}
+        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-800 p-6 hover:shadow-lg transition-shadow opacity-50">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+                <Package size={24} className="text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Push to GitHub
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Push directly to repo (Coming Soon)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Push your generated website directly to a GitHub repository.
+          </p>
+
+          <button
+            disabled
+            className="w-full bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2 cursor-not-allowed"
+          >
+            <Download size={18} />
+            Coming Soon
+          </button>
+        </div>
+      </div>
+
+      {/* Info Box */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-300 dark:border-blue-800 rounded-lg p-6">
+        <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
+          💡 Pro Tip
+        </h3>
+        <p className="text-sm text-blue-800 dark:text-blue-300">
+          Your website is generated with responsive design and modern CSS. All exports include Tailwind CSS classes for easy customization.
+        </p>
       </div>
     </div>
   );

@@ -136,11 +136,11 @@ public class UsersController : ControllerBase
     /// <param name="request">Profile update request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Updated user profile</returns>
-    [HttpPut("profile/update")]
+    [HttpPut("profile")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ApiResponse<UserDto>>> UpdateProfile(
+    public async Task<ActionResult<ApiResponse<UserProfileDto>>> UpdateProfile(
         [FromBody] UpdateProfileRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -149,18 +149,18 @@ public class UsersController : ControllerBase
             var userId = GetUserId();
 
             if (!ModelState.IsValid)
-                return BadRequest(new ApiResponse<UserDto>(false, null, "Invalid request"));
+                return BadRequest(new ApiResponse<UserProfileDto>(false, null, "Invalid request"));
 
             var updated = await _profileService.UpdateProfileAsync(userId, request, cancellationToken);
 
             _logger.LogInformation("User {UserId} updated their profile", userId);
-            return Ok(new ApiResponse<UserDto>(true, updated));
+            return Ok(new ApiResponse<UserProfileDto>(true, updated));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating profile");
             return StatusCode(StatusCodes.Status500InternalServerError,
-                new ApiResponse<UserDto>(false, null, "Error updating profile"));
+                new ApiResponse<UserProfileDto>(false, null, "Error updating profile"));
         }
     }
 
@@ -236,7 +236,7 @@ public class UsersController : ControllerBase
         try
         {
             var adminId = GetUserId();
-            var success = await _userService.DeactivateUserAsync(id, cancellationToken);
+            var success = await _userService.DeactivateUserAsync(id, null, cancellationToken);
 
             if (!success)
                 return NotFound(new ApiResponse(false, "User not found"));

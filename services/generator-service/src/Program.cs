@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using GeneratorService.Infrastructure;
 using GeneratorService.Infrastructure.Persistence;
 using GeneratorService.Middleware;
+using GeneratorService.WebAPI.Extensions;
 using Serilog;
 using Serilog.Context;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using TechBirdsFly.CacheClient;
 
 // ============================================================================
 // SERILOG CONFIGURATION - MUST BE FIRST
@@ -83,20 +83,11 @@ try
     // ADD SERVICES
     // ========================================================================
 
-    builder.Services.AddControllers();
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-    builder.Services.AddHealthChecks();
+    // Infrastructure services (Database, Repositories, AI services)
+    builder.Services.AddInfrastructureServices(builder.Configuration);
 
-    // Application & Infrastructure Services
-    builder.Services.AddApplicationServices();
-    builder.Services.AddInfrastructureServices(
-        builder.Configuration.GetConnectionString("GeneratorDb") ?? "Data Source=generator.db");
-
-    // Centralized Cache Client (replaces local Redis)
-    var cacheServiceUrl = builder.Configuration["Services:CacheService:Url"] ?? "http://localhost:8100";
-    var jwtToken = builder.Configuration["Jwt:Secret"] ?? "dev-secret";
-    builder.Services.AddCacheClient(cacheServiceUrl, jwtToken);
+    // WebAPI services (Controllers, Swagger, CORS, health checks)
+    builder.Services.AddWebAPIServices();
 
     // ========================================================================
     // BUILD APP & MIDDLEWARE PIPELINE
@@ -107,20 +98,14 @@ try
     // Initialize database
     await app.Services.InitializeDatabaseAsync();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    // Configure WebAPI pipeline (error handling, CORS, Swagger)
+    app.UseWebAPIPipeline();
 
     // Request/Response logging with correlation ID
     app.UseSerilogRequestLogging();
 
     // Add correlation ID to all requests
     app.UseMiddleware<CorrelationIdMiddleware>();
-
-    // Global exception handling
-    app.UseMiddleware<GlobalExceptionMiddleware>();
 
     app.MapControllers();
 

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0</Version>
+    <Authors>TechBirdsFly Team</Authors>
+    <Description>Project Service Application Layer</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ProjectService.Domain/ProjectService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.2.0" />
+  </ItemGroup>
+
+</Project>

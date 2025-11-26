@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0</Version>
+    <Authors>TechBirdsFly Team</Authors>
+    <Description>Project Service Domain Layer</Description>
+  </PropertyGroup>
+
+</Project>

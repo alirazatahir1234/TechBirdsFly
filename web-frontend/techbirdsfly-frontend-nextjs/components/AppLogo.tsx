@@ -15,8 +15,8 @@ interface AppLogoProps {
  * Reusable TechBirdsFly Logo Component
  *
  * Variants:
- * - icon: Just the bird icon (square)
- * - horizontal: Bird + Text side by side
+ * - icon: Just the logo icon (square)
+ * - horizontal: Logo + Text side by side
  * - text: Just the text
  *
  * Sizes:

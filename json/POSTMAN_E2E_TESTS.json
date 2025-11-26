@@ -1,0 +1,218 @@
+{
+  "info": {
+    "name": "TechBirdsFly Generator Service - E2E Tests",
+    "_postman_id": "techbirdsfly-generator-e2e-tests",
+    "description": "End-to-End tests for the AI Website Generator microservice. Tests the complete flow: WebAPI → MediatR → Application → Infrastructure → Ollama → DTO",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate", "health"]
+        },
+        "description": "Verify the service is healthy and running"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Generate SaaS Website (Purple Theme)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"AI Productivity Tool\",\n  \"description\": \"Generate a modern SaaS landing page for an AI productivity tool with automation features.\",\n  \"industry\": \"SaaS\",\n  \"features\": [\"Automation\", \"Document Creation\", \"Team Collaboration\"],\n  \"colorScheme\": \"Purple\",\n  \"includeContactForm\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 1: Generate a complete SaaS website with purple theme\nExpected: Full HTML with hero, features, pricing, contact sections"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Generate Tech Startup Website (Blue Theme)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"TechStartup\",\n  \"description\": \"Build a modern tech startup landing page with features, testimonials, and dark mode support.\",\n  \"industry\": \"Technology\",\n  \"features\": [\"Responsive Design\", \"Dark Mode\", \"Analytics Dashboard\"],\n  \"colorScheme\": \"Blue\",\n  \"includeContactForm\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 2: Generate a tech startup website with blue theme\nExpected: Full HTML with responsive sections and testimonials"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Generate E-Commerce Site (Orange Theme)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"Fashion Store\",\n  \"description\": \"Create a modern e-commerce website for an online fashion store with product showcase and checkout.\",\n  \"industry\": \"E-Commerce\",\n  \"features\": [\"Product Gallery\", \"Shopping Cart\", \"Payment Gateway\"],\n  \"colorScheme\": \"Orange\",\n  \"includeContactForm\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 3: Generate an e-commerce website with orange theme\nExpected: Full HTML with product sections and payment elements"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Generate Portfolio (Green Theme)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"Creative Portfolio\",\n  \"description\": \"Design a creative portfolio website for a freelance designer with project showcase and contact form.\",\n  \"industry\": \"Creative\",\n  \"features\": [\"Project Showcase\", \"Client Testimonials\", \"Contact Form\"],\n  \"colorScheme\": \"Green\",\n  \"includeContactForm\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 4: Generate a creative portfolio with green theme\nExpected: Full HTML with portfolio sections and showcase"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Error Test - Empty Project Name (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"\",\n  \"description\": \"Test description\",\n  \"industry\": \"SaaS\",\n  \"features\": [],\n  \"colorScheme\": \"Purple\",\n  \"includeContactForm\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 5: Validation error - empty project name\nExpected: 400 BadRequest with validation error message"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Error Test - Empty Description (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"Test Project\",\n  \"description\": \"\",\n  \"industry\": \"SaaS\",\n  \"features\": [],\n  \"colorScheme\": \"Purple\",\n  \"includeContactForm\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 6: Validation error - empty description\nExpected: 400 BadRequest with validation error message"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Complex Test - All Features",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"projectName\": \"Complete SaaS Platform\",\n  \"description\": \"Build a complete SaaS platform website with all sections: hero, features comparison table, pricing tiers, customer testimonials, blog section, FAQs, and comprehensive contact form.\",\n  \"industry\": \"SaaS\",\n  \"features\": [\n    \"Feature Comparison\",\n    \"Pricing Tiers\",\n    \"Customer Testimonials\",\n    \"Blog Integration\",\n    \"FAQ Section\",\n    \"Email Newsletter\"\n  ],\n  \"colorScheme\": \"Purple\",\n  \"includeContactForm\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5003/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5003",
+          "path": ["api", "v1", "generate"]
+        },
+        "description": "Test 7: Complex request with multiple features\nExpected: Full HTML with all requested sections"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5003",
+      "type": "string"
+    },
+    {
+      "key": "api_version",
+      "value": "v1",
+      "type": "string"
+    }
+  ]
+}

@@ -87,3 +87,48 @@ export const newPasswordSchema = z
   });
 
 export type NewPasswordData = z.infer<typeof newPasswordSchema>;
+
+// Email Verification Schema
+export const emailVerificationSchema = z.object({
+  code: z
+    .string()
+    .min(1, { message: 'Verification code is required' })
+    .regex(/^\d{6}$/, { message: 'Code must be 6 digits' }),
+});
+
+export type EmailVerificationData = z.infer<typeof emailVerificationSchema>;
+
+// 2FA TOTP Setup Schema
+export const twoFactorSetupSchema = z.object({
+  secret: z
+    .string()
+    .min(1, { message: 'Secret is required' }),
+  qrCodeURL: z
+    .string()
+    .url({ message: 'Invalid QR code URL' }),
+  backupCodes: z
+    .array(z.string())
+    .min(1, { message: 'Backup codes are required' }),
+});
+
+export type TwoFactorSetupData = z.infer<typeof twoFactorSetupSchema>;
+
+// 2FA Verification Schema (TOTP code)
+export const twoFactorVerificationSchema = z.object({
+  code: z
+    .string()
+    .min(1, { message: '2FA code is required' })
+    .regex(/^\d{6}$/, { message: 'Code must be 6 digits' }),
+});
+
+export type TwoFactorVerificationData = z.infer<typeof twoFactorVerificationSchema>;
+
+// 2FA Backup Code Schema
+export const twoFactorBackupCodeSchema = z.object({
+  code: z
+    .string()
+    .min(1, { message: 'Backup code is required' })
+    .regex(/^[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$/i, { message: 'Invalid backup code format' }),
+});
+
+export type TwoFactorBackupCodeData = z.infer<typeof twoFactorBackupCodeSchema>;

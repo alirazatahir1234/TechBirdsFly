@@ -1,616 +1,457 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import {
-  Save,
-  Download,
-  RotateCcw,
-  Plus,
-  Trash2,
-  Eye,
-  Code,
-  Palette,
-} from 'lucide-react';
-
-// Type Definitions
-interface Section {
-  id: string;
-  title: string;
-  type: 'hero' | 'features' | 'pricing' | 'testimonials' | 'cta' | 'footer';
-  content: string;
-  backgroundColor?: string;
-  textColor?: string;
-  image?: string;
-}
-
-interface GlobalStyles {
-  primaryColor: string;
-  secondaryColor: string;
-  fontFamily: 'inter' | 'playfair' | 'roboto';
-  fontSize: 'small' | 'medium' | 'large';
-  spacing: 'compact' | 'normal' | 'spacious';
-}
-
-interface GeneratedWebsite {
-  prompt: string;
-  style: string;
-  industry: string;
-  palette: string;
-}
-
-interface EditorState {
-  sections: Section[];
-  globalStyles: GlobalStyles;
-  selectedSectionId: string | null;
-  previewMode: 'desktop' | 'tablet' | 'mobile';
-  isSaving: boolean;
-  isDirty: boolean;
-}
-
-// Mock section templates (without ID, added during creation)
-const sectionTemplates = {
-  hero: {
-    title: 'Hero Section',
-    type: 'hero' as const,
-    content: 'Welcome to Your Amazing Website. Start creating something incredible today.',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-  },
-  features: {
-    title: 'Features',
-    type: 'features' as const,
-    content: 'Feature 1\nFeature 2\nFeature 3',
-    backgroundColor: '#f9fafb',
-    textColor: '#111827',
-  },
-  pricing: {
-    title: 'Pricing Plans',
-    type: 'pricing' as const,
-    content: 'Starter - $29/mo\nProfessional - $99/mo\nEnterprise - Custom',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-  },
-  testimonials: {
-    title: 'Testimonials',
-    type: 'testimonials' as const,
-    content: '"This is amazing!" - Customer 1\n"Love it!" - Customer 2',
-    backgroundColor: '#f3f4f6',
-    textColor: '#111827',
-  },
-  cta: {
-    title: 'Call to Action',
-    type: 'cta' as const,
-    content: 'Ready to get started? Join thousands of happy users.',
-    backgroundColor: '#7c3aed',
-    textColor: '#ffffff',
-  },
-  footer: {
-    title: 'Footer',
-    type: 'footer' as const,
-    content: '© 2025 Your Company. All rights reserved.',
-    backgroundColor: '#1f2937',
-    textColor: '#ffffff',
-  },
-};
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { loadProject, saveVersion, renameProject } from "@/lib/project-api";
+import HtmlRenderer from "@/components/html-renderer";
+import ImageReplaceModal from "@/components/image-replace-modal";
+import SeoModal from "@/components/seo-modal";
+import ThemeModal from "@/components/theme-modal";
+import { Copy, Download, Image as ImageIcon, Save, Loader2, Settings, Palette, FileDown } from "lucide-react";
+import toast from "react-hot-toast";
+import { ExportModal } from "@/components/export-modal";
 
 export default function EditorPage() {
-  const router = useRouter();
+  const params = useSearchParams();
+  const htmlParam = params.get("html");
+  const projectParam = params.get("project");
+  const projectName = params.get("name") || "Untitled Project";
 
-  // State Management
-  const [state, setState] = useState<EditorState>({
-    sections: [
-      {
-        id: 'section-hero-1',
-        ...sectionTemplates.hero,
-      },
-    ],
-    globalStyles: {
-      primaryColor: '#7c3aed',
-      secondaryColor: '#4f46e5',
-      fontFamily: 'inter',
-      fontSize: 'medium',
-      spacing: 'normal',
-    },
-    selectedSectionId: '',
-    previewMode: 'desktop',
-    isSaving: false,
-    isDirty: false,
-  });
+  const [html, setHtml] = useState<string>(htmlParam || "");
+  const [projectVersion, setProjectVersion] = useState<number>(1);
+  const [projectTitle, setProjectTitle] = useState<string>(projectName);
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [showSeoModal, setShowSeoModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [imageSources, setImageSources] = useState<string[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isRenamingSaving, setIsRenamingSaving] = useState(false);
+  const [isLoadingProject, setIsLoadingProject] = useState(!!projectParam);
+  const [projectData, setProjectData] = useState<any>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const [generatedWebsite, setGeneratedWebsite] = useState<GeneratedWebsite | null>(null);
-
-  // Retrieve data from sessionStorage on mount
+  // Load project if projectParam exists
   useEffect(() => {
-    const stored = sessionStorage.getItem('generatedWebsite');
-    if (stored) {
+    if (!projectParam) return;
+
+    const loadProjectData = async () => {
       try {
-        const website = JSON.parse(stored);
-        setGeneratedWebsite(website);
+        setIsLoadingProject(true);
+        const project = await loadProject(projectParam);
+        setHtml(project.html);
+        setProjectVersion(project.version);
+        setProjectData(project);
       } catch (error) {
-        console.error('Failed to parse generated website:', error);
+        console.error("Error loading project:", error);
+        toast.error("Failed to load project");
+      } finally {
+        setIsLoadingProject(false);
       }
-    }
-
-    // Initialize first section as selected
-    if (state.sections.length > 0) {
-      setState((prev) => ({
-        ...prev,
-        selectedSectionId: state.sections[0].id,
-      }));
-    }
-  }, []);
-
-  // Handlers
-  const handleAddSection = (type: keyof typeof sectionTemplates) => {
-    const newSection: Section = {
-      id: `section-${Date.now()}`,
-      ...sectionTemplates[type],
     };
 
-    setState((prev) => ({
-      ...prev,
-      sections: [...prev.sections, newSection],
-      isDirty: true,
-    }));
+    loadProjectData();
+  }, [projectParam]);
 
-    toast.success(`Added ${type} section`);
-  };
-
-  const handleDeleteSection = (id: string) => {
-    if (state.sections.length === 1) {
-      toast.error('You must keep at least one section');
+  async function handleRenameProject(newName: string) {
+    if (!projectParam || !newName || newName === projectTitle) {
       return;
     }
 
-    setState((prev) => ({
-      ...prev,
-      sections: prev.sections.filter((s) => s.id !== id),
-      selectedSectionId: prev.sections[0]?.id || null,
-      isDirty: true,
-    }));
+    try {
+      setIsRenamingSaving(true);
+      await renameProject(projectParam, newName);
+      setProjectTitle(newName);
+      toast.success("✅ Project renamed!");
+    } catch (error) {
+      console.error("Error renaming project:", error);
+      toast.error("Failed to rename project");
+      // Revert the input
+      setProjectTitle(projectTitle);
+    } finally {
+      setIsRenamingSaving(false);
+    }
+  }
 
-    toast.success('Section deleted');
-  };
+  // Extract all image sources from HTML
+  useEffect(() => {
+    if (!html) return;
 
-  const handleUpdateSection = (id: string, updates: Partial<Section>) => {
-    setState((prev) => ({
-      ...prev,
-      sections: prev.sections.map((s) =>
-        s.id === id ? { ...s, ...updates } : s
-      ),
-      isDirty: true,
-    }));
-  };
+    const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/g;
+    const sources: string[] = [];
+    let match;
 
-  const handleRegenerateSection = (id: string) => {
-    const section = state.sections.find((s) => s.id === id);
-    if (!section) return;
+    while ((match = imgRegex.exec(html)) !== null) {
+      sources.push(match[1]);
+    }
 
-    // Simulate regeneration
-    const loadingToast = toast.loading('Regenerating section...');
-    setTimeout(() => {
-      handleUpdateSection(id, {
-        content: `${section.content}\n\n[Regenerated content]`,
-      });
-      toast.dismiss(loadingToast);
-      toast.success('Section regenerated');
-    }, 1500);
-  };
+    setImageSources(sources);
+  }, [html]);
 
-  const handleUpdateStyles = (updates: Partial<GlobalStyles>) => {
-    setState((prev) => ({
-      ...prev,
-      globalStyles: { ...prev.globalStyles, ...updates },
-      isDirty: true,
-    }));
-  };
-
-  const handleSaveProject = async () => {
-    setState((prev) => ({ ...prev, isSaving: true }));
+  // Setup iframe and add click listeners to images
+  useEffect(() => {
+    if (!iframeRef.current || !html) return;
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const doc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+      if (!doc) return;
 
-      // Store project data
-      const projectData = {
-        id: `project-${Date.now()}`,
-        generatedWebsite,
-        sections: state.sections,
-        globalStyles: state.globalStyles,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      doc.open();
+      doc.write(html);
+      doc.close();
 
-      sessionStorage.setItem('currentProject', JSON.stringify(projectData));
+      // Add click handlers to images
+      const images = doc.querySelectorAll("img");
+      images.forEach((img, index) => {
+        img.style.cursor = "pointer";
+        img.style.border = "2px solid transparent";
+        img.style.transition = "border 0.2s";
 
-      setState((prev) => ({ ...prev, isDirty: false }));
-      toast.success('Project saved successfully!');
+        img.addEventListener("click", () => {
+          setSelectedImage(img.src);
+          setCurrentImageIndex(index);
+          setShowImageModal(true);
+        });
+
+        img.addEventListener("mouseover", () => {
+          img.style.border = "2px solid #a855f7";
+          img.style.borderRadius = "4px";
+        });
+
+        img.addEventListener("mouseout", () => {
+          img.style.border = "2px solid transparent";
+        });
+      });
     } catch (error) {
-      toast.error('Failed to save project');
-      console.error('Save error:', error);
+      console.error("Failed to setup iframe:", error);
+    }
+  }, [html]);
+
+  function handleReplaceImage(imageData: {
+    type: "upload" | "ai-generated";
+    base64: string;
+    url?: string;
+    prompt?: string;
+  }) {
+    if (!selectedImage || !html) {
+      toast.error("No image selected");
+      return;
+    }
+
+    try {
+      let newHtml = html;
+
+      // Replace the selected image src
+      if (imageData.type === "upload" && imageData.url) {
+        // For uploaded images, use the URL from the media service
+        newHtml = html.replace(selectedImage, imageData.url);
+      } else if (imageData.type === "ai-generated") {
+        // For AI-generated images, use base64
+        const base64Src = `data:image/png;base64,${imageData.base64}`;
+        newHtml = html.replace(selectedImage, base64Src);
+      }
+
+      setHtml(newHtml);
+      setShowImageModal(false);
+      setSelectedImage("");
+
+      const typeLabel = imageData.type === "upload" ? "📤 Uploaded" : "✨ AI-Generated";
+      toast.success(`${typeLabel} image applied!`);
+    } catch (error) {
+      console.error("Failed to replace image:", error);
+      toast.error("Failed to replace image");
+    }
+  }
+
+  function handleCopyHtml() {
+    if (html) {
+      navigator.clipboard.writeText(html);
+      toast.success("✅ HTML copied to clipboard!");
+    }
+  }
+
+  function handleDownload() {
+    if (html) {
+      const element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/html;charset=utf-8," + encodeURIComponent(html)
+      );
+      element.setAttribute("download", `${projectName}.html`);
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      toast.success("✅ HTML file downloaded!");
+    }
+  }
+
+  async function handleSaveVersion() {
+    if (!projectParam || !html) {
+      toast.error("No project to save");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const updated = await saveVersion({
+        projectId: projectParam,
+        html,
+      });
+      setProjectVersion(updated.version);
+      toast.success(`✅ Saved as version ${updated.version}!`);
+    } catch (error) {
+      console.error("Error saving version:", error);
+      toast.error("Failed to save version");
     } finally {
-      setState((prev) => ({ ...prev, isSaving: false }));
+      setIsSaving(false);
     }
-  };
-
-  const handleExport = () => {
-    router.push('/dashboard/export');
-  };
-
-  const selectedSection = state.sections.find((s) => s.id === state.selectedSectionId);
-
-  // Get responsive container width
-  const getPreviewWidth = () => {
-    switch (state.previewMode) {
-      case 'mobile':
-        return 'w-full max-w-sm';
-      case 'tablet':
-        return 'w-full max-w-2xl';
-      case 'desktop':
-        return 'w-full';
-      default:
-        return 'w-full';
-    }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Website Editor</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                {generatedWebsite
-                  ? `${generatedWebsite.style} | ${generatedWebsite.industry}`
-                  : 'Edit your website'}
+      <div className="flex items-center justify-between">
+        <div>
+          {projectParam ? (
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={projectTitle}
+                onChange={(e) => setProjectTitle(e.target.value)}
+                onBlur={() => handleRenameProject(projectTitle)}
+                disabled={isRenamingSaving}
+                className="text-4xl font-bold text-white bg-transparent border-2 border-transparent hover:border-purple-500 focus:border-purple-600 rounded px-2 py-1 transition-colors disabled:opacity-50 outline-none"
+                placeholder="Project name"
+              />
+              <p className="text-slate-400">
+                v{projectVersion}
               </p>
             </div>
+          ) : (
+            <>
+              <h1 className="text-4xl font-bold text-white">
+                Editor
+              </h1>
+              <p className="text-slate-400 mt-2">
+                {projectName}
+              </p>
+            </>
+          )}
+        </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3">
-              {state.isDirty && (
-                <span className="text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                  Unsaved changes
+        <div className="flex gap-3">
+          {projectParam && (
+            <>
+              <button
+                onClick={handleSaveVersion}
+                disabled={isSaving}
+                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-all font-medium"
+              >
+                {isSaving ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Save size={18} />
+                )}
+                {isSaving ? "Saving..." : "Save Version"}
+              </button>
+              <button
+                onClick={() => setShowSeoModal(true)}
+                className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-all font-medium"
+              >
+                <Settings size={18} />
+                SEO Settings
+              </button>
+              <button
+                onClick={() => setShowThemeModal(true)}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-all font-medium"
+              >
+                <Palette size={18} />
+                Theme Settings
+              </button>
+              <button
+                onClick={() => setShowExportModal(true)}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-all font-medium"
+              >
+                <FileDown size={18} />
+                Export Project
+              </button>
+            </>
+          )}
+          <button
+            onClick={handleCopyHtml}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all font-medium"
+          >
+            <Copy size={18} />
+            Copy HTML
+          </button>
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all font-medium"
+          >
+            <Download size={18} />
+            Download
+          </button>
+        </div>
+      </div>
+
+      {isLoadingProject && (
+        <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-6 flex items-center gap-2">
+          <Loader2 className="animate-spin text-blue-400" size={20} />
+          <p className="text-blue-400">Loading project...</p>
+        </div>
+      )}
+
+      {!html && !isLoadingProject && (
+        <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-6">
+          <p className="text-yellow-400">
+            No project loaded. Go back to Create to generate a website.
+          </p>
+        </div>
+      )}
+
+      {html && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Preview Area (2/3) */}
+          <div className="lg:col-span-2 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white">Preview</h2>
+              {imageSources.length > 0 && (
+                <span className="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full">
+                  💡 Click images to edit ({imageSources.length})
                 </span>
               )}
+            </div>
 
-              <button
-                onClick={handleSaveProject}
-                disabled={state.isSaving}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-all"
-              >
-                <Save size={18} />
-                {state.isSaving ? 'Saving...' : 'Save'}
-              </button>
+            <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden shadow-lg">
+              <iframe
+                ref={iframeRef}
+                className="w-full h-[600px] bg-white"
+                title="Website Preview"
+                sandbox={{ allow: ["same-origin", "scripts"] } as any}
+              />
+            </div>
+          </div>
 
-              <button
-                onClick={handleExport}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
-              >
-                <Download size={18} />
-                Export
-              </button>
+          {/* Image Editor Panel (1/3) */}
+          <div className="lg:col-span-1">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 sticky top-6 max-h-[700px] overflow-y-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <ImageIcon className="w-5 h-5 text-purple-400" />
+                <h3 className="text-lg font-semibold text-white">Image Editor</h3>
+              </div>
+
+              {imageSources.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-slate-400 text-sm">
+                    No images found in this design.
+                  </p>
+                </div>
+              ) : (
+                <ImageReplaceModal
+                  isOpen={showImageModal}
+                  onClose={() => setShowImageModal(false)}
+                  onReplace={handleReplaceImage}
+                />
+              )}
+
+              {/* Image List */}
+              {imageSources.length > 0 && (
+                <div className="mt-6 space-y-2">
+                  <p className="text-xs text-slate-400 font-medium">Images in page:</p>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {imageSources.map((src, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setSelectedImage(src);
+                          setCurrentImageIndex(idx);
+                          setShowImageModal(true);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors ${
+                          selectedImage === src
+                            ? "bg-purple-600 text-white"
+                            : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                        }`}
+                      >
+                        <span className="truncate block">
+                          Image {idx + 1}
+                        </span>
+                        <span className="text-xs opacity-70 truncate block">
+                          {src.substring(0, 40)}...
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Main Editor Layout */}
-      <div className="flex h-[calc(100vh-100px)]">
-        {/* Left Panel: Live Preview */}
-        <div className="flex-1 border-r border-gray-200 bg-gray-100 p-6 overflow-y-auto">
-          <div className="flex flex-col items-center gap-4">
-            {/* Preview Mode Buttons */}
-            <div className="flex gap-2 bg-white p-1 rounded-lg border border-gray-200">
-              {(['desktop', 'tablet', 'mobile'] as const).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() =>
-                    setState((prev) => ({ ...prev, previewMode: mode }))
-                  }
-                  className={`px-3 py-2 rounded text-sm font-medium capitalize transition-all ${
-                    state.previewMode === mode
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {mode === 'desktop' && <Eye size={16} className="mr-1 inline" />}
-                  {mode}
-                </button>
-              ))}
-            </div>
+      {showImageModal && (
+        <ImageReplaceModal
+          isOpen={showImageModal}
+          onClose={() => setShowImageModal(false)}
+          onReplace={(imageData: any) => {
+            const newUrl = imageData.url || imageData.base64;
+            const newHtml = html.replace(selectedImage, newUrl);
+            setHtml(newHtml);
+            toast.success("✅ Image updated!");
+          }}
+        />
+      )}
 
-            {/* Live Preview Container */}
-            <div className={`${getPreviewWidth()} mx-auto bg-white rounded-lg shadow-lg overflow-hidden`}>
-              {state.sections.map((section) => (
-                <div
-                  key={section.id}
-                  style={{
-                    backgroundColor: section.backgroundColor,
-                    color: section.textColor,
-                  }}
-                  className="p-8 min-h-[200px] border-b border-gray-200 hover:border-purple-300 transition-colors cursor-pointer"
-                  onClick={() =>
-                    setState((prev) => ({
-                      ...prev,
-                      selectedSectionId: section.id,
-                    }))
-                  }
-                >
-                  <div className={`max-w-4xl mx-auto ${state.selectedSectionId === section.id ? 'ring-2 ring-purple-500 rounded p-4' : ''}`}>
-                    <h2 className="text-xl font-bold mb-3">{section.title}</h2>
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {section.content}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {showSeoModal && projectParam && (
+        <SeoModal
+          projectId={projectParam}
+          userId={params.get("userId") || projectData?.userId || ""}
+          seoTitle={projectData?.seoTitle}
+          seoDescription={projectData?.seoDescription}
+          seoKeywords={projectData?.seoKeywords}
+          ogTitle={projectData?.ogTitle}
+          ogDescription={projectData?.ogDescription}
+          ogImageUrl={projectData?.ogImageUrl}
+          onClose={() => setShowSeoModal(false)}
+          onSuccess={() => {
+            toast.success("✅ SEO settings updated!");
+          }}
+        />
+      )}
 
-        {/* Right Panel: Editor Controls */}
-        <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto">
-          {/* Section Management */}
-          <div className="border-b border-gray-200 p-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Sections</h3>
+      {showThemeModal && projectParam && (
+        <ThemeModal
+          projectId={projectParam}
+          userId={params.get("userId") || projectData?.userId || ""}
+          primaryColor={projectData?.primaryColor}
+          secondaryColor={projectData?.secondaryColor}
+          accentColor={projectData?.accentColor}
+          backgroundColor={projectData?.backgroundColor}
+          textColor={projectData?.textColor}
+          fontFamily={projectData?.fontFamily}
+          fontSizeBase={projectData?.fontSizeBase}
+          borderRadius={projectData?.borderRadius}
+          onClose={() => setShowThemeModal(false)}
+          onSuccess={() => {
+            toast.success("✅ Theme settings updated!");
+          }}
+        />
+      )}
 
-            <div className="space-y-2 mb-4">
-              {state.sections.map((section) => (
-                <div
-                  key={section.id}
-                  onClick={() =>
-                    setState((prev) => ({
-                      ...prev,
-                      selectedSectionId: section.id,
-                    }))
-                  }
-                  className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                    state.selectedSectionId === section.id
-                      ? 'border-purple-600 bg-purple-50'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {section.title}
-                      </p>
-                      <p className="text-xs text-gray-500 capitalize">{section.type}</p>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteSection(section.id);
-                      }}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Add Section Dropdown */}
-            <details className="border border-gray-200 rounded-lg">
-              <summary className="p-3 cursor-pointer hover:bg-gray-50 flex items-center gap-2 font-medium text-sm">
-                <Plus size={16} />
-                Add Section
-              </summary>
-              <div className="p-3 space-y-2 bg-gray-50">
-                {(Object.keys(sectionTemplates) as Array<keyof typeof sectionTemplates>).map(
-                  (type) => (
-                    <button
-                      key={type}
-                      onClick={() => handleAddSection(type)}
-                      className="w-full text-left px-3 py-2 text-sm rounded hover:bg-gray-200 capitalize transition-colors"
-                    >
-                      + {type}
-                    </button>
-                  )
-                )}
-              </div>
-            </details>
-          </div>
-
-          {/* Section Editor */}
-          {selectedSection && (
-            <div className="border-b border-gray-200 p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-gray-900">Edit Section</h3>
-                <button
-                  onClick={() => handleRegenerateSection(selectedSection.id)}
-                  className="p-1 text-purple-600 hover:bg-purple-50 rounded transition-colors"
-                  title="Regenerate with AI"
-                >
-                  <RotateCcw size={16} />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="text-xs font-semibold text-gray-700">Title</label>
-                  <input
-                    type="text"
-                    value={selectedSection.title}
-                    onChange={(e) =>
-                      handleUpdateSection(selectedSection.id, {
-                        title: e.target.value,
-                      })
-                    }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                  />
-                </div>
-
-                {/* Content */}
-                <div>
-                  <label className="text-xs font-semibold text-gray-700">Content</label>
-                  <textarea
-                    value={selectedSection.content}
-                    onChange={(e) =>
-                      handleUpdateSection(selectedSection.id, {
-                        content: e.target.value,
-                      })
-                    }
-                    rows={4}
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none resize-none"
-                  />
-                </div>
-
-                {/* Background Color */}
-                <div>
-                  <label className="text-xs font-semibold text-gray-700">
-                    Background Color
-                  </label>
-                  <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={selectedSection.backgroundColor || '#ffffff'}
-                      onChange={(e) =>
-                        handleUpdateSection(selectedSection.id, {
-                          backgroundColor: e.target.value,
-                        })
-                      }
-                      className="w-10 h-10 rounded border border-gray-300 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={selectedSection.backgroundColor || '#ffffff'}
-                      readOnly
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50"
-                    />
-                  </div>
-                </div>
-
-                {/* Text Color */}
-                <div>
-                  <label className="text-xs font-semibold text-gray-700">
-                    Text Color
-                  </label>
-                  <div className="flex gap-2 mt-1">
-                    <input
-                      type="color"
-                      value={selectedSection.textColor || '#000000'}
-                      onChange={(e) =>
-                        handleUpdateSection(selectedSection.id, {
-                          textColor: e.target.value,
-                        })
-                      }
-                      className="w-10 h-10 rounded border border-gray-300 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={selectedSection.textColor || '#000000'}
-                      readOnly
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Global Styles */}
-          <div className="p-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Palette size={16} />
-              Global Styles
-            </h3>
-
-            <div className="space-y-4">
-              {/* Primary Color */}
-              <div>
-                <label className="text-xs font-semibold text-gray-700">
-                  Primary Color
-                </label>
-                <div className="flex gap-2 mt-1">
-                  <input
-                    type="color"
-                    value={state.globalStyles.primaryColor}
-                    onChange={(e) =>
-                      handleUpdateStyles({ primaryColor: e.target.value })
-                    }
-                    className="w-10 h-10 rounded border border-gray-300 cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={state.globalStyles.primaryColor}
-                    readOnly
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50"
-                  />
-                </div>
-              </div>
-
-              {/* Font Family */}
-              <div>
-                <label className="text-xs font-semibold text-gray-700">
-                  Font Family
-                </label>
-                <select
-                  value={state.globalStyles.fontFamily}
-                  onChange={(e) =>
-                    handleUpdateStyles({
-                      fontFamily: e.target.value as any,
-                    })
-                  }
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                >
-                  <option value="inter">Inter</option>
-                  <option value="playfair">Playfair Display</option>
-                  <option value="roboto">Roboto</option>
-                </select>
-              </div>
-
-              {/* Font Size */}
-              <div>
-                <label className="text-xs font-semibold text-gray-700">
-                  Font Size
-                </label>
-                <select
-                  value={state.globalStyles.fontSize}
-                  onChange={(e) =>
-                    handleUpdateStyles({
-                      fontSize: e.target.value as any,
-                    })
-                  }
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                >
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                </select>
-              </div>
-
-              {/* Spacing */}
-              <div>
-                <label className="text-xs font-semibold text-gray-700">
-                  Spacing
-                </label>
-                <select
-                  value={state.globalStyles.spacing}
-                  onChange={(e) =>
-                    handleUpdateStyles({
-                      spacing: e.target.value as any,
-                    })
-                  }
-                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                >
-                  <option value="compact">Compact</option>
-                  <option value="normal">Normal</option>
-                  <option value="spacious">Spacious</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {showExportModal && projectParam && (
+        <ExportModal
+          projectId={projectParam}
+          userId={params.get("userId") || projectData?.userId || ""}
+          projectName={projectTitle}
+          onClose={() => setShowExportModal(false)}
+          onSuccess={() => {
+            toast.success("✅ Project exported successfully!");
+          }}
+        />
+      )}
     </div>
   );
 }

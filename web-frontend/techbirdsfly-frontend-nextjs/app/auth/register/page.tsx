@@ -5,18 +5,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Mail, Lock, User, Chrome, Facebook } from 'lucide-react';
+import { Mail, Lock, User, Chrome, Facebook, Loader2 } from 'lucide-react';
 import { FormInput } from '@/components/forms/FormInput';
 import { FormCheckbox } from '@/components/forms/FormCheckbox';
 import { registerSchema } from '@/lib/schemas/auth';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
 import { AppLogoIcon, AppLogoText } from '@/components/AppLogo';
+import { generateGoogleAuthUrl, validateOAuthState, getOAuthRedirectPath } from '@/lib/oauth';
+import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, isLoading } = useAuthStore();
+  const { register, registerWithGoogle, isLoading } = useAuthStore();
   const [apiError, setApiError] = React.useState('');
+  const [oauthLoading, setOauthLoading] = React.useState(false);
 
   const {
     control,
@@ -34,18 +37,69 @@ export default function RegisterPage() {
     },
   });
 
+  // Check for OAuth callback
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const state = params.get('state');
+
+      if (code && state) {
+        handleOAuthCallback(code, state);
+        // Clean up URL
+        window.history.replaceState({}, document.title, '/auth/register');
+      }
+    }
+  }, []);
+
+  const handleOAuthCallback = async (code: string, state: string) => {
+    setOauthLoading(true);
+    try {
+      // Validate state for CSRF protection
+      if (!validateOAuthState(state)) {
+        throw new Error('Invalid OAuth state - security validation failed');
+      }
+
+      // Call the store's registerWithGoogle action
+      await registerWithGoogle(code);
+      toast.success('Account created successfully!');
+
+      // Get redirect path and navigate
+      const redirectPath = getOAuthRedirectPath();
+      setTimeout(() => {
+        router.push(redirectPath);
+      }, 100);
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : 'OAuth signup failed');
+      toast.error('OAuth signup failed');
+    } finally {
+      setOauthLoading(false);
+    }
+  };
+
   const onSubmit = async (data: any) => {
     setApiError('');
     try {
       await register(data.email, data.firstName, data.lastName, data.password);
+      toast.success('Account created successfully!');
       router.push('/dashboard');
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'Registration failed');
+      const message = error instanceof Error ? error.message : 'Registration failed';
+      setApiError(message);
+      toast.error(message);
     }
   };
 
-  const handleGoogleSignup = () => {
-    console.log('Google signup - implement OAuth flow');
+  const handleGoogleSignup = async () => {
+    try {
+      setOauthLoading(true);
+      const authUrl = await generateGoogleAuthUrl('/dashboard');
+      window.location.href = authUrl;
+    } catch (error) {
+      setApiError('Failed to start Google signup');
+      toast.error('Failed to start Google signup');
+      setOauthLoading(false);
+    }
   };
 
   const handleFacebookSignup = () => {
@@ -167,11 +221,16 @@ export default function RegisterPage() {
           <div className="space-y-3">
             <button
               onClick={handleGoogleSignup}
+              disabled={oauthLoading}
               type="button"
-              className="w-full py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Chrome className="w-5 h-5 text-blue-500" />
-              Sign up with Google
+              {oauthLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Chrome className="w-5 h-5 text-blue-500" />
+              )}
+              {oauthLoading ? 'Connecting...' : 'Sign up with Google'}
             </button>
 
             <button

@@ -40,6 +40,7 @@ export interface AuthState {
 
   // Auth actions
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (oauthCode: string) => Promise<void>;
   logout: () => void;
   register: (
     email: string,
@@ -47,6 +48,7 @@ export interface AuthState {
     lastName: string,
     password: string
   ) => Promise<void>;
+  registerWithGoogle: (oauthCode: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<{ resetToken: string }>;
   resetPassword: (
     email: string,
@@ -356,6 +358,176 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             error: null,
           });
+        },
+
+        loginWithGoogle: async (oauthCode: string) => {
+          set({ isLoading: true, error: null });
+          try {
+            // Exchange OAuth code with backend for JWT token
+            const response = await fetch(`${API_BASE}/auth/oauth/google/callback`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: oauthCode }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || data.error || "Google login failed");
+            }
+
+            const { user, accessToken, refreshToken } = data;
+
+            if (user) {
+              get().setUser(user);
+            } else if (accessToken) {
+              // Decode JWT to extract user info
+              try {
+                const base64Url = accessToken.split(".")[1];
+                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split("")
+                    .map((c) => {
+                      return (
+                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                      );
+                    })
+                    .join("")
+                );
+
+                const tokenData = JSON.parse(jsonPayload);
+                const claimNameId =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+                const claimEmail =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+                const claimGivenName =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
+                const claimSurname =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+
+                const userFromToken: User = {
+                  id:
+                    tokenData[claimNameId] ||
+                    tokenData.sub ||
+                    tokenData.id ||
+                    "unknown",
+                  email: tokenData[claimEmail] || tokenData.email || "unknown",
+                  firstName:
+                    tokenData[claimGivenName] || tokenData.firstName || "User",
+                  lastName: tokenData[claimSurname] || tokenData.lastName || "",
+                  role: tokenData.role || "user",
+                  createdAt: tokenData.createdAt || new Date().toISOString(),
+                };
+
+                get().setUser(userFromToken);
+              } catch (decodeErr) {
+                console.warn("Could not decode token, setting minimal user", decodeErr);
+                get().setUser({
+                  id: "unknown",
+                  email: "unknown",
+                  firstName: "User",
+                  lastName: "",
+                  role: "user",
+                  createdAt: new Date().toISOString(),
+                });
+              }
+            }
+
+            get().setToken(accessToken, refreshToken || "");
+            set({ isLoading: false });
+          } catch (err) {
+            const error =
+              err instanceof Error ? err.message : "An error occurred";
+            console.error("Google login error:", error);
+            set({ error, isLoading: false });
+            throw err;
+          }
+        },
+
+        registerWithGoogle: async (oauthCode: string) => {
+          set({ isLoading: true, error: null });
+          try {
+            // Exchange OAuth code with backend for JWT token (signup endpoint)
+            const response = await fetch(`${API_BASE}/auth/oauth/google/signup`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: oauthCode }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || data.error || "Google signup failed");
+            }
+
+            const { user, accessToken, refreshToken } = data;
+
+            if (user) {
+              get().setUser(user);
+            } else if (accessToken) {
+              // Decode JWT to extract user info
+              try {
+                const base64Url = accessToken.split(".")[1];
+                const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split("")
+                    .map((c) => {
+                      return (
+                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                      );
+                    })
+                    .join("")
+                );
+
+                const tokenData = JSON.parse(jsonPayload);
+                const claimNameId =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+                const claimEmail =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+                const claimGivenName =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
+                const claimSurname =
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+
+                const userFromToken: User = {
+                  id:
+                    tokenData[claimNameId] ||
+                    tokenData.sub ||
+                    tokenData.id ||
+                    "unknown",
+                  email: tokenData[claimEmail] || tokenData.email || "unknown",
+                  firstName:
+                    tokenData[claimGivenName] || tokenData.firstName || "User",
+                  lastName: tokenData[claimSurname] || tokenData.lastName || "",
+                  role: tokenData.role || "user",
+                  createdAt: tokenData.createdAt || new Date().toISOString(),
+                };
+
+                get().setUser(userFromToken);
+              } catch (decodeErr) {
+                console.warn("Could not decode token, setting minimal user", decodeErr);
+                get().setUser({
+                  id: "unknown",
+                  email: "unknown",
+                  firstName: "User",
+                  lastName: "",
+                  role: "user",
+                  createdAt: new Date().toISOString(),
+                });
+              }
+            }
+
+            get().setToken(accessToken, refreshToken || "");
+            set({ isLoading: false });
+          } catch (err) {
+            const error =
+              err instanceof Error ? err.message : "An error occurred";
+            console.error("Google signup error:", error);
+            set({ error, isLoading: false });
+            throw err;
+          }
         },
 
         updateUser: (updates) =>

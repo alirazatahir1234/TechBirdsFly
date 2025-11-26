@@ -161,8 +161,9 @@ builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri("http://localhost:5001/health"), name: "auth-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5002/health"), name: "user-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5003/health"), name: "generator-service", timeout: TimeSpan.FromSeconds(3))
-    .AddUrlGroup(new Uri("http://localhost:5007/health"), name: "image-service", timeout: TimeSpan.FromSeconds(3))
-    .AddUrlGroup(new Uri("http://localhost:5008/health"), name: "user-profile-service", timeout: TimeSpan.FromSeconds(3));
+    .AddUrlGroup(new Uri("http://localhost:5004/health"), name: "image-service", timeout: TimeSpan.FromSeconds(3))
+    .AddUrlGroup(new Uri("http://localhost:5005/health"), name: "billing-service", timeout: TimeSpan.FromSeconds(3))
+    .AddUrlGroup(new Uri("http://localhost:5006/health"), name: "admin-service", timeout: TimeSpan.FromSeconds(3));
 
 // Add Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -289,10 +290,12 @@ app.MapGet("/info", () => new
     routes = new
     {
         auth = "/api/auth/** → Auth Service (5001)",
-        users = "/api/users/** → User Service (5008)",
-        projects = "/api/projects/** → Generator Service (5003)",
-        images = "/api/images/** → Image Service (5007)",
-        admin = "/api/admin/** → Admin Service (5006)"
+        users = "/api/users/** → User Service (5002)",
+        generator = "/api/generator/** → Generator Service (5003)",
+        images = "/api/images/** → Image Service (5004)",
+        billing = "/api/billing/** → Billing Service (5005)",
+        admin = "/api/admin/** → Admin Service (5006)",
+        events = "/api/events/** → Event Bus Service (5007)"
     }
 }).WithName("GatewayInfo");
 

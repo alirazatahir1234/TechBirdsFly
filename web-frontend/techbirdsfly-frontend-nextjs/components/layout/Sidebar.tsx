@@ -26,38 +26,39 @@ interface SidebarItem {
 
 /**
  * Base44-Style Sidebar for AI Website Builder
- * Minimal, AI-focused, 6 core items max
+ * Minimal, AI-focused, 7 core items max
  * 
  * Flow:
- * 1. Create Website (Primary CTA - AI Prompt)
- * 2. Editor (Edit generated website)
- * 3. Projects (Manage all generated sites)
- * 4. Media (AI Images + Uploads)
- * 5. Export (HTML/React/Next.js)
- * 6. Settings (Profile, Billing, API)
+ * 1. Generate (AI-powered website generation)
+ * 2. Create Website (Custom prompt entry)
+ * 3. Editor (Edit generated website)
+ * 4. Projects (Manage all generated sites)
+ * 5. Media (AI Images + Uploads)
+ * 6. Export (HTML/React/Next.js)
+ * 7. Settings (Profile, Billing, API)
  */
 const sidebarItems: SidebarItem[] = [
   { 
     icon: Sparkles, 
-    label: "Create Website", 
-    href: "/dashboard/create", 
+    label: "Generator", 
+    href: "/dashboard/generator", 
     active: false,
     isPrimary: true,
-    description: "Generate with AI"
+    description: "Create new website"
   },
   { 
     icon: Wand2, 
     label: "Editor", 
     href: "/dashboard/editor", 
     active: false,
-    description: "Edit sections & regenerate"
+    description: "Edit & customize"
   },
   { 
     icon: Folder, 
     label: "Projects", 
     href: "/dashboard/projects", 
     active: false,
-    description: "All generated websites"
+    description: "Your websites"
   },
   { 
     icon: Image, 

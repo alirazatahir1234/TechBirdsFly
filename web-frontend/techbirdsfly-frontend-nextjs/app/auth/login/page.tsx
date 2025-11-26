@@ -5,20 +5,23 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Mail, Lock, Chrome, Facebook } from 'lucide-react';
+import { Mail, Lock, Chrome, Facebook, Loader2 } from 'lucide-react';
 import { FormInput } from '@/components/forms/FormInput';
 import { FormCheckbox } from '@/components/forms/FormCheckbox';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
 import { AppLogoIcon, AppLogoText } from '@/components/AppLogo';
+import { generateGoogleAuthUrl, validateOAuthState, getOAuthRedirectPath } from '@/lib/oauth';
+import toast from 'react-hot-toast';
 
 const REMEMBER_ME_KEY = 'login_remember_email';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading } = useAuthStore();
+  const { login, loginWithGoogle, isLoading } = useAuthStore();
   const [apiError, setApiError] = React.useState('');
+  const [oauthLoading, setOauthLoading] = React.useState(false);
 
   const {
     control,
@@ -45,6 +48,46 @@ export default function LoginPage() {
     }
   }, [setValue]);
 
+  // Check for OAuth callback
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const state = params.get('state');
+
+      if (code && state) {
+        handleOAuthCallback(code, state);
+        // Clean up URL
+        window.history.replaceState({}, document.title, '/auth/login');
+      }
+    }
+  }, []);
+
+  const handleOAuthCallback = async (code: string, state: string) => {
+    setOauthLoading(true);
+    try {
+      // Validate state for CSRF protection
+      if (!validateOAuthState(state)) {
+        throw new Error('Invalid OAuth state - security validation failed');
+      }
+
+      // Call the store's loginWithGoogle action
+      await loginWithGoogle(code);
+      toast.success('Logged in successfully!');
+
+      // Get redirect path and navigate
+      const redirectPath = getOAuthRedirectPath();
+      setTimeout(() => {
+        router.push(redirectPath);
+      }, 100);
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : 'OAuth login failed');
+      toast.error('OAuth login failed');
+    } finally {
+      setOauthLoading(false);
+    }
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     setApiError('');
     try {
@@ -68,13 +111,25 @@ export default function LoginPage() {
       setTimeout(() => {
         router.push(redirectUrl);
       }, 100);
+
+      toast.success('Logged in successfully!');
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : 'Login failed');
+      const message = error instanceof Error ? error.message : 'Login failed';
+      setApiError(message);
+      toast.error(message);
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Google login - implement OAuth flow');
+  const handleGoogleLogin = async () => {
+    try {
+      setOauthLoading(true);
+      const authUrl = await generateGoogleAuthUrl('/dashboard');
+      window.location.href = authUrl;
+    } catch (error) {
+      setApiError('Failed to start Google login');
+      toast.error('Failed to start Google login');
+      setOauthLoading(false);
+    }
   };
 
   const handleFacebookLogin = () => {
@@ -166,11 +221,16 @@ export default function LoginPage() {
           <div className="space-y-3">
             <button
               onClick={handleGoogleLogin}
+              disabled={oauthLoading}
               type="button"
-              className="w-full py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Chrome className="w-5 h-5 text-blue-500" />
-              Sign in with Google
+              {oauthLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Chrome className="w-5 h-5 text-blue-500" />
+              )}
+              {oauthLoading ? 'Connecting...' : 'Sign in with Google'}
             </button>
 
             <button

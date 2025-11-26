@@ -2,11 +2,13 @@ namespace GeneratorService.Infrastructure;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using GeneratorService.Application.Interfaces;
-using GeneratorService.Application.Services;
+using Microsoft.Extensions.Configuration;
 using GeneratorService.Infrastructure.Persistence;
 using GeneratorService.Infrastructure.Repositories;
-using GeneratorService.Infrastructure.ExternalServices;
+using GeneratorService.Infrastructure.AI;
+using GeneratorService.Infrastructure.Services;
+using GeneratorService.Domain.Interfaces;
+using GeneratorService.Application.Interfaces;
 
 /// <summary>
 /// Dependency Injection extension methods for configuring services
@@ -15,45 +17,46 @@ using GeneratorService.Infrastructure.ExternalServices;
 public static class DependencyInjection
 {
     /// <summary>
-    /// Adds application services to the dependency injection container
-    /// </summary>
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        // Register application services
-        services.AddScoped<ITemplateApplicationService, TemplateApplicationService>();
-        services.AddScoped<IProjectApplicationService, ProjectApplicationService>();
-        services.AddScoped<IGenerationApplicationService, GenerationApplicationService>();
-
-        return services;
-    }
-
-    /// <summary>
     /// Adds infrastructure services to the dependency injection container
-    /// Including repositories, DbContext, and external services
+    /// Including DbContext, EF Core repositories, AI services, and the website generator
+    /// Phase 4: PostgreSQL integration with production-ready persistence layer
     /// </summary>
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string connectionString)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configure DbContext with SQLite
+        var connectionString = configuration.GetConnectionString("GeneratorDb")
+            ?? throw new InvalidOperationException("Connection string 'GeneratorDb' not found.");
+
+        // Configure DbContext with PostgreSQL provider (Npgsql)
         services.AddDbContext<GeneratorDbContext>(options =>
         {
-            options.UseSqlite(connectionString);
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "public");
+                npgsqlOptions.CommandTimeout(30);
+            });
         });
 
-        // Register repositories
-        services.AddScoped<ITemplateRepository, TemplateRepository>();
-        services.AddScoped<IProjectRepository, ProjectRepository>();
-        services.AddScoped<IGenerationRepository, GenerationRepository>();
+        // Register Phase 4: EF Core repositories for PostgreSQL
+        services.AddScoped<IProjectRepository, EFProjectRepository>();
+        services.AddScoped<ISectionRepository, EFSectionRepository>();
+        services.AddScoped<IGeneratedPageRepository, EFGeneratedPageRepository>();
 
-        // Register external services
-        services.AddScoped<IAIGeneratorService, AIGeneratorService>();
-        services.AddScoped<IStorageService, StorageService>();
-        services.AddScoped<IEventPublisher, EventPublisher>();
+        // Register Unit of Work for transaction management
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Register AI services
+        services.AddScoped<ILlamaService, LlamaService>();
+        services.AddScoped<PromptBuilder>();
+        services.AddScoped<HtmlTemplateBuilder>();
+
+        // Register website generator service (implements IWebsiteGenerator)
+        services.AddScoped<IWebsiteGenerator, WebsiteGeneratorService>();
 
         return services;
     }
 
     /// <summary>
-    /// Creates the database schema if it doesn't exist
+    /// Initializes the database, applying migrations and creating schema
     /// Should be called during application startup
     /// </summary>
     public static async Task InitializeDatabaseAsync(this IServiceProvider serviceProvider)
@@ -65,12 +68,14 @@ public static class DependencyInjection
         {
             // Apply any pending migrations
             await context.Database.MigrateAsync();
-            Console.WriteLine("Database migration completed successfully");
+            Console.WriteLine("✓ Database migration completed successfully");
+            Console.WriteLine("✓ PostgreSQL schema initialized with all entity configurations");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error during database migration: {ex.Message}");
+            Console.WriteLine($"✗ Error during database migration: {ex.Message}");
             throw;
         }
     }
 }
+
