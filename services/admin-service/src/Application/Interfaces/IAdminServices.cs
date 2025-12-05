@@ -1,6 +1,7 @@
 namespace AdminService.Application.Interfaces;
 
 using AdminService.Domain.Entities;
+using AdminService.Application.DTOs;
 
 /// <summary>
 /// Repository for AdminUser entities
@@ -11,8 +12,8 @@ public interface IAdminUserRepository
     Task<AdminUser?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<IEnumerable<AdminUser>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<AdminUser>> GetByStatusAsync(string status, CancellationToken cancellationToken = default);
-    Task AddAsync(AdminUser adminUser, CancellationToken cancellationToken = default);
-    Task UpdateAsync(AdminUser adminUser, CancellationToken cancellationToken = default);
+    Task<AdminUser> AddAsync(AdminUser adminUser, CancellationToken cancellationToken = default);
+    Task<AdminUser> UpdateAsync(AdminUser adminUser, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
@@ -25,8 +26,8 @@ public interface IRoleRepository
     Task<Role?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Role?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
     Task<IEnumerable<Role>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task AddAsync(Role role, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Role role, CancellationToken cancellationToken = default);
+    Task<Role> AddAsync(Role role, CancellationToken cancellationToken = default);
+    Task<Role> UpdateAsync(Role role, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
@@ -41,7 +42,7 @@ public interface IAuditLogRepository
     Task<IEnumerable<AuditLog>> GetByResourceAsync(string resourceType, string resourceId, CancellationToken cancellationToken = default);
     Task<IEnumerable<AuditLog>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetAllAsync(AuditLogFilterRequest filter, CancellationToken cancellationToken = default);
-    Task AddAsync(AuditLog auditLog, CancellationToken cancellationToken = default);
+    Task<AuditLog> AddAsync(AuditLog auditLog, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 

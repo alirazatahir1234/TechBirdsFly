@@ -91,9 +91,10 @@ public static class ExportEndpoints
         string projectId,
         string framework,
         IExportService exportService,
-        ILogger<Program> logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("ExportEndpoints");
         try
         {
             logger.LogInformation(
@@ -146,9 +147,10 @@ public static class ExportEndpoints
         string projectId,
         string framework,
         IExportService exportService,
-        ILogger<Program> logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("ExportEndpoints");
         try
         {
             var result = await exportService.GetExportAsync(projectId, framework, cancellationToken);
@@ -171,9 +173,10 @@ public static class ExportEndpoints
     public static async Task<IResult> DeleteExports(
         string projectId,
         IFileStorage fileStorage,
-        ILogger<Program> logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("ExportEndpoints");
         try
         {
             var deleted = await fileStorage.DeleteAsync(projectId, cancellationToken);
@@ -193,8 +196,9 @@ public static class ExportEndpoints
     /// <summary>
     /// Gets list of supported frameworks
     /// </summary>
-    public static Task<IResult> GetSupportedFrameworks(ILogger<Program> logger)
+    public static Task<IResult> GetSupportedFrameworks(ILoggerFactory loggerFactory)
     {
+        var logger = loggerFactory.CreateLogger("ExportEndpoints");
         var frameworks = new[]
         {
             new { name = "html", description = "Plain HTML/CSS" },

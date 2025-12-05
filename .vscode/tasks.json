@@ -125,6 +125,42 @@
       "problemMatcher": "$msCompile"
     },
 
+    {
+      "label": "build-publish-service",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/publish-service/PublishService.sln",
+        "--configuration",
+        "Debug"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      },
+      "problemMatcher": "$msCompile"
+    },
+
+    {
+      "label": "build-template-service",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/template-service/TemplateService.sln",
+        "--configuration",
+        "Debug"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      },
+      "problemMatcher": "$msCompile"
+    },
+
     // ---------------------------------------------------------------------
     // 🧱 BUILD ALL (.SLN LEVEL)
     // ---------------------------------------------------------------------

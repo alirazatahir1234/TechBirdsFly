@@ -3,6 +3,7 @@ using ProjectService.Application.Commands;
 using ProjectService.Application.DTOs;
 using ProjectService.Domain.Entities;
 using ProjectService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectService.Application.Handlers;
 

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using TechBirdsFly.AdminService.Application.DTOs;
-using TechBirdsFly.AdminService.Application.Interfaces;
+using AdminService.Application.DTOs;
+using AdminService.Application.Interfaces;
+using AdminService.Domain.Entities;
 
-namespace TechBirdsFly.AdminService.WebAPI.Controllers;
+namespace AdminService.WebAPI.Controllers;
 
 /// <summary>
 /// Audit Logs Controller - Handles audit log querying and retrieval.
@@ -22,6 +23,27 @@ public class AuditLogsController : ControllerBase
     {
         _auditLogService = auditLogService ?? throw new ArgumentNullException(nameof(auditLogService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    /// <summary>
+    /// Maps an AuditLog entity to AuditLogDto
+    /// </summary>
+    private static AuditLogDto MapToDto(AuditLog auditLog)
+    {
+        return new AuditLogDto
+        {
+            Id = auditLog.Id,
+            AdminUserId = auditLog.AdminUserId,
+            Action = auditLog.Action,
+            ResourceType = auditLog.ResourceType,
+            ResourceId = auditLog.ResourceId,
+            Details = auditLog.Details,
+            OldValues = auditLog.OldValues,
+            NewValues = auditLog.NewValues,
+            IpAddress = auditLog.IpAddress,
+            UserAgent = auditLog.UserAgent,
+            CreatedAt = auditLog.CreatedAt
+        };
     }
 
     /// <summary>
@@ -51,16 +73,16 @@ public class AuditLogsController : ControllerBase
         // Validate pagination parameters
         if (pageNumber < 1)
             return BadRequest(ApiResponse<PaginatedResult<AuditLogDto>>.ErrorResponse(
-                "Invalid request", new[] { "Page number must be at least 1" }));
+                "Invalid request", new List<string> { "Page number must be at least 1" }));
 
         if (pageSize < 1 || pageSize > 100)
             return BadRequest(ApiResponse<PaginatedResult<AuditLogDto>>.ErrorResponse(
-                "Invalid request", new[] { "Page size must be between 1 and 100" }));
+                "Invalid request", new List<string> { "Page size must be between 1 and 100" }));
 
         // Validate date range
         if (fromDate.HasValue && toDate.HasValue && fromDate > toDate)
             return BadRequest(ApiResponse<PaginatedResult<AuditLogDto>>.ErrorResponse(
-                "Invalid request", new[] { "From date cannot be after to date" }));
+                "Invalid request", new List<string> { "From date cannot be after to date" }));
 
         try
         {
@@ -94,13 +116,13 @@ public class AuditLogsController : ControllerBase
             };
 
             _logger.LogInformation("Audit logs retrieved successfully. Count: {Count}, TotalPages: {TotalPages}", items.Count(), totalPages);
-            return Ok(ApiResponse<PaginatedResult<AuditLogDto>>.Success(result, "Audit logs retrieved successfully"));
+            return Ok(ApiResponse<PaginatedResult<AuditLogDto>>.SuccessResponse(result, "Audit logs retrieved successfully"));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching audit logs");
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<PaginatedResult<AuditLogDto>>.ErrorResponse("Failed to retrieve audit logs", new[] { ex.Message }));
+                ApiResponse<PaginatedResult<AuditLogDto>>.ErrorResponse("Failed to retrieve audit logs", new List<string> { ex.Message }));
         }
     }
 
@@ -117,7 +139,7 @@ public class AuditLogsController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<AuditLogDto>.ErrorResponse("Invalid audit log ID", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<AuditLogDto>.ErrorResponse("Invalid audit log ID", new List<string> { "ID cannot be empty" }));
 
         try
         {
@@ -127,16 +149,16 @@ public class AuditLogsController : ControllerBase
             if (auditLog == null)
             {
                 _logger.LogWarning("Audit log not found: {AuditLogId}", id);
-                return NotFound(ApiResponse<AuditLogDto>.ErrorResponse("Audit log not found", new[] { $"No audit log with ID {id}" }));
+                return NotFound(ApiResponse<AuditLogDto>.ErrorResponse("Audit log not found", new List<string> { $"No audit log with ID {id}" }));
             }
 
-            return Ok(ApiResponse<AuditLogDto>.Success(auditLog, "Audit log retrieved successfully"));
+            return Ok(ApiResponse<AuditLogDto>.SuccessResponse(MapToDto(auditLog), "Audit log retrieved successfully"));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching audit log {AuditLogId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<AuditLogDto>.ErrorResponse("Failed to retrieve audit log", new[] { ex.Message }));
+                ApiResponse<AuditLogDto>.ErrorResponse("Failed to retrieve audit log", new List<string> { ex.Message }));
         }
     }
 }

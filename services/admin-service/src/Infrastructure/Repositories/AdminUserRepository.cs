@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TechBirdsFly.AdminService.Application.Interfaces;
-using TechBirdsFly.AdminService.Domain.Entities;
+using AdminService.Application.Interfaces;
+using AdminService.Domain.Entities;
+using AdminService.Infrastructure.Persistence;
 
-namespace TechBirdsFly.AdminService.Infrastructure.Repositories;
+namespace AdminService.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository for AdminUser entity persistence and retrieval operations.

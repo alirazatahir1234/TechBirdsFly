@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TechBirdsFly.AdminService.Domain.Entities;
+using AdminService.Domain.Entities;
 
-namespace TechBirdsFly.AdminService.Infrastructure.Configurations;
+namespace AdminService.Infrastructure.Configurations;
 
 /// <summary>
 /// Entity Type Configuration for AdminUser.
@@ -41,7 +41,7 @@ public class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
 
         // Relationships
         builder.HasMany(e => e.Roles)
-            .WithMany(r => r.AdminUsers)
+            .WithMany(r => r.Users)
             .UsingEntity("AdminUserRoles");
 
         builder.HasMany(e => e.AuditLogs)

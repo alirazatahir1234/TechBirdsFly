@@ -1,10 +1,13 @@
 using Serilog;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
-using TechBirdsFly.AdminService.Infrastructure.Persistence;
-using TechBirdsFly.AdminService.WebAPI.DI;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using AdminService.Infrastructure.Persistence;
+using AdminService.WebAPI.DI;
 using TechBirdsFly.CacheClient;
 
-var builder = WebApplicationBuilder.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog logging
 Log.Logger = new LoggerConfiguration()
@@ -29,12 +32,11 @@ builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 // builder.Services.AddOpenTelemetryInstrumentation(builder.Configuration, "AdminService");
 
 // Add health checks
-builder.Services.AddHealthChecks()
-    .AddDbContextCheck<AdminDbContext>(name: "database", tags: new[] { "ready" })
-    .AddUrlGroup(
-        new Uri(builder.Configuration["EventBusService:Url"] ?? "http://localhost:5020"),
-        name: "event-bus",
-        tags: new[] { "ready" });
+builder.Services.AddHealthChecks();
+    // .AddUrlGroup(
+    //     new Uri(builder.Configuration["EventBusService:Url"] ?? "http://localhost:5020"),
+    //     name: "event-bus",
+    //     tags: new[] { "ready" });
 
 // Add Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>

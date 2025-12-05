@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using TechBirdsFly.AdminService.Application.DTOs;
-using TechBirdsFly.AdminService.Application.Interfaces;
-using TechBirdsFly.AdminService.Domain.Entities;
+using AdminService.Application.DTOs;
+using AdminService.Application.Interfaces;
+using AdminService.Domain.Entities;
+using AdminService.Infrastructure.Persistence;
 
-namespace TechBirdsFly.AdminService.Infrastructure.Repositories;
+namespace AdminService.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository for AuditLog entity persistence and retrieval operations.

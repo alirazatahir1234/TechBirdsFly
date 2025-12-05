@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using TechBirdsFly.AdminService.Application.Interfaces;
-using TechBirdsFly.Shared.Events;
+using AdminService.Application.Interfaces;
+using AdminService.Domain.Events;
 
-namespace TechBirdsFly.AdminService.Infrastructure.ExternalServices;
+namespace AdminService.Infrastructure.ExternalServices;
 
 /// <summary>
 /// EventPublisher implementation that publishes domain events to the Event Bus Service.
@@ -29,10 +29,10 @@ public class EventPublisher : IEventPublisher
     /// The event is wrapped with metadata and sent as JSON.
     /// If publishing fails, it's logged but doesn't throw to maintain service resilience.
     /// </summary>
-    /// <typeparam name="T">The domain event type implementing IDomainEvent</typeparam>
+    /// <typeparam name="T">The domain event type</typeparam>
     /// <param name="domainEvent">The event instance to publish</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public async Task PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default) where T : IDomainEvent
+    public async Task PublishAsync<T>(T domainEvent, CancellationToken cancellationToken = default) where T : class
     {
         if (domainEvent == null)
         {

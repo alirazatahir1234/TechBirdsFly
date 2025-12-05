@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TechBirdsFly.AdminService.Application.Interfaces;
-using TechBirdsFly.AdminService.Application.Services;
-using TechBirdsFly.AdminService.Infrastructure.ExternalServices;
-using TechBirdsFly.AdminService.Infrastructure.Persistence;
-using TechBirdsFly.AdminService.Infrastructure.Repositories;
+using AdminService.Application.Interfaces;
+using AdminService.Application.Services;
+using AdminService.Infrastructure.ExternalServices;
+using AdminService.Infrastructure.Persistence;
+using AdminService.Infrastructure.Repositories;
 
-namespace TechBirdsFly.AdminService.WebAPI.DI;
+namespace AdminService.WebAPI.DI;
 
 /// <summary>
 /// Dependency Injection configuration for Admin Service.
@@ -37,7 +37,7 @@ public static class DependencyInjection
                 npgsqlOptions.MigrationsAssembly(typeof(AdminDbContext).Assembly.GetName().Name);
                 npgsqlOptions.EnableRetryOnFailure(
                     maxRetryCount: 3,
-                    maxRetryDelaySeconds: 10,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
                     errorCodesToAdd: null);
             });
 

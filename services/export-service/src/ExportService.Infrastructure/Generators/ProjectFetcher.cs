@@ -1,5 +1,6 @@
 using ExportService.Application.Interfaces;
 using ExportService.Application.Models;
+using Microsoft.Extensions.Logging;
 
 namespace ExportService.Infrastructure.Generators;
 
@@ -37,7 +38,8 @@ public class ProjectFetcher : IProjectFetcher
 
             if (response.IsSuccessStatusCode)
             {
-                var project = await response.Content.ReadAsAsync<ProjectDto>(cancellationToken: cancellationToken);
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var project = System.Text.Json.JsonSerializer.Deserialize<ProjectDto>(json);
                 _logger.LogInformation("Successfully fetched project {ProjectId}", projectId);
                 return project ?? throw new InvalidOperationException("Invalid project data");
             }

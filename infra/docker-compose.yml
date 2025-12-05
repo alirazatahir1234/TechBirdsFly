@@ -421,6 +421,132 @@ services:
     labels:
       - "com.techbirdsfly.service=user-service"
 
+  publish-service:
+    build:
+      context: ../services/publish-service
+      dockerfile: Dockerfile
+    container_name: techbirdsfly-publish-service
+    restart: unless-stopped
+    ports:
+      - "5025:5025"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5025
+      - ConnectionStrings__DefaultConnection=Host=techbirdsfly-postgres;Port=5432;Database=techbirdsfly_publish;Username=postgres;Password=Alisheikh@123
+      - JAEGER_AGENT_HOST=techbirdsfly-jaeger
+      - JAEGER_AGENT_PORT=6831
+      - Serilog__WriteTo__0__Args__serverUrl=http://techbirdsfly-seq:5341
+    volumes:
+      - publish_data:/app
+      - publish_artifacts:/app/artifacts
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seq:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5025/api/publish/health", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=publish-service"
+
+  # ============================================================================
+  # MinIO - Object Storage (S3-compatible)
+  # ============================================================================
+
+  minio:
+    image: minio/minio:latest
+    container_name: techbirdsfly-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio_data:/minio_data
+    networks:
+      - techbirdsfly_network
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    labels:
+      - "com.techbirdsfly.service=minio"
+
+  # ============================================================================
+  # Template Service Database (PostgreSQL - Port 5438)
+  # ============================================================================
+
+  templatedb:
+    image: postgres:17-alpine
+    container_name: techbirdsfly-templatedb
+    restart: unless-stopped
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: templates
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - templatedb_data:/var/lib/postgresql/data
+    networks:
+      - techbirdsfly_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d templates"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "com.techbirdsfly.service=templatedb"
+
+  # ============================================================================
+  # Template Service
+  # ============================================================================
+
+  template-service:
+    build:
+      context: ../services/template-service
+      dockerfile: Dockerfile
+    container_name: techbirdsfly-template-service
+    restart: unless-stopped
+    ports:
+      - "7402:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__Postgres=Host=techbirdsfly-templatedb;Port=5432;Database=templates;Username=postgres;Password=postgres
+      - Minio__Endpoint=techbirdsfly-minio:9000
+      - Minio__AccessKey=minio
+      - Minio__SecretKey=minio123
+    networks:
+      - techbirdsfly_network
+    depends_on:
+      templatedb:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/templates/health", "||", "exit", "1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=template-service"
+
 # ============================================================================
 # VOLUMES
 # ============================================================================
@@ -443,6 +569,14 @@ volumes:
   image_data:
     driver: local
   user_data:
+    driver: local
+  publish_data:
+    driver: local
+  publish_artifacts:
+    driver: local
+  minio_data:
+    driver: local
+  templatedb_data:
     driver: local
 
 # ============================================================================

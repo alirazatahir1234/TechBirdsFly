@@ -5,28 +5,30 @@ namespace AdminService.Domain.Entities;
 /// </summary>
 public class AdminUser
 {
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-    public string Email { get; private set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
-    public string FullName { get; private set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
 
     /// <summary>
     /// Status: active, suspended, banned
     /// </summary>
-    public string Status { get; private set; } = "active";
+    public string Status { get; set; } = "active";
 
-    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public DateTime? LastLoginAt { get; private set; }
+    public DateTime? UpdatedAt { get; set; }
 
-    public DateTime? SuspendedAt { get; private set; }
+    public DateTime? LastLoginAt { get; set; }
 
-    public string? SuspensionReason { get; private set; }
+    public DateTime? SuspendedAt { get; set; }
 
-    public int ProjectCount { get; private set; } = 0;
+    public string? SuspensionReason { get; set; }
 
-    public decimal TotalSpent { get; private set; } = 0;
+    public int ProjectCount { get; set; } = 0;
+
+    public decimal TotalSpent { get; set; } = 0;
 
     // Navigation properties
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();

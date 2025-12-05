@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "🔐 .NET Auth Service (Port 5001)",
+      "name": "Auth Service (Port 5001)",
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/services/auth-service/src/bin/Debug/net8.0/AuthService.dll",
@@ -12,9 +12,7 @@
       "internalConsoleOptions": "openOnSessionStart",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5001",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
+        "ASPNETCORE_URLS": "http://localhost:5001"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
@@ -22,238 +20,28 @@
         "action": "openExternally"
       }
     },
-
     {
-      "name": "� .NET Event Bus Service (Port 5020)",
+      "name": "Publish Service (Port 5025)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/services/event-bus-service/src/bin/Debug/net8.0/EventBusService.dll",
-      "cwd": "${workspaceFolder}/services/event-bus-service/src",
+      "program": "${workspaceFolder}/services/publish-service/src/WebAPI/bin/Debug/net8.0/PublishService.WebAPI.dll",
+      "cwd": "${workspaceFolder}/services/publish-service/src/WebAPI",
       "stopAtEntry": false,
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
+      "preLaunchTask": "build-publish-service",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5020",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
-        "ConnectionStrings:DefaultConnection": "Host=localhost;Port=5432;Database=techbirdsfly_eventbus;Username=postgres;Password=Alisheikh@123"
+        "ASPNETCORE_URLS": "http://localhost:5025"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5020/swagger",
+        "uriFormat": "http://localhost:5025/swagger",
         "action": "openExternally"
       }
     },
-
     {
-      "name": "👤 .NET User Service (Port 5008)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/user-service/src/UserService/bin/Debug/net8.0/UserService.dll",
-      "cwd": "${workspaceFolder}/services/user-service/src/UserService",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5008",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
-        "EventBusUrl": "http://localhost:5020"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5008/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "💳 .NET Billing Service (Port 5002)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/billing-service/src/bin/Debug/net8.0/BillingService.dll",
-      "cwd": "${workspaceFolder}/services/billing-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5002",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5002/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "⚙️ .NET Generator Service (Port 5003)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/generator-service/src/bin/Debug/net8.0/GeneratorService.dll",
-      "cwd": "${workspaceFolder}/services/generator-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5003",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5003/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "🖼 .NET Image Service (Port 5007)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/image-service/src/bin/Debug/net8.0/ImageService.dll",
-      "cwd": "${workspaceFolder}/services/image-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5007",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5007/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "🛠 .NET Admin Service (Port 5006)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/admin-service/src/bin/Debug/net8.0/AdminService.dll",
-      "cwd": "${workspaceFolder}/services/admin-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5006",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5006/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "� .NET Export Service (Port 5004)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/export-service/src/bin/Debug/net8.0/ExportService.dll",
-      "cwd": "${workspaceFolder}/services/export-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5004",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
-        "EventBusUrl": "http://localhost:5020"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5004/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "📁 .NET Project Service (Port 5009)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/ProjectService/src/ProjectService.Api/bin/Debug/net8.0/ProjectService.Api.dll",
-      "cwd": "${workspaceFolder}/services/ProjectService/src/ProjectService.Api",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5009",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
-        "ConnectionStrings:DefaultConnection": "Host=localhost;Port=5432;Database=techbirdsfly_projects;Username=postgres;Password=Alisheikh@123",
-        "EventBusUrl": "http://localhost:5020"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5009/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "⚡ .NET Cache Service (Port 5021)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/cache-service/src/bin/Debug/net8.0/CacheService.dll",
-      "cwd": "${workspaceFolder}/services/cache-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5021",
-        "Redis:ConnectionString": "localhost:6379",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5021/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "🎬 .NET Media Service (Port 5022)",
-      "type": "coreclr",
-      "request": "launch",
-      "program": "${workspaceFolder}/services/media-service/src/bin/Debug/net8.0/MediaService.dll",
-      "cwd": "${workspaceFolder}/services/media-service/src",
-      "stopAtEntry": false,
-      "console": "internalConsole",
-      "internalConsoleOptions": "openOnSessionStart",
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5022",
-        "Kafka:BootstrapServers": "localhost:9092",
-        "Kafka:SchemaRegistry:Url": "http://localhost:8081",
-        "MongoDB:ConnectionString": "mongodb://localhost:27017",
-        "MongoDB:DatabaseName": "techbirdsfly_media",
-        "Redis:ConnectionString": "localhost:6379"
-      },
-      "serverReadyAction": {
-        "pattern": "Now listening on",
-        "uriFormat": "http://localhost:5022/swagger",
-        "action": "openExternally"
-      }
-    },
-
-    {
-      "name": "�🚪 .NET API Gateway (Port 8000)",
+      "name": "API Gateway (Port 8000)",
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/gateway/yarp-gateway/src/bin/Debug/net8.0/YarpGateway.dll",
@@ -271,9 +59,199 @@
         "action": "openExternally"
       }
     },
-
     {
-      "name": "🌐 Next.js Frontend (Port 3000)",
+      "name": "User Service (Port 5002)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/user-service/src/bin/Debug/net8.0/UserService.dll",
+      "cwd": "${workspaceFolder}/services/user-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5002"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5002/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Billing Service (Port 5003)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/billing-service/src/BillingService/bin/Debug/net8.0/BillingService.dll",
+      "cwd": "${workspaceFolder}/services/billing-service/src/BillingService",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5003"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5003/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Generator Service (Port 5004)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/generator-service/src/bin/Debug/net8.0/GeneratorService.dll",
+      "cwd": "${workspaceFolder}/services/generator-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5004"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5004/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Media Service (Port 5011)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/media-service/src/bin/Debug/net8.0/MediaService.dll",
+      "cwd": "${workspaceFolder}/services/media-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5011"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5011/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Export Service (Port 5012)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/export-service/src/ExportService.Api/bin/Debug/net8.0/ExportService.Api.dll",
+      "cwd": "${workspaceFolder}/services/export-service/src/ExportService.Api",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5012"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5012/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Editor Service (Port 5013)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/editor-service/src/bin/Debug/net8.0/EditorService.dll",
+      "cwd": "${workspaceFolder}/services/editor-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5013"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5013/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Project Service (Port 5014)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/ProjectService/src/ProjectService.Api/bin/Debug/net8.0/ProjectService.Api.dll",
+      "cwd": "${workspaceFolder}/services/ProjectService/src/ProjectService.Api",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5014"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5014/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Publish Service (Port 5015)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/publish-service/src/WebAPI/bin/Debug/net8.0/PublishService.WebAPI.dll",
+      "cwd": "${workspaceFolder}/services/publish-service/src/WebAPI",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5015"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5015/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Template Service (Port 5016)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/template-service/src/TemplateService.Api/bin/Debug/net8.0/TemplateService.Api.dll",
+      "cwd": "${workspaceFolder}/services/template-service/src/TemplateService.Api",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5016",
+        "ConnectionStrings__Postgres": "Host=localhost;Port=5432;Database=templates;Username=postgres;Password=postgres"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5016/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Event Bus Service (Port 5009)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/services/event-bus-service/src/bin/Debug/net8.0/EventBusService.dll",
+      "cwd": "${workspaceFolder}/services/event-bus-service/src",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5009"
+      },
+      "serverReadyAction": {
+        "pattern": "Now listening on",
+        "uriFormat": "http://localhost:5009/swagger",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "Next.js Frontend (Port 3000)",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/web-frontend/techbirdsfly-frontend-nextjs/node_modules/.bin/next",
@@ -283,8 +261,7 @@
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "development",
-        "NEXT_PUBLIC_API_URL": "http://localhost:8000",
-        "NEXT_PUBLIC_AUTH_URL": "http://localhost:5001"
+        "NEXT_PUBLIC_API_URL": "http://localhost:8000"
       },
       "serverReadyAction": {
         "pattern": "ready - started server on",
@@ -295,51 +272,60 @@
   ],
   "compounds": [
     {
-      "name": "🔵 All .NET Services + Frontend",
+      "name": "Core Services (Gateway + Auth + Frontend)",
       "configurations": [
-        "🚪 .NET API Gateway (Port 8000)",
-        "🔐 .NET Auth Service (Port 5001)",
-        "� .NET Billing Service (Port 5002)",
-        "⚙️ .NET Generator Service (Port 5003)",
-        "📤 .NET Export Service (Port 5004)",
-        "🖼 .NET Image Service (Port 5007)",
-        "🛠 .NET Admin Service (Port 5006)",
-        "👤 .NET User Service (Port 5008)",
-        "📁 .NET Project Service (Port 5009)",
-        "�📨 .NET Event Bus Service (Port 5020)",
-        "⚡ .NET Cache Service (Port 5021)",
-        "🎬 .NET Media Service (Port 5022)",
-        "🌐 Next.js Frontend (Port 3000)"
+        "API Gateway (Port 8000)",
+        "Auth Service (Port 5001)",
+        "Next.js Frontend (Port 3000)"
       ],
       "stopAll": true
     },
     {
-      "name": "🔧 Core Services Only (Auth, User, Billing, Gateway)",
+      "name": "All Services (Complete Stack)",
       "configurations": [
-        "🚪 .NET API Gateway (Port 8000)",
-        "🔐 .NET Auth Service (Port 5001)",
-        "👤 .NET User Service (Port 5008)",
-        "💳 .NET Billing Service (Port 5002)",
-        "🌐 Next.js Frontend (Port 3000)"
+        "API Gateway (Port 8000)",
+        "Auth Service (Port 5001)",
+        "User Service (Port 5002)",
+        "Billing Service (Port 5003)",
+        "Generator Service (Port 5004)",
+        "Media Service (Port 5011)",
+        "Export Service (Port 5012)",
+        "Editor Service (Port 5013)",
+        "Project Service (Port 5014)",
+        "Publish Service (Port 5015)",
+        "Template Service (Port 5016)",
+        "Event Bus Service (Port 5009)",
+        "Next.js Frontend (Port 3000)"
       ],
       "stopAll": true
     },
     {
-      "name": "📊 Data & Infrastructure Services",
+      "name": "Core Services Only",
       "configurations": [
-        "📨 .NET Event Bus Service (Port 5020)",
-        "⚡ .NET Cache Service (Port 5021)",
-        "🎬 .NET Media Service (Port 5022)"
+        "API Gateway (Port 8000)",
+        "Auth Service (Port 5001)",
+        "User Service (Port 5002)",
+        "Next.js Frontend (Port 3000)"
       ],
       "stopAll": true
     },
     {
-      "name": "⚙️ Processing Services",
+      "name": "Content Services",
       "configurations": [
-        "⚙️ .NET Generator Service (Port 5003)",
-        "� .NET Export Service (Port 5004)",
-        "� .NET Image Service (Port 5007)",
-        "📁 .NET Project Service (Port 5009)"
+        "Editor Service (Port 5013)",
+        "Media Service (Port 5011)",
+        "Generator Service (Port 5004)",
+        "Export Service (Port 5012)",
+        "Project Service (Port 5014)"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "Publishing Services",
+      "configurations": [
+        "Publish Service (Port 5015)",
+        "Template Service (Port 5016)",
+        "Event Bus Service (Port 5009)"
       ],
       "stopAll": true
     }

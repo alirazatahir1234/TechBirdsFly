@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using TechBirdsFly.AdminService.Application.DTOs;
-using TechBirdsFly.AdminService.Application.Interfaces;
+using AdminService.Application.DTOs;
+using AdminService.Application.Interfaces;
+using AdminService.Domain.Entities;
 
-namespace TechBirdsFly.AdminService.WebAPI.Controllers;
+namespace AdminService.WebAPI.Controllers;
 
 /// <summary>
 /// Roles Controller - Handles role management operations.
@@ -25,6 +26,23 @@ public class RolesController : ControllerBase
     }
 
     /// <summary>
+    /// Maps a Role entity to RoleDto
+    /// </summary>
+    private static RoleDto MapToDto(Role role)
+    {
+        return new RoleDto
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description,
+            Permissions = role.Permissions?.ToList() ?? new(),
+            IsSystem = role.IsSystem,
+            CreatedAt = role.CreatedAt,
+            UpdatedAt = role.UpdatedAt
+        };
+    }
+
+    /// <summary>
     /// Get all roles in the system.
     /// </summary>
     /// <returns>List of all roles</returns>
@@ -37,13 +55,14 @@ public class RolesController : ControllerBase
         {
             _logger.LogInformation("Fetching all roles");
             var roles = await _roleService.GetAllRolesAsync(cancellationToken);
-            return Ok(ApiResponse<IEnumerable<RoleDto>>.Success(roles, "Roles retrieved successfully"));
+            var roleDtos = roles.Select(MapToDto).ToList();
+            return Ok(ApiResponse<IEnumerable<RoleDto>>.SuccessResponse(roleDtos, "Roles retrieved successfully"));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching roles");
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<IEnumerable<RoleDto>>.ErrorResponse("Failed to retrieve roles", new[] { ex.Message }));
+                ApiResponse<IEnumerable<RoleDto>>.ErrorResponse("Failed to retrieve roles", new List<string> { ex.Message }));
         }
     }
 
@@ -60,7 +79,7 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid role ID", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid role ID", new List<string> { "ID cannot be empty" }));
 
         try
         {
@@ -70,16 +89,16 @@ public class RolesController : ControllerBase
             if (role == null)
             {
                 _logger.LogWarning("Role not found: {RoleId}", id);
-                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new[] { $"No role with ID {id}" }));
+                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new List<string> { $"No role with ID {id}" }));
             }
 
-            return Ok(ApiResponse<RoleDto>.Success(role, "Role retrieved successfully"));
+            return Ok(ApiResponse<RoleDto>.SuccessResponse(MapToDto(role), "Role retrieved successfully"));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching role {RoleId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<RoleDto>.ErrorResponse("Failed to retrieve role", new[] { ex.Message }));
+                ApiResponse<RoleDto>.ErrorResponse("Failed to retrieve role", new List<string> { ex.Message }));
         }
     }
 
@@ -97,7 +116,7 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (!ModelState.IsValid)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToArray()));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()));
 
         try
         {
@@ -106,18 +125,18 @@ public class RolesController : ControllerBase
 
             _logger.LogInformation("Role created successfully: {RoleId}", role.Id);
             return CreatedAtAction(nameof(GetRoleById), new { id = role.Id },
-                ApiResponse<RoleDto>.Success(role, "Role created successfully"));
+                ApiResponse<RoleDto>.SuccessResponse(MapToDto(role), "Role created successfully"));
         }
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Invalid role creation request: {Message}", ex.Message);
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { ex.Message }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { ex.Message }));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating role: {RoleName}", request.Name);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<RoleDto>.ErrorResponse("Failed to create role", new[] { ex.Message }));
+                ApiResponse<RoleDto>.ErrorResponse("Failed to create role", new List<string> { ex.Message }));
         }
     }
 
@@ -138,32 +157,33 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { "ID cannot be empty" }));
 
         if (!ModelState.IsValid)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToArray()));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList()));
 
         try
         {
             _logger.LogInformation("Updating role: {RoleId}", id);
-            var role = await _roleService.UpdateRoleAsync(id, request.Description, request.Permissions, cancellationToken);
+            await _roleService.UpdateRoleAsync(id, request.Description, request.Permissions, cancellationToken);
+            var role = await _roleService.GetRoleAsync(id, cancellationToken);
 
             if (role == null)
-                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new[] { $"No role with ID {id}" }));
+                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new List<string> { $"No role with ID {id}" }));
 
             _logger.LogInformation("Role updated successfully: {RoleId}", id);
-            return Ok(ApiResponse<RoleDto>.Success(role, "Role updated successfully"));
+            return Ok(ApiResponse<RoleDto>.SuccessResponse(MapToDto(role), "Role updated successfully"));
         }
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Invalid role update request: {Message}", ex.Message);
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { ex.Message }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { ex.Message }));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating role {RoleId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<RoleDto>.ErrorResponse("Failed to update role", new[] { ex.Message }));
+                ApiResponse<RoleDto>.ErrorResponse("Failed to update role", new List<string> { ex.Message }));
         }
     }
 
@@ -181,7 +201,7 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<object>.ErrorResponse("Invalid request", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<object>.ErrorResponse("Invalid request", new List<string> { "ID cannot be empty" }));
 
         try
         {
@@ -194,13 +214,13 @@ public class RolesController : ControllerBase
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Cannot delete system role: {RoleId}", id);
-            return BadRequest(ApiResponse<object>.ErrorResponse("Invalid request", new[] { ex.Message }));
+            return BadRequest(ApiResponse<object>.ErrorResponse("Invalid request", new List<string> { ex.Message }));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting role {RoleId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<object>.ErrorResponse("Failed to delete role", new[] { ex.Message }));
+                ApiResponse<object>.ErrorResponse("Failed to delete role", new List<string> { ex.Message }));
         }
     }
 
@@ -221,32 +241,33 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { "ID cannot be empty" }));
 
         if (string.IsNullOrWhiteSpace(request.Permission))
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { "Permission cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { "Permission cannot be empty" }));
 
         try
         {
             _logger.LogInformation("Adding permission '{Permission}' to role {RoleId}", request.Permission, id);
-            var role = await _roleService.AddPermissionToRoleAsync(id, request.Permission, cancellationToken);
+            await _roleService.AddPermissionToRoleAsync(id, request.Permission, cancellationToken);
+            var role = await _roleService.GetRoleAsync(id, cancellationToken);
 
             if (role == null)
-                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new[] { $"No role with ID {id}" }));
+                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new List<string> { $"No role with ID {id}" }));
 
             _logger.LogInformation("Permission added to role successfully: {RoleId}", id);
-            return Ok(ApiResponse<RoleDto>.Success(role, "Permission added successfully"));
+            return Ok(ApiResponse<RoleDto>.SuccessResponse(MapToDto(role), "Permission added successfully"));
         }
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Invalid permission request: {Message}", ex.Message);
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { ex.Message }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { ex.Message }));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error adding permission to role {RoleId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<RoleDto>.ErrorResponse("Failed to add permission", new[] { ex.Message }));
+                ApiResponse<RoleDto>.ErrorResponse("Failed to add permission", new List<string> { ex.Message }));
         }
     }
 
@@ -267,32 +288,33 @@ public class RolesController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         if (id == Guid.Empty)
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { "ID cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { "ID cannot be empty" }));
 
         if (string.IsNullOrWhiteSpace(request.Permission))
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { "Permission cannot be empty" }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { "Permission cannot be empty" }));
 
         try
         {
             _logger.LogInformation("Removing permission '{Permission}' from role {RoleId}", request.Permission, id);
-            var role = await _roleService.RemovePermissionFromRoleAsync(id, request.Permission, cancellationToken);
+            await _roleService.RemovePermissionFromRoleAsync(id, request.Permission, cancellationToken);
+            var role = await _roleService.GetRoleAsync(id, cancellationToken);
 
             if (role == null)
-                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new[] { $"No role with ID {id}" }));
+                return NotFound(ApiResponse<RoleDto>.ErrorResponse("Role not found", new List<string> { $"No role with ID {id}" }));
 
             _logger.LogInformation("Permission removed from role successfully: {RoleId}", id);
-            return Ok(ApiResponse<RoleDto>.Success(role, "Permission removed successfully"));
+            return Ok(ApiResponse<RoleDto>.SuccessResponse(MapToDto(role), "Permission removed successfully"));
         }
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning("Invalid permission request: {Message}", ex.Message);
-            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new[] { ex.Message }));
+            return BadRequest(ApiResponse<RoleDto>.ErrorResponse("Invalid request", new List<string> { ex.Message }));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error removing permission from role {RoleId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError,
-                ApiResponse<RoleDto>.ErrorResponse("Failed to remove permission", new[] { ex.Message }));
+                ApiResponse<RoleDto>.ErrorResponse("Failed to remove permission", new List<string> { ex.Message }));
         }
     }
 }

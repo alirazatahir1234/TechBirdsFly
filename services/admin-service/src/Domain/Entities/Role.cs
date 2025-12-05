@@ -5,28 +5,28 @@ namespace AdminService.Domain.Entities;
 /// </summary>
 public class Role
 {
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// Role name (e.g., Admin, Creator, Viewer)
     /// </summary>
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-    public string Description { get; private set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// Comma-separated or JSON list of permissions
     /// </summary>
-    public List<string> Permissions { get; private set; } = new();
+    public List<string> Permissions { get; set; } = new();
 
     /// <summary>
     /// System roles cannot be deleted
     /// </summary>
-    public bool IsSystem { get; private set; } = false;
+    public bool IsSystem { get; set; } = false;
 
-    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public DateTime? UpdatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; set; }
 
     // Navigation properties
     public virtual ICollection<AdminUser> Users { get; set; } = new List<AdminUser>();

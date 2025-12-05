@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using TechBirdsFly.AdminService.Domain.Entities;
+using AdminService.Domain.Entities;
+using AdminService.Infrastructure.Configurations;
 
-namespace TechBirdsFly.AdminService.Infrastructure.Persistence;
+namespace AdminService.Infrastructure.Persistence;
 
 /// <summary>
 /// Entity Framework Core DbContext for Admin Service.
@@ -58,7 +59,7 @@ public class AdminDbContext : DbContext
 
             // Configure relationships
             entity.HasMany(e => e.Roles)
-                .WithMany(r => r.AdminUsers)
+                .WithMany(r => r.Users)
                 .UsingEntity("AdminUserRoles");
 
             entity.HasMany(e => e.AuditLogs)
