@@ -160,7 +160,7 @@ builder.Services.AddReverseProxy()
 builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri("http://localhost:5001/health"), name: "auth-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5002/health"), name: "user-service", timeout: TimeSpan.FromSeconds(3))
-    .AddUrlGroup(new Uri("http://localhost:5003/health"), name: "generator-service", timeout: TimeSpan.FromSeconds(3))
+    .AddUrlGroup(new Uri("http://localhost:5289/health"), name: "generator-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5004/health"), name: "image-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5005/health"), name: "billing-service", timeout: TimeSpan.FromSeconds(3))
     .AddUrlGroup(new Uri("http://localhost:5006/health"), name: "admin-service", timeout: TimeSpan.FromSeconds(3));
@@ -291,7 +291,7 @@ app.MapGet("/info", () => new
     {
         auth = "/api/auth/** → Auth Service (5001)",
         users = "/api/users/** → User Service (5002)",
-        generator = "/api/generator/** → Generator Service (5003)",
+        generator = "/api/generator/** → Generator Service (5289)",
         images = "/api/images/** → Image Service (5004)",
         billing = "/api/billing/** → Billing Service (5005)",
         admin = "/api/admin/** → Admin Service (5006)",
@@ -302,7 +302,7 @@ app.MapGet("/info", () => new
 // Map YARP Reverse Proxy
 app.MapReverseProxy();
 
-Log.Information("🚀 TechBirdsFly API Gateway starting on port 5500");
+Log.Information("🚀 TechBirdsFly API Gateway starting on port 8000");
 Log.Information("✅ JWT Authentication: Enabled");
 Log.Information("✅ Rate Limiting: 100 requests/min per user, 50 requests/30s per IP");
 Log.Information("✅ CORS: Configured for frontend origins");

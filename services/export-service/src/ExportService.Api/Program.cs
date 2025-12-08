@@ -20,6 +20,7 @@ builder.Services.AddScoped<IExportService, ExportApplicationService>();
 
 // Register infrastructure services
 builder.Services.AddScoped<IProjectFetcher, ProjectFetcher>();
+builder.Services.AddScoped<ICodeGenerator, FrameworkAwareCodeGenerator>();
 builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 // Uncomment for Azure Blob Storage: builder.Services.AddScoped<IFileStorage, AzureBlobStorage>();
 

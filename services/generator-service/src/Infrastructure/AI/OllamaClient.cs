@@ -15,8 +15,15 @@ public class OllamaClient
     public OllamaClient(IConfiguration config)
     {
         _config = config;
-        var baseUrl = config["Ollama:Url"] ?? "http://localhost:11434";
+        var baseUrl = config["Ollama:Endpoint"] ?? "http://localhost:11434";
         _http = new HttpClient { BaseAddress = new Uri(baseUrl) };
+        
+        // Add API key if configured
+        var apiKey = config["Ollama:ApiKey"];
+        if (!string.IsNullOrEmpty(apiKey))
+        {
+            _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+        }
     }
 
     /// <summary>

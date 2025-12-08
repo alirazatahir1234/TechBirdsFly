@@ -21,7 +21,7 @@ public static class ServiceRegistration
     {
         // Database
         services.AddDbContext<UserDbContext>(options =>
-            options.UseSqlite(connectionString));
+            options.UseNpgsql(connectionString));
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

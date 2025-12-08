@@ -160,7 +160,7 @@ public class AdminUsersController : ControllerBase
         {
             _logger.LogInformation("Updating admin user: {AdminUserId}", id);
             await _adminUserService.UpdateAdminUserAsync(id, request.FullName, request.ProjectCount, request.TotalSpent, cancellationToken);
-            
+
             var adminUser = await _adminUserService.GetAdminUserAsync(id, cancellationToken);
             if (adminUser == null)
                 return NotFound(ApiResponse<AdminUserDto>.ErrorResponse("Admin user not found", new List<string> { $"No admin user with ID {id}" }));
@@ -199,7 +199,7 @@ public class AdminUsersController : ControllerBase
         {
             _logger.LogInformation("Suspending admin user: {AdminUserId}", id);
             await _adminUserService.SuspendAdminUserAsync(id, request.Reason, cancellationToken);
-            
+
             var adminUser = await _adminUserService.GetAdminUserAsync(id, cancellationToken);
             if (adminUser == null)
                 return NotFound(ApiResponse<AdminUserDto>.ErrorResponse("Admin user not found", new List<string> { $"No admin user with ID {id}" }));
@@ -236,7 +236,7 @@ public class AdminUsersController : ControllerBase
         {
             _logger.LogInformation("Unsuspending admin user: {AdminUserId}", id);
             await _adminUserService.UnsuspendAdminUserAsync(id, cancellationToken);
-            
+
             var adminUser = await _adminUserService.GetAdminUserAsync(id, cancellationToken);
             if (adminUser == null)
                 return NotFound(ApiResponse<AdminUserDto>.ErrorResponse("Admin user not found", new List<string> { $"No admin user with ID {id}" }));
@@ -273,7 +273,7 @@ public class AdminUsersController : ControllerBase
         {
             _logger.LogInformation("Banning admin user: {AdminUserId}", id);
             await _adminUserService.BanAdminUserAsync(id, cancellationToken);
-            
+
             var adminUser = await _adminUserService.GetAdminUserAsync(id, cancellationToken);
             if (adminUser == null)
                 return NotFound(ApiResponse<AdminUserDto>.ErrorResponse("Admin user not found", new List<string> { $"No admin user with ID {id}" }));

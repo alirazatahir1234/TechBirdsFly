@@ -1,4 +1,5 @@
 using Serilog;
+using MediatR;
 using TechBirdsFly.MediaService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Media Service API", Version = "v1" });
 });
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options =>

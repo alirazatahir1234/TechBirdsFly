@@ -15,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // MediatR
-builder.Services.AddMediatR(typeof(CreateSectionCommand));
+builder.Services.AddMediatR(typeof(Program));
 
 // Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);

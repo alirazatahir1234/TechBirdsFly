@@ -19,15 +19,14 @@ public static class InfrastructureServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Add DbContext
-        var connectionString = configuration.GetConnectionString("Postgres") 
-            ?? "Host=localhost;Port=5432;Database=project_service;Username=postgres;Password=postgres";
+        var connectionString = configuration.GetConnectionString("ProjectServiceDatabase") 
+            ?? "Host=localhost;Port=5432;Database=project_service;Username=postgres;Password=Alisheikh@123";
 
         services.AddDbContext<ProjectDbContext>(options =>
             options.UseNpgsql(connectionString));
 
         // Add MediatR
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
-            typeof(InfrastructureServiceCollectionExtensions).Assembly));
+        services.AddMediatR(typeof(InfrastructureServiceCollectionExtensions).Assembly);
 
         return services;
     }

@@ -131,3 +131,15 @@ public class CodeGeneratorFactory
             _ => throw new ArgumentException($"Unsupported framework: {framework}")
         };
 }
+
+/// <summary>
+/// Implementation of ICodeGenerator that delegates to specific generators based on framework
+/// </summary>
+public class FrameworkAwareCodeGenerator : ICodeGenerator
+{
+    public Task<byte[]> GenerateAsync(ProjectDto project, string framework, CancellationToken cancellationToken = default)
+    {
+        var generator = CodeGeneratorFactory.CreateGenerator(framework);
+        return generator.GenerateAsync(project, framework, cancellationToken);
+    }
+}

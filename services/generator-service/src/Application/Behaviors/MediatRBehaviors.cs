@@ -28,7 +28,7 @@ public class LoggingBehavior<TRequest> : IRequestPreProcessor<TRequest>
 /// Logging post-processor for MediatR responses
 /// </summary>
 public class LoggingPostProcessor<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IRequest<TResponse>
 {
     private readonly ILogger<LoggingPostProcessor<TRequest, TResponse>> _logger;
 
@@ -48,7 +48,7 @@ public class LoggingPostProcessor<TRequest, TResponse> : IRequestPostProcessor<T
 /// Validation behavior for MediatR requests
 /// </summary>
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<FluentValidation.IValidator<TRequest>> _validators;
     private readonly ILogger<ValidationBehavior<TRequest, TResponse>> _logger;
@@ -87,7 +87,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 /// Performance tracking behavior for MediatR requests
 /// </summary>
 public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IRequest<TResponse>
 {
     private readonly ILogger<PerformanceBehavior<TRequest, TResponse>> _logger;
 

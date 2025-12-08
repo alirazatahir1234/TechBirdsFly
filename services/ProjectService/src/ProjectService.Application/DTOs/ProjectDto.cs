@@ -40,3 +40,20 @@ public class ProjectDto
     /// </summary>
     public int VersionCount { get; set; }
 }
+public class LinkArtifactRequest
+{
+    /// <summary>
+    /// Project version ID
+    /// </summary>
+    public Guid VersionId { get; set; }
+
+    /// <summary>
+    /// Artifact ID from GeneratorService
+    /// </summary>
+    public Guid ArtifactId { get; set; }
+
+    /// <summary>
+    /// Artifact type
+    /// </summary>
+    public string Type { get; set; } = default!;
+}

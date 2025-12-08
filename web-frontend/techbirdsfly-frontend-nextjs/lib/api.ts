@@ -13,34 +13,50 @@ export async function generateWebsite(
   payload: GenerateWebsitePayload
 ): Promise<ApiResponse<GeneratedWebsiteDto>> {
   try {
-    // Route through gateway: /api/generator/** → Generator Service
-    const response = await fetch(
-      `${API_BASE_URL}/api/generator/api/v1/generate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-        cache: "no-store",
-      }
-    );
+    // Call through the API Gateway
+    // Gateway will route to Generator Service at /api/generator/v1/generate
+    const gatewayUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const endpoint = `${gatewayUrl}/api/generator/v1/generate`;
+    
+    console.log("Calling Generator Service through Gateway at:", endpoint);
+    
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    });
 
     if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        message: error.message || "Failed to generate website",
-        errors: error.errors,
-      };
+      const errorText = await response.text();
+      console.error("Generator Service error:", response.status, errorText);
+      
+      // Try to parse as JSON if possible
+      try {
+        const error = JSON.parse(errorText);
+        return {
+          success: false,
+          message: error.message || "Failed to generate website",
+          errors: error.errors,
+        };
+      } catch {
+        return {
+          success: false,
+          message: `Generator Service error: ${response.statusText}`,
+        };
+      }
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
+    const message = error instanceof Error ? error.message : "An error occurred";
+    console.error("Generate website error:", message);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "An error occurred",
+      message,
     };
   }
 }

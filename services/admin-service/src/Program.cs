@@ -33,10 +33,10 @@ builder.Services.AddCacheClient(cacheServiceUrl, jwtSecret);
 
 // Add health checks
 builder.Services.AddHealthChecks();
-    // .AddUrlGroup(
-    //     new Uri(builder.Configuration["EventBusService:Url"] ?? "http://localhost:5020"),
-    //     name: "event-bus",
-    //     tags: new[] { "ready" });
+// .AddUrlGroup(
+//     new Uri(builder.Configuration["EventBusService:Url"] ?? "http://localhost:5020"),
+//     name: "event-bus",
+//     tags: new[] { "ready" });
 
 // Add Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>

@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<INetlifyDeployer, NetlifyDeployer>();
 
         // MediatR
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<DeployCommandHandler>());
+        services.AddMediatR(typeof(ServiceCollectionExtensions).Assembly);
 
         return services;
     }

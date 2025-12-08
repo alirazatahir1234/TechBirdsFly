@@ -63,8 +63,8 @@
       "name": "User Service (Port 5002)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/services/user-service/src/bin/Debug/net8.0/UserService.dll",
-      "cwd": "${workspaceFolder}/services/user-service/src",
+      "program": "${workspaceFolder}/services/user-service/src/UserService/bin/Debug/net8.0/UserService.dll",
+      "cwd": "${workspaceFolder}/services/user-service/src/UserService",
       "stopAtEntry": false,
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
@@ -120,7 +120,7 @@
       "name": "Media Service (Port 5011)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/services/media-service/src/bin/Debug/net8.0/MediaService.dll",
+      "program": "${workspaceFolder}/services/media-service/src/bin/Debug/net8.0/TechBirdsFly.MediaService.dll",
       "cwd": "${workspaceFolder}/services/media-service/src",
       "stopAtEntry": false,
       "console": "internalConsole",
@@ -223,7 +223,7 @@
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:5016",
-        "ConnectionStrings__Postgres": "Host=localhost;Port=5432;Database=templates;Username=postgres;Password=postgres"
+        "ConnectionStrings__Postgres": "Host=localhost;Port=5438;Database=templates;Username=postgres;Password=postgres"
       },
       "serverReadyAction": {
         "pattern": "Now listening on",

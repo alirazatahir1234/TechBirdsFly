@@ -11,7 +11,7 @@ namespace GeneratorService.WebAPI.Controllers;
 /// Orchestrates AI-powered website generation with comprehensive error handling
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]/v1")]
 [Produces("application/json")]
 public class GenerateController : ControllerBase
 {

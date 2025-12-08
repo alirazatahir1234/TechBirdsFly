@@ -17,14 +17,8 @@ public static class DependencyInjection
         var assemblyToScan = typeof(DependencyInjection).Assembly;
         services.AddAutoMapper(assemblyToScan);
 
-        // Register MediatR
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-
-            // Register request/response logging behavior
-            config.AddRequestPreProcessor(typeof(LoggingBehavior<>));
-        });
+        // Register MediatR - v11 compatible pattern
+        services.AddMediatR(typeof(DependencyInjection).Assembly);
 
         // Register validators
         services.AddValidatorsAsTransient();

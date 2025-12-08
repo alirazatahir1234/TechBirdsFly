@@ -3,6 +3,7 @@ using ProjectService.Application.Commands;
 using ProjectService.Application.DTOs;
 using ProjectService.Infrastructure;
 using ProjectService.Infrastructure.Data;
+using ProjectService.Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,23 +172,4 @@ app.MapPost("/api/projects/versions/link-artifact", async (LinkArtifactRequest r
 
 app.Run();
 
-/// <summary>
-/// Request DTO for linking artifacts
-/// </summary>
-public class LinkArtifactRequest
-{
-    /// <summary>
-    /// Project version ID
-    /// </summary>
-    public Guid VersionId { get; set; }
 
-    /// <summary>
-    /// Artifact ID from GeneratorService
-    /// </summary>
-    public Guid ArtifactId { get; set; }
-
-    /// <summary>
-    /// Artifact type
-    /// </summary>
-    public string Type { get; set; } = default!;
-}

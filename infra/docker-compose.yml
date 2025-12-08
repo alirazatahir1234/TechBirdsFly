@@ -154,6 +154,31 @@ services:
       - "com.techbirdsfly.service=schema-registry"
 
   # ============================================================================
+  # AI SERVICES - OLLAMA
+  # ============================================================================
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: techbirdsfly-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - techbirdsfly_network
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - "com.techbirdsfly.service=ollama"
+
+  # ============================================================================
   # OBSERVABILITY STACK
   # ============================================================================
 
@@ -578,6 +603,8 @@ volumes:
     driver: local
   templatedb_data:
     driver: local
+  ollama_data:
+    driver: local
 
 # ============================================================================
 # NETWORKS
@@ -588,4 +615,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.25.0.0/16
+        - subnet: 172.26.0.0/16

@@ -10,6 +10,7 @@ CREATE DATABASE techbirdsfly_admin WITH ENCODING 'UTF8';
 CREATE DATABASE techbirdsfly_user WITH ENCODING 'UTF8';
 CREATE DATABASE techbirdsfly_image WITH ENCODING 'UTF8';
 CREATE DATABASE techbirdsfly_gateway WITH ENCODING 'UTF8';
+CREATE DATABASE project_service WITH ENCODING 'UTF8';
 
 -- Grant all privileges
 GRANT ALL PRIVILEGES ON DATABASE techbirdsfly_auth TO postgres;
@@ -20,6 +21,7 @@ GRANT ALL PRIVILEGES ON DATABASE techbirdsfly_admin TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE techbirdsfly_user TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE techbirdsfly_image TO postgres;
 GRANT ALL PRIVILEGES ON DATABASE techbirdsfly_gateway TO postgres;
+GRANT ALL PRIVILEGES ON DATABASE project_service TO postgres;
 
 -- Connection limit for production databases
 ALTER DATABASE techbirdsfly_auth CONNECTION LIMIT 100;
@@ -30,3 +32,4 @@ ALTER DATABASE techbirdsfly_admin CONNECTION LIMIT 100;
 ALTER DATABASE techbirdsfly_user CONNECTION LIMIT 100;
 ALTER DATABASE techbirdsfly_image CONNECTION LIMIT 100;
 ALTER DATABASE techbirdsfly_gateway CONNECTION LIMIT 100;
+ALTER DATABASE project_service CONNECTION LIMIT 100;

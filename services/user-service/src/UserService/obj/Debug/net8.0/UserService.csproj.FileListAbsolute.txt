@@ -9,6 +9,8 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251119.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251120.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251122.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251125.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251205.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService.staticwebassets.endpoints.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/UserService.deps.json
@@ -58,6 +60,8 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Microsoft.OpenApi.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Mono.TextTemplating.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Newtonsoft.Json.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Npgsql.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/OpenTelemetry.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/OpenTelemetry.Api.dll
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll
@@ -198,4 +202,3 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/UserService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/UserService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/ref/UserService.dll
-/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251125.json

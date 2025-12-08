@@ -4,7 +4,7 @@ using TechBirdsFly.EditorService.Domain.Interfaces;
 
 namespace TechBirdsFly.EditorService.Application.Features.UpdateSection;
 
-public class UpdateSectionHandler : IRequestHandler<UpdateSectionCommand>
+public class UpdateSectionHandler : IRequestHandler<UpdateSectionCommand, Unit>
 {
     private readonly ISectionRepository _repo;
 
@@ -13,7 +13,7 @@ public class UpdateSectionHandler : IRequestHandler<UpdateSectionCommand>
         _repo = repo;
     }
 
-    public async Task Handle(UpdateSectionCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateSectionCommand request, CancellationToken cancellationToken)
     {
         var section = await _repo.GetByIdAsync(request.Id)
             ?? throw new SectionNotFoundException(request.Id);
@@ -26,5 +26,7 @@ public class UpdateSectionHandler : IRequestHandler<UpdateSectionCommand>
         }
 
         await _repo.SaveChangesAsync();
+        
+        return Unit.Value;
     }
 }

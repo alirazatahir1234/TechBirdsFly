@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using GeneratorService.WebAPI.Middleware;
+using MediatR;
 
 namespace GeneratorService.WebAPI.Extensions;
 
@@ -13,6 +14,10 @@ public static class DependencyInjection
     /// </summary>
     public static IServiceCollection AddWebAPIServices(this IServiceCollection services)
     {
+        // MediatR - Command/Query mediator pattern
+        // Register handlers from Application assembly
+        services.AddMediatR(typeof(GeneratorService.Application.Features.GenerateWebsite.GenerateWebsiteCommand));
+
         // Controllers
         services.AddControllers();
 

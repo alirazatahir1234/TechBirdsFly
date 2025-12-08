@@ -44,10 +44,15 @@ public static class DependencyInjection
         // Register Unit of Work for transaction management
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        // AutoMapper for DTO mapping
+        services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+
         // Register AI services
         services.AddScoped<ILlamaService, LlamaService>();
         services.AddScoped<PromptBuilder>();
+        services.AddScoped<IPromptBuilder, PromptBuilder>();
         services.AddScoped<HtmlTemplateBuilder>();
+        services.AddScoped<IHtmlTemplateBuilder, HtmlTemplateBuilder>();
 
         // Register website generator service (implements IWebsiteGenerator)
         services.AddScoped<IWebsiteGenerator, WebsiteGeneratorService>();
