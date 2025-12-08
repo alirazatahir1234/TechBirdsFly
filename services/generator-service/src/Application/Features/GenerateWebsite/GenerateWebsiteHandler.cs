@@ -26,7 +26,7 @@ public class GenerateWebsiteHandler : IRequestHandler<GenerateWebsiteCommand, Ge
     public async Task<GenerateWebsiteResponse> Handle(GenerateWebsiteCommand request, CancellationToken cancellationToken)
     {
         string aiResponse;
-        
+
         try
         {
             // Build AI prompt
@@ -81,7 +81,7 @@ Features: {string.Join(", ", request.Features ?? new List<string>())}";
 
     private string GenerateHtmlBody(GenerateWebsiteCommand request, string aiResponse)
     {
-        var features = request.Features?.Any() == true 
+        var features = request.Features?.Any() == true
             ? string.Join("", request.Features.Select(f => $"<li>{f}</li>"))
             : "<li>Professional Design</li><li>Responsive Layout</li><li>Contact Form</li>";
 

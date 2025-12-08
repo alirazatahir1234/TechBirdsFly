@@ -20,7 +20,7 @@ public class DeleteSectionHandler : IRequestHandler<DeleteSectionCommand, Unit>
 
         await _repo.DeleteAsync(section);
         await _repo.SaveChangesAsync();
-        
+
         return Unit.Value;
     }
 }

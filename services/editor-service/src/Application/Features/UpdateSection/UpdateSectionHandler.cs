@@ -26,7 +26,7 @@ public class UpdateSectionHandler : IRequestHandler<UpdateSectionCommand, Unit>
         }
 
         await _repo.SaveChangesAsync();
-        
+
         return Unit.Value;
     }
 }

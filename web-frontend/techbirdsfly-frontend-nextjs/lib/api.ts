@@ -15,11 +15,12 @@ export async function generateWebsite(
   try {
     // Call through the API Gateway
     // Gateway will route to Generator Service at /api/generator/v1/generate
-    const gatewayUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const gatewayUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const endpoint = `${gatewayUrl}/api/generator/v1/generate`;
-    
+
     console.log("Calling Generator Service through Gateway at:", endpoint);
-    
+
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
@@ -32,7 +33,7 @@ export async function generateWebsite(
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Generator Service error:", response.status, errorText);
-      
+
       // Try to parse as JSON if possible
       try {
         const error = JSON.parse(errorText);
@@ -52,7 +53,8 @@ export async function generateWebsite(
     const data = await response.json();
     return data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : "An error occurred";
+    const message =
+      error instanceof Error ? error.message : "An error occurred";
     console.error("Generate website error:", message);
     return {
       success: false,
