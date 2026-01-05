@@ -11,7 +11,7 @@ namespace GeneratorService.WebAPI.Controllers;
 /// Orchestrates AI-powered website generation with comprehensive error handling
 /// </summary>
 [ApiController]
-[Route("api/[controller]/v1")]
+[Route("generator/v1")]
 [Produces("application/json")]
 public class GenerateController : ControllerBase
 {
@@ -34,7 +34,7 @@ public class GenerateController : ControllerBase
     /// <response code="200">Website generated successfully</response>
     /// <response code="400">Invalid request parameters or validation failure</response>
     /// <response code="500">Server error during generation (AI service unavailable or internal error)</response>
-    [HttpPost]
+    [HttpPost("generate")]
     [ProducesResponseType(typeof(ApiResponse<GeneratedWebsiteDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ocEY8auibM4=",
+  "dgSpecHash": "loya8xXn+io=",
   "success": true,
   "projectFilePath": "/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/event-bus-service/src/EventBusService.csproj",
   "expectedPackageFiles": [
@@ -12,8 +12,9 @@
     "/Users/alirazatahir/.nuget/packages/fluentvalidation/11.9.2/fluentvalidation.11.9.2.nupkg.sha512",
     "/Users/alirazatahir/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/alirazatahir/.nuget/packages/librdkafka.redist/2.3.0/librdkafka.redist.2.3.0.nupkg.sha512",
-    "/Users/alirazatahir/.nuget/packages/mediatr/12.3.0/mediatr.12.3.0.nupkg.sha512",
-    "/Users/alirazatahir/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/Users/alirazatahir/.nuget/packages/mediatr/11.1.0/mediatr.11.1.0.nupkg.sha512",
+    "/Users/alirazatahir/.nuget/packages/mediatr.contracts/1.0.1/mediatr.contracts.1.0.1.nupkg.sha512",
+    "/Users/alirazatahir/.nuget/packages/mediatr.extensions.microsoft.dependencyinjection/11.1.0/mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
     "/Users/alirazatahir/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/8.0.0/microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
     "/Users/alirazatahir/.nuget/packages/microsoft.bcl.asyncinterfaces/7.0.0/microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "/Users/alirazatahir/.nuget/packages/microsoft.build.framework/17.8.3/microsoft.build.framework.17.8.3.nupkg.sha512",

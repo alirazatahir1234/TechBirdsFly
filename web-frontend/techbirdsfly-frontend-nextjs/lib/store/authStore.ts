@@ -4,9 +4,9 @@ import { devtools, persist } from "zustand/middleware";
 // ============================================================================
 // API Base URL Configuration
 // ============================================================================
-// Uses NEXT_PUBLIC_API_BASE from environment, defaults to gateway on port 5500
+// Uses NEXT_PUBLIC_API_BASE from environment, defaults to gateway on port 8000
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5500/api";
+  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000/api";
 
 export interface User {
   id: string;
