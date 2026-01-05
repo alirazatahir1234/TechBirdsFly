@@ -1,0 +1,223 @@
+# TechBirdsFly Cloud Build Configuration
+# Builds and deploys all services to Cloud Run on Google Cloud
+
+substitutions:
+  _REGION: us-central1
+  _REPO: techbirdsfly-repo
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+steps:
+  # ============================================
+  # Step 1: Build Auth Service
+  # ============================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-auth-service'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service:latest'
+      - '-f'
+      - 'services/auth-service/Dockerfile'
+      - 'services/auth-service'
+
+  # ============================================
+  # Step 2: Build Generator Service
+  # ============================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-generator-service'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service:latest'
+      - '-f'
+      - 'services/generator-service/Dockerfile'
+      - 'services/generator-service'
+
+  # ============================================
+  # Step 3: Build API Gateway
+  # ============================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-gateway'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway:latest'
+      - '-f'
+      - 'gateway/yarp-gateway/Dockerfile'
+      - 'gateway/yarp-gateway'
+
+  # ============================================
+  # Step 4: Build Frontend
+  # ============================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:latest'
+      - '-f'
+      - 'web-frontend/techbirdsfly-frontend-nextjs/Dockerfile'
+      - 'web-frontend/techbirdsfly-frontend-nextjs'
+    waitFor: ['-']  # Run in parallel with other builds
+
+  # ============================================
+  # Step 5: Push All Images to Artifact Registry
+  # ============================================
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-auth-service'
+    args: ['push', '--all-tags', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service']
+    waitFor: ['build-auth-service']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-generator-service'
+    args: ['push', '--all-tags', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service']
+    waitFor: ['build-generator-service']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-gateway'
+    args: ['push', '--all-tags', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway']
+    waitFor: ['build-gateway']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend'
+    args: ['push', '--all-tags', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend']
+    waitFor: ['build-frontend']
+
+  # ============================================
+  # Step 6: Deploy Auth Service to Cloud Run
+  # ============================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-auth-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'techbirdsfly-auth'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=5001'
+      - '--memory=256Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=2'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=ASPNETCORE_ENVIRONMENT=Production'
+    waitFor: ['push-auth-service']
+
+  # ============================================
+  # Step 7: Deploy Generator Service to Cloud Run
+  # ============================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-generator-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'techbirdsfly-generator'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=5289'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=2'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=ASPNETCORE_ENVIRONMENT=Production'
+    waitFor: ['push-generator-service']
+
+  # ============================================
+  # Step 8: Deploy Gateway to Cloud Run
+  # ============================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-gateway'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'techbirdsfly-gateway'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=8000'
+      - '--memory=256Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=3'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=ASPNETCORE_ENVIRONMENT=Production'
+    waitFor: ['push-gateway']
+
+  # ============================================
+  # Step 9: Deploy Frontend to Cloud Run
+  # ============================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-frontend'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'techbirdsfly-frontend'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=3000'
+      - '--memory=256Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=3'
+      - '--allow-unauthenticated'
+    waitFor: ['push-frontend']
+
+  # ============================================
+  # Step 10: Print Service URLs
+  # ============================================
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'print-urls'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        echo "=========================================="
+        echo "🎉 TechBirdsFly Deployment Complete!"
+        echo "=========================================="
+        echo ""
+        echo "Service URLs:"
+        echo "-------------"
+        gcloud run services describe techbirdsfly-auth --region=${_REGION} --format='value(status.url)' | xargs -I {} echo "Auth Service:      {}"
+        gcloud run services describe techbirdsfly-generator --region=${_REGION} --format='value(status.url)' | xargs -I {} echo "Generator Service: {}"
+        gcloud run services describe techbirdsfly-gateway --region=${_REGION} --format='value(status.url)' | xargs -I {} echo "API Gateway:       {}"
+        gcloud run services describe techbirdsfly-frontend --region=${_REGION} --format='value(status.url)' | xargs -I {} echo "Frontend:          {}"
+        echo ""
+        echo "=========================================="
+    waitFor:
+      - 'deploy-auth-service'
+      - 'deploy-generator-service'
+      - 'deploy-gateway'
+      - 'deploy-frontend'
+
+# Images to be pushed to Artifact Registry
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/auth-service:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/generator-service:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/gateway:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:latest'
+
+# Build timeout (30 minutes)
+timeout: 1800s

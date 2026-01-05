@@ -6,9 +6,9 @@ Complete microservice architecture with 6 independent services running on separa
 
 | Service | Port | Status | Purpose |
 |---------|------|--------|---------|
-| **Auth** | 5001 | ✅ Production | User authentication, JWT tokens |
+| **Auth** | 5001 | ✅ Production | User authentication, JWT tokens, SQLite |
 | **User** | 5002 | 🟡 Phase 2 | User profiles, preferences, quotas |
-| **Generator** | 5003 | ✅ Production | Website generation, project mgmt |
+| **Generator** | 5289 | ✅ Production | Website generation (Ollama Llama 3.1), project mgmt, ZIP export |
 | **Image** | 5004 | 🟡 Phase 2 | Image generation (DALL·E), CDN |
 | **Billing** | 5005 | 🟡 Phase 2 | Usage tracking, Stripe, invoices |
 | **Admin** | 5006 | 🟡 Phase 2 | Admin dashboard, templates, audit |
@@ -264,17 +264,19 @@ Each service outputs to:
 ## Current Ports
 
 ```
-5001 - Auth Service      ✅ Active
-5002 - User Service      🟡 Ready
-5003 - Generator Service ✅ Active
-5004 - Image Service     🟡 Ready
-5005 - Billing Service   🟡 Ready
-5006 - Admin Service     🟡 Ready
-3000 - Frontend (React)  ✅ Running
-5007 - API Gateway       🟡 Ready
-5010 - RabbitMQ          (in docker-compose)
-5011 - SQL Server        (in docker-compose)
-6379 - Redis             (in docker-compose)
+5001 - Auth Service            ✅ Active
+5002 - User Service            🟡 Ready
+5289 - Generator Service       ✅ Active (was 5003, changed for conflict resolution)
+5004 - Image Service           🟡 Ready
+5005 - Billing Service         🟡 Ready
+5006 - Admin Service           🟡 Ready
+3000 - Frontend (Next.js)      ✅ Running
+8000 - API Gateway (YARP)      ✅ Running (was 5007, changed for standardization)
+5432 - PostgreSQL              ✅ Running
+11434 - Ollama (Llama 3.1)     ✅ Running
+6379 - Redis                   ✅ Running
+5341 - Seq Logging             ✅ Running
+16686 - Jaeger Tracing         ✅ Running
 ```
 
 ---

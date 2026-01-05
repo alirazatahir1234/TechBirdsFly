@@ -1,3 +1,6 @@
+# TechBirdsFly YARP Gateway - Cloud Run Compatible
+# Multi-stage build for optimized image size
+
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
@@ -17,11 +20,21 @@ RUN dotnet publish "YarpGateway.csproj" -c Release -o /app/publish /p:UseAppHost
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+# Create non-root user for security
+RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+USER appuser
+
+# Copy published application
 COPY --from=publish /app/publish .
 
-EXPOSE 5000
+# Cloud Run injects PORT env variable - use 8080 as default
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 8080
 
+# Health check for container orchestration
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl --fail http://localhost:5000/health || exit 1
+  CMD curl --fail http://localhost:8080/health || exit 1
 
 ENTRYPOINT ["dotnet", "YarpGateway.dll"]
