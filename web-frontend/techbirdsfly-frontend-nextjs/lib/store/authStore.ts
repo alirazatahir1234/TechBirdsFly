@@ -364,16 +364,21 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true, error: null });
           try {
             // Exchange OAuth code with backend for JWT token
-            const response = await fetch(`${API_BASE}/auth/oauth/google/callback`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ code: oauthCode }),
-            });
+            const response = await fetch(
+              `${API_BASE}/auth/oauth/google/callback`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: oauthCode }),
+              }
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-              throw new Error(data.message || data.error || "Google login failed");
+              throw new Error(
+                data.message || data.error || "Google login failed"
+              );
             }
 
             const { user, accessToken, refreshToken } = data;
@@ -422,7 +427,10 @@ export const useAuthStore = create<AuthState>()(
 
                 get().setUser(userFromToken);
               } catch (decodeErr) {
-                console.warn("Could not decode token, setting minimal user", decodeErr);
+                console.warn(
+                  "Could not decode token, setting minimal user",
+                  decodeErr
+                );
                 get().setUser({
                   id: "unknown",
                   email: "unknown",
@@ -449,16 +457,21 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true, error: null });
           try {
             // Exchange OAuth code with backend for JWT token (signup endpoint)
-            const response = await fetch(`${API_BASE}/auth/oauth/google/signup`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ code: oauthCode }),
-            });
+            const response = await fetch(
+              `${API_BASE}/auth/oauth/google/signup`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: oauthCode }),
+              }
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
-              throw new Error(data.message || data.error || "Google signup failed");
+              throw new Error(
+                data.message || data.error || "Google signup failed"
+              );
             }
 
             const { user, accessToken, refreshToken } = data;
@@ -507,7 +520,10 @@ export const useAuthStore = create<AuthState>()(
 
                 get().setUser(userFromToken);
               } catch (decodeErr) {
-                console.warn("Could not decode token, setting minimal user", decodeErr);
+                console.warn(
+                  "Could not decode token, setting minimal user",
+                  decodeErr
+                );
                 get().setUser({
                   id: "unknown",
                   email: "unknown",
