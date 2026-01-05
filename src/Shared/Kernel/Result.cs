@@ -43,10 +43,10 @@ public class Result<T> : Result
     public static Result<T> Success(T data, string message = "Operation completed successfully")
         => new(true, data, message);
 
-    public static Result<T> Failure(string message, List<string>? errors = null)
+    public new static Result<T> Failure(string message, List<string>? errors = null)
         => new(false, default, message, errors);
 
-    public static Result<T> Failure(params string[] errors)
+    public new static Result<T> Failure(params string[] errors)
         => new(false, default, "Operation failed", new List<string>(errors));
 
     public TResult Match<TResult>(

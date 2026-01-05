@@ -9,11 +9,11 @@ namespace GeneratorService.Domain.Entities;
 /// </summary>
 public class GeneratedPage : AuditableEntity
 {
-    public string Title { get; private set; }
-    public HtmlContent Html { get; private set; }
-    public string Css { get; private set; }
-    public string JavaScript { get; private set; }
-    public Metadata Meta { get; private set; }
+    public string Title { get; private set; } = default!;
+    public HtmlContent Html { get; private set; } = default!;
+    public string Css { get; private set; } = default!;
+    public string JavaScript { get; private set; } = default!;
+    public Metadata Meta { get; private set; } = default!;
     public int Version { get; private set; } = 1;
     public bool IsPublished { get; private set; } = false;
 

@@ -9,11 +9,11 @@ namespace GeneratorService.Domain.Entities;
 /// </summary>
 public class Project : AuditableEntity
 {
-    public string Name { get; private set; }
-    public string Industry { get; private set; }
-    public string Style { get; private set; }
-    public ColorPalette Palette { get; private set; }
-    public string Description { get; private set; }
+    public string Name { get; private set; } = default!;
+    public string Industry { get; private set; } = default!;
+    public string Style { get; private set; } = default!;
+    public ColorPalette Palette { get; private set; } = default!;
+    public string Description { get; private set; } = default!;
 
     private readonly List<Section> _sections = new();
     public IReadOnlyCollection<Section> Sections => _sections.AsReadOnly();

@@ -11,7 +11,7 @@ public class Section : AuditableEntity
 {
     public Guid ProjectId { get; private set; }
     public SectionType Type { get; private set; }
-    public HtmlContent Html { get; private set; }
+    public HtmlContent Html { get; private set; } = default!;
     public string CssClass { get; private set; } = string.Empty;
 
     private Section() { }
