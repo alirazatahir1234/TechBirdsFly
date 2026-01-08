@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ import { check2FAAttempts, record2FAAttempt, clear2FAAttempts } from '@/lib/2fa'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5500/api';
 
-export default function TwoFactorVerifyPage() {
+function TwoFactorVerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -264,5 +264,13 @@ export default function TwoFactorVerifyPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TwoFactorVerifyPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <TwoFactorVerifyContent />
+    </Suspense>
   );
 }

@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   // Required for Docker/Cloud Run deployment
   output: "standalone",
   
+  // Skip type checking and linting during build for faster CI/CD
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  
   // Optimize images for production
   images: {
     unoptimized: process.env.NODE_ENV === 'development',

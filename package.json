@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "eslint-config-next": "^16.1.1"
+  },
+  "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
+    "lucide-react": "^0.562.0"
+  }
+}

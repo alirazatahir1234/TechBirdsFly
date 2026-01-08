@@ -1,6 +1,9 @@
 'use client';
 
-import React from 'react';
+// Force dynamic rendering for pages with useSearchParams
+export const dynamic = 'force-dynamic';
+
+import React, { Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -21,7 +24,7 @@ import {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5500/api';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -256,5 +259,13 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

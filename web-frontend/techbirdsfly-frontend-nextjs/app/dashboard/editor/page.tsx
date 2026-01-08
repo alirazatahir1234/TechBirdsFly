@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { loadProject, saveVersion, renameProject } from "@/lib/project-api";
 import HtmlRenderer from "@/components/html-renderer";
 import ImageReplaceModal from "@/components/image-replace-modal";
@@ -11,7 +11,7 @@ import { Copy, Download, Image as ImageIcon, Save, Loader2, Settings, Palette, F
 import toast from "react-hot-toast";
 import { ExportModal } from "@/components/export-modal";
 
-export default function EditorPage() {
+function EditorPageContent() {
   const params = useSearchParams();
   const htmlParam = params.get("html");
   const projectParam = params.get("project");
@@ -453,5 +453,13 @@ export default function EditorPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading editor...</div>}>
+      <EditorPageContent />
+    </Suspense>
   );
 }
