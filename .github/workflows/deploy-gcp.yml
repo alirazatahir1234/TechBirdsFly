@@ -47,9 +47,10 @@ jobs:
       - name: Build .NET solution
         run: dotnet build TechBirdsFly.sln --configuration Release --no-restore
         
-      - name: Run .NET tests
-        run: dotnet test TechBirdsFly.sln --configuration Release --no-build --verbosity normal
-        continue-on-error: true  # Continue even if tests fail for now
+      # Skip .NET tests - no test projects exist yet
+      # TODO: Add test projects and enable this step
+      # - name: Run .NET tests
+      #   run: dotnet test TechBirdsFly.sln --configuration Release --no-build --verbosity normal
         
       - name: Install frontend dependencies
         run: |
