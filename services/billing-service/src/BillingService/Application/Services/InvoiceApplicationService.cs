@@ -74,7 +74,7 @@ public sealed class InvoiceApplicationService : IInvoiceApplicationService
             invoice.Issue();
             var updated = await _invoiceRepository.UpdateAsync(invoice, cancellationToken);
 
-            var @event = new InvoiceIssuedEvent(updated.Id, updated.UserId, updated.TotalAmount, updated.DueDate.Value);
+            var @event = new InvoiceIssuedEvent(updated.Id, updated.UserId, updated.TotalAmount, updated.DueDate ?? DateTime.UtcNow.AddDays(30));
             await _eventPublisher.PublishEventAsync(@event, cancellationToken);
 
             _logger.LogInformation("Invoice issued successfully: {InvoiceId}", invoiceId);

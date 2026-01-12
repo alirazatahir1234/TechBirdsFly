@@ -272,7 +272,7 @@ public sealed class SubscriptionApplicationService : ISubscriptionApplicationSer
             subscription.Renew();
             var updated = await _subscriptionRepository.UpdateAsync(subscription, cancellationToken);
 
-            var @event = new SubscriptionRenewedEvent(subscriptionId, subscription.UserId, subscription.PlanId, updated.NextBillingDate.Value);
+            var @event = new SubscriptionRenewedEvent(subscriptionId, subscription.UserId, subscription.PlanId, updated.NextBillingDate ?? DateTime.UtcNow.AddMonths(1));
             await _eventPublisher.PublishEventAsync(@event, cancellationToken);
 
             _logger.LogInformation("Subscription renewed: {SubscriptionId}", subscriptionId);

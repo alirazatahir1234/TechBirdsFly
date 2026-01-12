@@ -5,13 +5,21 @@ namespace AdminService.Application.DTOs;
 /// </summary>
 public class AdminUserDto
 {
+    /// <summary>Gets or sets the unique identifier.</summary>
     public Guid Id { get; set; }
+    /// <summary>Gets or sets the email address.</summary>
     public string Email { get; set; } = string.Empty;
+    /// <summary>Gets or sets the full name.</summary>
     public string FullName { get; set; } = string.Empty;
+    /// <summary>Gets or sets the account status.</summary>
     public string Status { get; set; } = string.Empty;
+    /// <summary>Gets or sets the creation timestamp.</summary>
     public DateTime CreatedAt { get; set; }
+    /// <summary>Gets or sets the last login timestamp.</summary>
     public DateTime? LastLoginAt { get; set; }
+    /// <summary>Gets or sets the suspension timestamp.</summary>
     public DateTime? SuspendedAt { get; set; }
+    /// <summary>Gets or sets the suspension reason.</summary>
     public string? SuspensionReason { get; set; }
     public int ProjectCount { get; set; }
     public decimal TotalSpent { get; set; }
