@@ -9,8 +9,8 @@ namespace CacheService.Domain.Entities;
 public class CacheEntry
 {
     public Guid Id { get; set; }
-    public string Key { get; set; }
-    public byte[] Value { get; set; }
+    public string Key { get; set; } = string.Empty;
+    public byte[] Value { get; set; } = Array.Empty<byte>();
     public string? ServiceName { get; set; }
     public string? Category { get; set; }
     public CacheEntryType Type { get; set; }

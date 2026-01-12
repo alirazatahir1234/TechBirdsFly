@@ -6,7 +6,7 @@ namespace CacheService.Domain.Events;
 public abstract class CacheEventBase : DomainEvent
 {
     public Guid AggregateId { get; set; }
-    public string Key { get; set; }
+    public string Key { get; set; } = string.Empty;
     public DateTime Timestamp { get; set; }
 }
 

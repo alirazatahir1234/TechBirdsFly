@@ -7,7 +7,7 @@
     <RootNamespace>TechBirdsFly.AdminService</RootNamespace>
     <AssemblyName>TechBirdsFly.AdminService</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
