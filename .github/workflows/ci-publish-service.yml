@@ -28,10 +28,10 @@ jobs:
           dotnet-version: '8.0.x'
       
       - name: Restore dependencies
-        run: dotnet restore services/publish-service/src/PublishService.csproj
+        run: dotnet restore services/publish-service/src/WebAPI/PublishService.WebAPI.csproj
       
       - name: Build
-        run: dotnet build services/publish-service/src/PublishService.csproj --configuration Release --no-restore
+        run: dotnet build services/publish-service/src/WebAPI/PublishService.WebAPI.csproj --configuration Release --no-restore
       
       - name: Run tests (if exist)
         run: |

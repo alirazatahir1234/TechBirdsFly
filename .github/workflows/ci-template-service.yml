@@ -28,10 +28,10 @@ jobs:
           dotnet-version: '8.0.x'
       
       - name: Restore dependencies
-        run: dotnet restore services/template-service/src/TemplateService.csproj
+        run: dotnet restore services/template-service/src/TemplateService.Api/TemplateService.Api.csproj
       
       - name: Build
-        run: dotnet build services/template-service/src/TemplateService.csproj --configuration Release --no-restore
+        run: dotnet build services/template-service/src/TemplateService.Api/TemplateService.Api.csproj --configuration Release --no-restore
       
       - name: Run tests (if exist)
         run: |
