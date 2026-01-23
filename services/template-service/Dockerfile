@@ -10,16 +10,16 @@ COPY src/TemplateService.Infrastructure/TemplateService.Infrastructure.csproj sr
 COPY src/TemplateService.Api/TemplateService.Api.csproj src/TemplateService.Api/
 
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore TemplateService.sln
 
 # Copy source code
 COPY src/ src/
 
 # Build the application
-RUN dotnet build -c Release --no-restore
+RUN dotnet build TemplateService.sln -c Release --no-restore
 
 # Publish the application
-RUN dotnet publish -c Release --no-build -o /app/publish
+RUN dotnet publish src/TemplateService.Api/TemplateService.Api.csproj -c Release --no-build -o /app/publish
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
