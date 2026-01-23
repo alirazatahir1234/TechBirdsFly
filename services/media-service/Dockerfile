@@ -1,4 +1,4 @@
-# Multi-stage build for Image Service
+# Multi-stage build for Media Service
 
 # ============================================================================
 # BUILD STAGE
@@ -7,20 +7,20 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY ["services/image-service/src/ImageService/ImageService.csproj", "ImageService/"]
+COPY ["src/MediaService.csproj", "MediaService/"]
 
 # Restore dependencies
-RUN dotnet restore "ImageService/ImageService.csproj"
+RUN dotnet restore "MediaService/MediaService.csproj"
 
 # Copy source code
-COPY ["services/image-service/src/ImageService/", "ImageService/"]
+COPY ["src/", "MediaService/"]
 
 # Build application
-WORKDIR "/src/ImageService"
-RUN dotnet build "ImageService.csproj" -c Release -o /app/build
+WORKDIR "/src/MediaService"
+RUN dotnet build "MediaService.csproj" -c Release -o /app/build
 
 # Publish
-RUN dotnet publish "ImageService.csproj" -c Release -o /app/publish
+RUN dotnet publish "MediaService.csproj" -c Release -o /app/publish
 
 # ============================================================================
 # RUNTIME STAGE
@@ -32,7 +32,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Create storage directory
-RUN mkdir -p /app/storage/images
+RUN mkdir -p /app/storage/media
 
 # Copy published application
 COPY --from=build /app/publish .
@@ -53,4 +53,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5007/health || exit 1
 
 # Entry point
-ENTRYPOINT ["dotnet", "ImageService.dll"]
+ENTRYPOINT ["dotnet", "MediaService.dll"]
