@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 # Configuration
 PROJECT_ID="techbirdsfly"
 REGION="us-central1"
-REPO_NAME="techbirdsfly-repo"
+REPO_NAME="TechBirdsFly"
 SA_NAME="techbirdsfly-cicd"
 
 echo -e "${BLUE}============================================${NC}"

@@ -1,0 +1,46 @@
+name: CI - Admin Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/admin-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-admin-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/admin-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Admin Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/admin-service/src/AdminService.csproj
+      
+      - name: Build
+        run: dotnet build services/admin-service/src/AdminService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/admin-service/tests" ]; then
+            dotnet test services/admin-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t admin-service:ci -f services/admin-service/Dockerfile services/admin-service

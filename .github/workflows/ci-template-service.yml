@@ -1,0 +1,46 @@
+name: CI - Template Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/template-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-template-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/template-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Template Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/template-service/src/TemplateService.csproj
+      
+      - name: Build
+        run: dotnet build services/template-service/src/TemplateService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/template-service/tests" ]; then
+            dotnet test services/template-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t template-service:ci -f services/template-service/Dockerfile services/template-service

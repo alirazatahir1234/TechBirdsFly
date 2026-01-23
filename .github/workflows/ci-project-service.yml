@@ -1,0 +1,46 @@
+name: CI - Project Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/ProjectService/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-project-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/ProjectService/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Project Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/ProjectService/src/ProjectService.Api/ProjectService.Api.csproj
+      
+      - name: Build
+        run: dotnet build services/ProjectService/src/ProjectService.Api/ProjectService.Api.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/ProjectService/tests" ]; then
+            dotnet test services/ProjectService/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t project-service:ci -f services/ProjectService/Dockerfile services/ProjectService

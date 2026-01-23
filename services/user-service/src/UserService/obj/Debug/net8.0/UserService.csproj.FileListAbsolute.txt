@@ -202,3 +202,13 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/UserService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/UserService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/obj/Debug/net8.0/ref/UserService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251206.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251207.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251208.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251209.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251210.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251211.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251212.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251213.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251214.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251215.json

@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI - Frontend
 
 on:
   push:
@@ -129,7 +129,7 @@ jobs:
           retention-days: 7
 
   build:
-    name: Build Application
+    name: Build Frontend
     runs-on: ubuntu-latest
     needs: [lint, test-unit]
     

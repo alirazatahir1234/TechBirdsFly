@@ -48,7 +48,7 @@ TechBirdsFly is a full-stack **microservice architecture** for AI-powered websit
      │   │  • [image, billing, admin]_db   │
      │   └─────────────────────────────────┘
      │
-     ├── SQLite (Auth Service Local)
+     ├── Postgres
      │
      └─ Ollama (Port 11434)
         └─ Llama 3.1 Model (4.9 GB)

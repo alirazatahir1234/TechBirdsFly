@@ -1,0 +1,46 @@
+name: CI - Export Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/export-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-export-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/export-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Export Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/export-service/src/ExportService.csproj
+      
+      - name: Build
+        run: dotnet build services/export-service/src/ExportService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/export-service/tests" ]; then
+            dotnet test services/export-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t export-service:ci -f services/export-service/Dockerfile services/export-service

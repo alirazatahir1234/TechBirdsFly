@@ -120,6 +120,146 @@ jobs:
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/generator-service:${{ github.sha }}
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/generator-service:latest
           
+      # Build and Push Admin Service
+      - name: Build Admin Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:latest \
+            -f services/admin-service/Dockerfile \
+            services/admin-service
+            
+      - name: Push Admin Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:latest
+          
+      # Build and Push Billing Service
+      - name: Build Billing Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:latest \
+            -f services/billing-service/Dockerfile \
+            services/billing-service
+            
+      - name: Push Billing Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:latest
+          
+      # Build and Push Cache Service
+      - name: Build Cache Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:latest \
+            -f services/cache-service/Dockerfile \
+            services/cache-service
+            
+      - name: Push Cache Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:latest
+          
+      # Build and Push Editor Service
+      - name: Build Editor Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:latest \
+            -f services/editor-service/Dockerfile \
+            services/editor-service
+            
+      - name: Push Editor Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:latest
+          
+      # Build and Push Export Service
+      - name: Build Export Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/export-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/export-service:latest \
+            -f services/export-service/Dockerfile \
+            services/export-service
+            
+      - name: Push Export Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/export-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/export-service:latest
+          
+      # Build and Push Media Service
+      - name: Build Media Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/media-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/media-service:latest \
+            -f services/media-service/Dockerfile \
+            services/media-service
+            
+      - name: Push Media Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/media-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/media-service:latest
+          
+      # Build and Push Project Service
+      - name: Build Project Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/project-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/project-service:latest \
+            -f services/ProjectService/Dockerfile \
+            services/ProjectService
+            
+      - name: Push Project Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/project-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/project-service:latest
+          
+      # Build and Push Publish Service
+      - name: Build Publish Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/publish-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/publish-service:latest \
+            -f services/publish-service/Dockerfile \
+            services/publish-service
+            
+      - name: Push Publish Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/publish-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/publish-service:latest
+          
+      # Build and Push Template Service
+      - name: Build Template Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/template-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/template-service:latest \
+            -f services/template-service/Dockerfile \
+            services/template-service
+            
+      - name: Push Template Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/template-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/template-service:latest
+          
+      # Build and Push User Service
+      - name: Build User Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:latest \
+            -f services/user-service/Dockerfile \
+            services/user-service
+            
+      - name: Push User Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:latest
+          
       # Build and Push Gateway
       - name: Build Gateway
         run: |
@@ -178,6 +318,147 @@ jobs:
             --timeout=300 \
             --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
             
+      - name: Deploy Admin Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-admin \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Billing Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-billing \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Cache Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-cache \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Editor Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-editor \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Export Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-export \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/export-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --timeout=300 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Media Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-media \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/media-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Project Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-project \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/project-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Publish Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-publish \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/publish-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Template Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-template \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/template-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy User Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-user \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=256Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=2 \
+            --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
       - name: Deploy Gateway to Cloud Run
         run: |
           gcloud run deploy techbirdsfly-gateway \
@@ -213,4 +494,14 @@ jobs:
           echo "Frontend: $(gcloud run services describe techbirdsfly-frontend --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
           echo "Gateway: $(gcloud run services describe techbirdsfly-gateway --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
           echo "Auth Service: $(gcloud run services describe techbirdsfly-auth --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Admin Service: $(gcloud run services describe techbirdsfly-admin --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Billing Service: $(gcloud run services describe techbirdsfly-billing --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Cache Service: $(gcloud run services describe techbirdsfly-cache --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Editor Service: $(gcloud run services describe techbirdsfly-editor --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Export Service: $(gcloud run services describe techbirdsfly-export --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Media Service: $(gcloud run services describe techbirdsfly-media --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Project Service: $(gcloud run services describe techbirdsfly-project --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Publish Service: $(gcloud run services describe techbirdsfly-publish --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "Template Service: $(gcloud run services describe techbirdsfly-template --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
+          echo "User Service: $(gcloud run services describe techbirdsfly-user --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY
           echo "Generator Service: $(gcloud run services describe techbirdsfly-generator --region=${{ env.REGION }} --format='value(status.url)')" >> $GITHUB_STEP_SUMMARY

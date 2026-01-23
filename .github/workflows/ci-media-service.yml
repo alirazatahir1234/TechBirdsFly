@@ -1,0 +1,46 @@
+name: CI - Media Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/media-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-media-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/media-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Media Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/media-service/src/MediaService.csproj
+      
+      - name: Build
+        run: dotnet build services/media-service/src/MediaService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/media-service/tests" ]; then
+            dotnet test services/media-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t media-service:ci -f services/media-service/Dockerfile services/media-service

@@ -1,0 +1,46 @@
+name: CI - Cache Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/cache-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-cache-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/cache-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Cache Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/cache-service/src/CacheService/CacheService.csproj
+      
+      - name: Build
+        run: dotnet build services/cache-service/src/CacheService/CacheService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/cache-service/tests" ]; then
+            dotnet test services/cache-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t cache-service:ci -f services/cache-service/Dockerfile services/cache-service

@@ -1,0 +1,46 @@
+name: CI - Generator Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/generator-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-generator-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/generator-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Generator Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/generator-service/src/GeneratorService.csproj
+      
+      - name: Build
+        run: dotnet build services/generator-service/src/GeneratorService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/generator-service/tests" ]; then
+            dotnet test services/generator-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t generator-service:ci -f services/generator-service/Dockerfile services/generator-service

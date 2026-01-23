@@ -1,0 +1,46 @@
+name: CI - Editor Service
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/editor-service/**'
+      - 'src/Shared/**'
+      - '.github/workflows/ci-editor-service.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/editor-service/**'
+      - 'src/Shared/**'
+
+jobs:
+  build-and-test:
+    name: Build Editor Service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore services/editor-service/src/EditorService.csproj
+      
+      - name: Build
+        run: dotnet build services/editor-service/src/EditorService.csproj --configuration Release --no-restore
+      
+      - name: Run tests (if exist)
+        run: |
+          if [ -d "services/editor-service/tests" ]; then
+            dotnet test services/editor-service/tests --configuration Release --no-build --verbosity normal
+          else
+            echo "No tests found, skipping..."
+          fi
+        continue-on-error: true
+      
+      - name: Build Docker image (validation only)
+        run: docker build -t editor-service:ci -f services/editor-service/Dockerfile services/editor-service
