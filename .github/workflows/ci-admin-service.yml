@@ -43,4 +43,4 @@ jobs:
         continue-on-error: true
       
       - name: Build Docker image (validation only)
-        run: docker build -t admin-service:ci -f services/admin-service/Dockerfile services/admin-service
+        run: docker build -t admin-service:ci -f services/admin-service/Dockerfile .

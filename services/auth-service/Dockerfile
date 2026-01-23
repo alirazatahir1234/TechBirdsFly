@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files (auth-service and its dependencies)
-COPY src/AuthService.csproj ./auth-service/
-COPY ../cache-service/src/CacheClient/CacheClient.csproj ./cache-service/src/CacheClient/
+COPY services/auth-service/src/AuthService.csproj ./auth-service/
+COPY services/cache-service/src/CacheClient/CacheClient.csproj ./cache-service/src/CacheClient/
 
 # Restore dependencies
 WORKDIR /src/auth-service
@@ -12,8 +12,8 @@ RUN dotnet restore
 
 # Copy source code
 WORKDIR /src
-COPY src/ ./auth-service/
-COPY ../cache-service/src/CacheClient/ ./cache-service/src/CacheClient/
+COPY services/auth-service/src/ ./auth-service/
+COPY services/cache-service/src/CacheClient/ ./cache-service/src/CacheClient/
 
 # Build and publish
 WORKDIR /src/auth-service

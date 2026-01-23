@@ -99,7 +99,7 @@ jobs:
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/auth-service:${{ github.sha }} \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/auth-service:latest \
             -f services/auth-service/Dockerfile \
-            services/auth-service
+            .
             
       - name: Push Auth Service
         run: |
@@ -127,7 +127,7 @@ jobs:
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:${{ github.sha }} \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/admin-service:latest \
             -f services/admin-service/Dockerfile \
-            services/admin-service
+            .
             
       - name: Push Admin Service
         run: |
