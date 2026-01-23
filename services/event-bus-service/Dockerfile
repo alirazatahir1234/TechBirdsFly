@@ -3,21 +3,23 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
 WORKDIR /src
 
-# Copy project files
-COPY ["src/EventBusService.csproj", "src/"]
+# Copy project files (event-bus-service and its dependencies)
+COPY ["src/EventBusService.csproj", "event-bus-service/src/"]
+COPY ["../cache-service/src/CacheClient/CacheClient.csproj", "cache-service/src/CacheClient/"]
 
 # Restore dependencies
-RUN dotnet restore "src/EventBusService.csproj"
+RUN dotnet restore "event-bus-service/src/EventBusService.csproj"
 
 # Copy source code
-COPY ["src/", "src/"]
+COPY ["src/", "event-bus-service/src/"]
+COPY ["../cache-service/src/CacheClient/", "cache-service/src/CacheClient/"]
 
 # Build
-RUN dotnet build "src/EventBusService.csproj" -c Release -o /app/build
+RUN dotnet build "event-bus-service/src/EventBusService.csproj" -c Release -o /app/build
 
 # Publish stage
 FROM builder AS publish
-RUN dotnet publish "src/EventBusService.csproj" -c Release -o /app/publish
+RUN dotnet publish "event-bus-service/src/EventBusService.csproj" -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

@@ -7,13 +7,13 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY ["services/user-service/src/UserService/UserService.csproj", "UserService/"]
+COPY ["src/UserService/UserService.csproj", "UserService/"]
 
 # Restore dependencies
 RUN dotnet restore "UserService/UserService.csproj"
 
 # Copy source code
-COPY ["services/user-service/src/UserService/", "UserService/"]
+COPY ["src/UserService/", "UserService/"]
 
 # Build application
 WORKDIR "/src/UserService"
