@@ -176,6 +176,20 @@ jobs:
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:${{ github.sha }}
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/editor-service:latest
           
+      # Build and Push Event Bus Service
+      - name: Build Event Bus Service
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/event-bus-service:${{ github.sha }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/event-bus-service:latest \
+            -f services/event-bus-service/Dockerfile \
+            .
+            
+      - name: Push Event Bus Service
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/event-bus-service:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/event-bus-service:latest
+          
       # Build and Push Export Service
       - name: Build Export Service
         run: |
@@ -372,6 +386,20 @@ jobs:
             --min-instances=0 \
             --max-instances=2 \
             --port=8080 \
+            --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
+            
+      - name: Deploy Event Bus Service to Cloud Run
+        run: |
+          gcloud run deploy techbirdsfly-event-bus \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/event-bus-service:${{ github.sha }} \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=3 \
+            --port=5020 \
             --set-env-vars="ASPNETCORE_ENVIRONMENT=Production"
             
       - name: Deploy Export Service to Cloud Run

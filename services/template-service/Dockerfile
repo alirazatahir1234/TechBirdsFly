@@ -15,6 +15,9 @@ RUN dotnet restore TemplateService.sln
 # Copy source code
 COPY src/ src/
 
+# Restore again to ensure all dependencies are available after source copy
+RUN dotnet restore TemplateService.sln
+
 # Build the application
 RUN dotnet build TemplateService.sln -c Release --no-restore
 
