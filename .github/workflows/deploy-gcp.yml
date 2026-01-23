@@ -155,7 +155,7 @@ jobs:
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:${{ github.sha }} \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/cache-service:latest \
             -f services/cache-service/Dockerfile \
-            services/cache-service
+            .
             
       - name: Push Cache Service
         run: |
@@ -267,7 +267,7 @@ jobs:
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:${{ github.sha }} \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/user-service:latest \
             -f services/user-service/Dockerfile \
-            services/user-service
+            .
             
       - name: Push User Service
         run: |

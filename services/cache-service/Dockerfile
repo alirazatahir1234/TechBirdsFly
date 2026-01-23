@@ -4,13 +4,15 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 WORKDIR /src
 
 # Copy project files
-COPY ["src/CacheService.csproj", "src/"]
+COPY ["services/cache-service/src/CacheService/CacheService.csproj", "src/CacheService/"]
+COPY ["src/Shared/TechBirdsFly.Shared.csproj", "Shared/"]
 
 # Restore dependencies
-RUN dotnet restore "src/CacheService.csproj"
+RUN dotnet restore "src/CacheService/CacheService.csproj"
 
 # Copy source code
-COPY ["src/", "src/"]
+COPY ["services/cache-service/src/CacheService/", "src/CacheService/"]
+COPY ["src/Shared/", "Shared/"]
 
 # Build
 RUN dotnet build "src/CacheService.csproj" -c Release -o /app/build

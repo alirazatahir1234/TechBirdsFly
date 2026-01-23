@@ -5,6 +5,7 @@ WORKDIR /src
 # Copy project files (auth-service and its dependencies)
 COPY services/auth-service/src/AuthService.csproj ./auth-service/
 COPY services/cache-service/src/CacheClient/CacheClient.csproj ./cache-service/src/CacheClient/
+COPY src/Shared/TechBirdsFly.Shared.csproj ./src/Shared/
 
 # Restore dependencies
 WORKDIR /src/auth-service
@@ -14,6 +15,7 @@ RUN dotnet restore
 WORKDIR /src
 COPY services/auth-service/src/ ./auth-service/
 COPY services/cache-service/src/CacheClient/ ./cache-service/src/CacheClient/
+COPY src/Shared/ ./src/Shared/
 
 # Build and publish
 WORKDIR /src/auth-service

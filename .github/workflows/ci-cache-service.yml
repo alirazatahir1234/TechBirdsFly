@@ -43,4 +43,4 @@ jobs:
         continue-on-error: true
       
       - name: Build Docker image (validation only)
-        run: docker build -t cache-service:ci -f services/cache-service/Dockerfile services/cache-service
+        run: docker build -t cache-service:ci -f services/cache-service/Dockerfile .

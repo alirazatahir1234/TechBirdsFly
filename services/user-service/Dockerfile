@@ -7,13 +7,15 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY ["src/UserService/UserService.csproj", "UserService/"]
+COPY ["services/user-service/src/UserService/UserService.csproj", "UserService/"]
+COPY ["src/Shared/TechBirdsFly.Shared.csproj", "Shared/"]
 
 # Restore dependencies
 RUN dotnet restore "UserService/UserService.csproj"
 
 # Copy source code
-COPY ["src/UserService/", "UserService/"]
+COPY ["services/user-service/src/UserService/", "UserService/"]
+COPY ["src/Shared/", "Shared/"]
 
 # Build application
 WORKDIR "/src/UserService"

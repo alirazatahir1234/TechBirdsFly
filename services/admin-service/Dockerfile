@@ -4,6 +4,7 @@ WORKDIR /app
 # Copy project files (admin-service and its dependencies)
 COPY services/admin-service/src/*.csproj ./admin-service/
 COPY services/cache-service/src/CacheClient/*.csproj ./cache-service/src/CacheClient/
+COPY src/Shared/*.csproj ./src/Shared/
 
 # Restore dependencies
 WORKDIR /app/admin-service
@@ -13,6 +14,7 @@ RUN dotnet restore
 WORKDIR /app
 COPY services/admin-service/src/ ./admin-service/
 COPY services/cache-service/src/CacheClient/ ./cache-service/src/CacheClient/
+COPY src/Shared/ ./src/Shared/
 
 # Build
 WORKDIR /app/admin-service
