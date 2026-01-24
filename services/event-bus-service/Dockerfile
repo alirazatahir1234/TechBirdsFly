@@ -1,27 +1,31 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
-WORKDIR /src
+WORKDIR /app
 
 # Copy project files (event-bus-service and its dependencies)
-COPY ["services/event-bus-service/src/EventBusService.csproj", "event-bus-service/src/"]
-COPY ["services/cache-service/src/CacheClient/CacheClient.csproj", "cache-service/src/CacheClient/"]
+COPY ["services/event-bus-service/src/EventBusService.csproj", "services/event-bus-service/src/"]
+COPY ["services/cache-service/src/CacheClient/CacheClient.csproj", "services/cache-service/src/CacheClient/"]
 COPY ["src/Shared/TechBirdsFly.Shared.csproj", "src/Shared/"]
 
 # Restore dependencies
-RUN dotnet restore "event-bus-service/src/EventBusService.csproj"
+WORKDIR /app/services/event-bus-service/src
+RUN dotnet restore
 
 # Copy source code
-COPY ["services/event-bus-service/src/", "event-bus-service/src/"]
-COPY ["services/cache-service/src/CacheClient/", "cache-service/src/CacheClient/"]
+WORKDIR /app
+COPY ["services/event-bus-service/src/", "services/event-bus-service/src/"]
+COPY ["services/cache-service/src/CacheClient/", "services/cache-service/src/CacheClient/"]
 COPY ["src/Shared/", "src/Shared/"]
 
 # Build
-RUN dotnet build "event-bus-service/src/EventBusService.csproj" -c Release -o /app/build
+WORKDIR /app/services/event-bus-service/src
+RUN dotnet build -c Release -o /app/build
 
 # Publish stage
 FROM builder AS publish
-RUN dotnet publish "event-bus-service/src/EventBusService.csproj" -c Release -o /app/publish
+WORKDIR /app/services/event-bus-service/src
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

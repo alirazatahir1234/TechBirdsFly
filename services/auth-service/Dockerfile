@@ -1,24 +1,24 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
 # Copy project files (auth-service and its dependencies)
-COPY services/auth-service/src/AuthService.csproj ./auth-service/
-COPY services/cache-service/src/CacheClient/CacheClient.csproj ./cache-service/src/CacheClient/
+COPY services/auth-service/src/AuthService.csproj ./services/auth-service/src/
+COPY services/cache-service/src/CacheClient/CacheClient.csproj ./services/cache-service/src/CacheClient/
 COPY src/Shared/TechBirdsFly.Shared.csproj ./src/Shared/
 
 # Restore dependencies
-WORKDIR /src/auth-service
+WORKDIR /app/services/auth-service/src
 RUN dotnet restore
 
 # Copy source code
-WORKDIR /src
-COPY services/auth-service/src/ ./auth-service/
-COPY services/cache-service/src/CacheClient/ ./cache-service/src/CacheClient/
+WORKDIR /app
+COPY services/auth-service/src/ ./services/auth-service/src/
+COPY services/cache-service/src/CacheClient/ ./services/cache-service/src/CacheClient/
 COPY src/Shared/ ./src/Shared/
 
 # Build and publish
-WORKDIR /src/auth-service
+WORKDIR /app/services/auth-service/src
 RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage

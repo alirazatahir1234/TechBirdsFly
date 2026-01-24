@@ -1,25 +1,29 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
-WORKDIR /src
+WORKDIR /app
 
 # Copy project files
-COPY ["services/cache-service/src/CacheService/CacheService.csproj", "src/CacheService/"]
-COPY ["src/Shared/TechBirdsFly.Shared.csproj", "Shared/"]
+COPY ["services/cache-service/src/CacheService/CacheService.csproj", "services/cache-service/src/CacheService/"]
+COPY ["src/Shared/TechBirdsFly.Shared.csproj", "src/Shared/"]
 
 # Restore dependencies
-RUN dotnet restore "src/CacheService/CacheService.csproj"
+WORKDIR /app/services/cache-service/src/CacheService
+RUN dotnet restore
 
 # Copy source code
-COPY ["services/cache-service/src/CacheService/", "src/CacheService/"]
-COPY ["src/Shared/", "Shared/"]
+WORKDIR /app
+COPY ["services/cache-service/src/CacheService/", "services/cache-service/src/CacheService/"]
+COPY ["src/Shared/", "src/Shared/"]
 
 # Build
-RUN dotnet build "src/CacheService.csproj" -c Release -o /app/build
+WORKDIR /app/services/cache-service/src/CacheService
+RUN dotnet build -c Release -o /app/build
 
 # Publish stage
 FROM builder AS publish
-RUN dotnet publish "src/CacheService.csproj" -c Release -o /app/publish
+WORKDIR /app/services/cache-service/src/CacheService
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

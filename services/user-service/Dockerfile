@@ -4,25 +4,29 @@
 # BUILD STAGE
 # ============================================================================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
 # Copy project files
-COPY ["services/user-service/src/UserService/UserService.csproj", "UserService/"]
-COPY ["src/Shared/TechBirdsFly.Shared.csproj", "Shared/"]
+COPY ["services/user-service/src/UserService/UserService.csproj", "services/user-service/src/UserService/"]
+COPY ["services/cache-service/src/CacheClient/CacheClient.csproj", "services/cache-service/src/CacheClient/"]
+COPY ["src/Shared/TechBirdsFly.Shared.csproj", "src/Shared/"]
 
 # Restore dependencies
-RUN dotnet restore "UserService/UserService.csproj"
+WORKDIR /app/services/user-service/src/UserService
+RUN dotnet restore
 
 # Copy source code
-COPY ["services/user-service/src/UserService/", "UserService/"]
-COPY ["src/Shared/", "Shared/"]
+WORKDIR /app
+COPY ["services/user-service/src/UserService/", "services/user-service/src/UserService/"]
+COPY ["services/cache-service/src/CacheClient/", "services/cache-service/src/CacheClient/"]
+COPY ["src/Shared/", "src/Shared/"]
 
 # Build application
-WORKDIR "/src/UserService"
-RUN dotnet build "UserService.csproj" -c Release -o /app/build
+WORKDIR /app/services/user-service/src/UserService
+RUN dotnet build -c Release -o /app/build
 
 # Publish
-RUN dotnet publish "UserService.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 # ============================================================================
 # RUNTIME STAGE
