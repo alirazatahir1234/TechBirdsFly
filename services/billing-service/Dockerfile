@@ -2,15 +2,15 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy project file
-COPY src/*.csproj ./
-RUN dotnet restore
+COPY src/BillingService/BillingService.csproj ./BillingService/
+RUN dotnet restore ./BillingService/BillingService.csproj
 
 # Copy source
-COPY src/ ./
-RUN dotnet build -c Release -o out
+COPY src/BillingService/ ./BillingService/
+RUN dotnet build ./BillingService/BillingService.csproj -c Release -o out
 
 # Publish
-RUN dotnet publish -c Release -o publish
+RUN dotnet publish ./BillingService/BillingService.csproj -c Release -o publish
 
 # Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
