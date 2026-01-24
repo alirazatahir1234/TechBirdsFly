@@ -81,6 +81,7 @@ public class AuthEventPublisherService
 
             // TODO: Create and publish UserUpdated event
             // When UserUpdated event is created in shared contracts
+            await Task.CompletedTask;
 
             _logger.LogInformation(
                 "✅ UserUpdated event published - UserId: {UserId}",
@@ -112,6 +113,7 @@ public class AuthEventPublisherService
 
             // TODO: Create and publish UserDeactivated event
             // When UserDeactivated event is created in shared contracts
+            await Task.CompletedTask;
 
             _logger.LogInformation(
                 "✅ UserDeactivated event published - UserId: {UserId}",
