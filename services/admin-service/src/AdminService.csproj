@@ -38,11 +38,7 @@
   <!-- Project References -->
   <ItemGroup>
     <ProjectReference Include="../../cache-service/src/CacheClient/CacheClient.csproj" />
+    <ProjectReference Include="../../../src/Shared/TechBirdsFly.Shared.csproj" />
   </ItemGroup>
-
-  <!-- TODO: Add shared project reference -->
-  <!-- <ItemGroup>
-    <ProjectReference Include="../../../shared/TechBirdsFly.Shared.csproj" />
-  </ItemGroup> -->
 
 </Project>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TechBirdsFly.AdminService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e27e2f1c4cff2e476861e99ba78a86bc2bf219fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5b66d56340cd4184f650969ff99805f0ebdc63c")]
 [assembly: System.Reflection.AssemblyProductAttribute("TechBirdsFly.AdminService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TechBirdsFly.AdminService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
