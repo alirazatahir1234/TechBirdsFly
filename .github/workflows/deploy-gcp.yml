@@ -141,7 +141,7 @@ jobs:
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:${{ github.sha }} \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/billing-service:latest \
             -f services/billing-service/Dockerfile \
-            services/billing-service
+            .
             
       - name: Push Billing Service
         run: |

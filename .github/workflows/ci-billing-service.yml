@@ -43,4 +43,4 @@ jobs:
         continue-on-error: true
       
       - name: Build Docker image (validation only)
-        run: docker build -t billing-service:ci -f services/billing-service/Dockerfile services/billing-service
+        run: docker build -t billing-service:ci -f services/billing-service/Dockerfile .
