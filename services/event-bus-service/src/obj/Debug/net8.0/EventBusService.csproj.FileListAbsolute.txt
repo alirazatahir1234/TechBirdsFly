@@ -208,3 +208,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/event-bus-service/src/obj/Debug/net8.0/EventBusService.pdb
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/event-bus-service/src/obj/Debug/net8.0/EventBusService.genruntimeconfig.cache
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/event-bus-service/src/obj/Debug/net8.0/ref/EventBusService.dll
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/event-bus-service/src/bin/Debug/net8.0/MediatR.Extensions.Microsoft.DependencyInjection.dll

@@ -212,3 +212,4 @@
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251213.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251214.json
 /Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20251215.json
+/Users/alirazatahir/Desktop/Ali-Library/Project/Self/TechBirdsFly/services/user-service/src/UserService/bin/Debug/net8.0/logs/user-service-20260124.json
