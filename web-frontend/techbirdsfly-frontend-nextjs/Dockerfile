@@ -34,8 +34,7 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_API_URL=http://api-gateway:9000
-ENV NEXT_PUBLIC_AUTH_URL=http://auth-service:5001
+ENV PORT=3000
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-period=60s \
     CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
