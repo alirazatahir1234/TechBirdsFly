@@ -160,7 +160,7 @@ try
     // =========================================================================
     // DATABASE MIGRATION (Only in Development)
     // =========================================================================
-    if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase) 
+    if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase)
         && app.Environment.IsDevelopment())
     {
         try
