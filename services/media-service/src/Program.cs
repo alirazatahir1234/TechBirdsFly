@@ -4,6 +4,10 @@ using TechBirdsFly.MediaService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5010";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()

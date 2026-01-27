@@ -7,6 +7,10 @@ using ProjectService.Application.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5013";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

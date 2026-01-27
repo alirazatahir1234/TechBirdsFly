@@ -26,6 +26,12 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // ========================================================================
+    // CLOUD RUN PORT CONFIGURATION
+    // ========================================================================
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+    // ========================================================================
     // CONFIGURE SERILOG
     // ========================================================================
 

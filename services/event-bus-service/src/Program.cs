@@ -20,6 +20,10 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+    // Configure Cloud Run port
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5008";
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
     // Add Serilog
     builder.Host.UseSerilog(logger);
 

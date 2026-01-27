@@ -17,6 +17,10 @@ using UserService.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5006";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Configuration
 var configuration = builder.Configuration;
 var jwtSecret = configuration["Jwt:Secret"] ?? throw new InvalidOperationException("JWT Secret not configured");

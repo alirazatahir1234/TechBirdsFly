@@ -9,6 +9,10 @@ using TechBirdsFly.CacheClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5003";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Configure Serilog logging
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)

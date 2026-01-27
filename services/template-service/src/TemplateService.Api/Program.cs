@@ -9,6 +9,10 @@ using TemplateService.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5011";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Add services
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);

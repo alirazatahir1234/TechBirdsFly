@@ -4,6 +4,10 @@ using PublishService.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5012";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Add services
 builder.Services.AddPublishServices(builder.Configuration);
 builder.Services.AddControllers();

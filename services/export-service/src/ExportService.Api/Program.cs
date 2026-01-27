@@ -7,6 +7,10 @@ using System.Net.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Cloud Run port
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5009";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // Add logging
 builder.Services.AddLogging(config =>
 {
