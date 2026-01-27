@@ -37,6 +37,5 @@ COPY --from=publish /app/publish .
 
 EXPOSE 5021
 
-ENV ASPNETCORE_URLS=http://+:5021
 
 ENTRYPOINT ["dotnet", "CacheService.dll"]

@@ -32,15 +32,14 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app/publish .
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:5001
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Expose port
 EXPOSE 5001
 
-# Health check
+# Health check (port will be determined by PORT env var at runtime)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5001/health || exit 1
+  CMD curl -f http://localhost:${PORT:-5001}/health || exit 1
 
 # Run the application
 ENTRYPOINT ["dotnet", "AuthService.dll"]

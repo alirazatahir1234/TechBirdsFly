@@ -30,6 +30,5 @@ COPY --from=publish /app/publish .
 RUN mkdir -p /app/exports
 
 EXPOSE 8200
-ENV ASPNETCORE_URLS=http://+:8200
 
 ENTRYPOINT ["dotnet", "ExportService.Api.dll"]

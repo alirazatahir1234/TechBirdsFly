@@ -39,6 +39,5 @@ COPY --from=publish /app/publish .
 
 EXPOSE 5020
 
-ENV ASPNETCORE_URLS=http://+:5020
 
 ENTRYPOINT ["dotnet", "EventBusService.dll"]

@@ -22,7 +22,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ENV ASPNETCORE_URLS=http://+:5025
 EXPOSE 5025
 
 ENTRYPOINT ["dotnet", "PublishService.WebAPI.dll"]

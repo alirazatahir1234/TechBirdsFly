@@ -48,7 +48,6 @@ USER appuser
 EXPOSE 5002
 
 # Environment variables (can be overridden at runtime)
-ENV ASPNETCORE_URLS=http://+:5002
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Health check
