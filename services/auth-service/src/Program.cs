@@ -157,7 +157,11 @@ try
     var app = builder.Build();
 
     // Only run migrations in production/development, not in test environments
-    if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))
+    // =========================================================================
+    // DATABASE MIGRATION (Only in Development)
+    // =========================================================================
+    if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase) 
+        && app.Environment.IsDevelopment())
     {
         try
         {

@@ -114,11 +114,14 @@ try
 
     var app = builder.Build();
 
-    // Migrate DB
-    using (var scope = app.Services.CreateScope())
+    // Migrate DB (Only in Development)
+    if (app.Environment.IsDevelopment())
     {
-        var db = scope.ServiceProvider.GetRequiredService<BillingDbContext>();
-        db.Database.Migrate();
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<BillingDbContext>();
+            db.Database.Migrate();
+        }
     }
 
     if (app.Environment.IsDevelopment())
